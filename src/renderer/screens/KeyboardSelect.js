@@ -45,6 +45,7 @@ import Hardware from "@chrysalis-api/hardware";
 import usb from "usb";
 
 import i18n from "../i18n";
+import ColorButton from "./Editor/ColorButton";
 
 const styles = theme => ({
   loader: {
@@ -108,6 +109,8 @@ const styles = theme => ({
     color: green[500]
   }
 });
+
+// const buttonsAmount = new Array(16).fill(0);
 
 class KeyboardSelect extends React.Component {
   state = {
@@ -375,6 +378,7 @@ class KeyboardSelect extends React.Component {
             <div className={classes.grow} />
             {connectionButton}
           </CardActions>
+          <ColorButton />
         </Card>
       </div>
     );

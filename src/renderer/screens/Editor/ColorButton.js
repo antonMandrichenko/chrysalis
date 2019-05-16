@@ -38,10 +38,9 @@ const setRandomColor = () => {
 };
 
 function ColorButton(props) {
-  const { classes, changeBackgroundColor, isKeyDown } = props;
+  const { classes, changeColor, isKeyDown, handleKeyDown, handleKeyUp } = props;
 
-  const [displayColorPicker, setDisplayColorPicker] = useState(false);
-  const [isKeyPress, setIsKeyPress] = useState(false);
+  const [displayColorPicker, setDisplayColorPicker] = useState(null);
   const [color, setColor] = useState(setRandomColor());
 
   const style = {
@@ -55,7 +54,7 @@ function ColorButton(props) {
     if (!isKeyDown) {
       setDisplayColorPicker(!displayColorPicker);
     } else {
-      changeBackgroundColor(color);
+      changeColor(color);
     }
   };
 
@@ -65,34 +64,27 @@ function ColorButton(props) {
 
   const handleChange = color => {
     setColor(color.rgb);
-    if (isKeyPress) changeBackgroundColor(color.rgb);
-  };
-
-  const handleKeyDown = e => {
-    if (e.keyCode === 16 || e.keyCode === 17) setIsKeyPress(true);
-  };
-
-  const handleKeyUp = e => {
-    if (e.keyCode === 16 || e.keyCode === 17) setIsKeyPress(false);
+    changeColor(color.rgb);
   };
 
   return (
-    <React.Fragment>
-      <div className={classes.swatch} onClick={handleClick}>
+    <div>
+      <div
+        className={classes.swatch}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+        onKeyUp={handleKeyUp}
+        tabIndex="0"
+      >
         <div style={style} />
       </div>
       {displayColorPicker ? (
-        <div
-          className={classes.popover}
-          onKeyDown={handleKeyDown}
-          onKeyUp={handleKeyUp}
-          tabIndex="0"
-        >
+        <div className={classes.popover}>
           <div className={classes.cover} onClick={handleClose} />
           <SketchPicker color={color} onChange={handleChange} />
         </div>
       ) : null}
-    </React.Fragment>
+    </div>
   );
 }
 

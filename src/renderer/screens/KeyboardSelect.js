@@ -249,8 +249,12 @@ class KeyboardSelect extends React.Component {
       this.setState({ isKeyDown: false });
   };
 
+  changeColor = color => {
+    if (this.state.isKeyDown) this.props.changeBackgroundColor(color);
+  };
+
   render() {
-    const { classes, changeBackgroundColor } = this.props;
+    const { classes } = this.props;
     const { scanFoundDevices, devices, isKeyDown } = this.state;
 
     let loader = null;
@@ -415,8 +419,10 @@ class KeyboardSelect extends React.Component {
                 className={classnames(classes.grid, classes.paper)}
               >
                 <ColorButton
-                  changeBackgroundColor={changeBackgroundColor}
+                  changeColor={this.changeColor}
                   isKeyDown={isKeyDown}
+                  handleKeyDown={this.handleKeyDown}
+                  handleKeyUp={this.handleKeyUp}
                 />
               </Grid>
             ))}

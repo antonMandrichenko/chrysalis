@@ -38,6 +38,7 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import { withSnackbar } from "notistack";
+import classnames from "classnames";
 
 import Focus from "@chrysalis-api/focus";
 import Hardware from "@chrysalis-api/hardware";
@@ -46,6 +47,7 @@ import usb from "usb";
 
 import i18n from "../i18n";
 import ColorButton from "./Editor/ColorButton";
+import { Grid } from "@material-ui/core";
 
 const styles = theme => ({
   loader: {
@@ -107,17 +109,26 @@ const styles = theme => ({
   },
   found: {
     color: green[500]
+  },
+  paper: {
+    display: "flex",
+    justifyContent: "center",
+    alignItem: "center"
+  },
+  grid: {
+    margin: `${theme.spacing.unit / 2}px 0`
   }
 });
 
-// const buttonsAmount = new Array(16).fill(0);
+const colorButtonsAmount = new Array(16).fill(0);
 
 class KeyboardSelect extends React.Component {
   state = {
     selectedPortIndex: 0,
     opening: false,
     devices: null,
-    loading: false
+    loading: false,
+    isKeyDown: false
   };
 
   findNonSerialKeyboards = deviceList => {
@@ -228,9 +239,19 @@ class KeyboardSelect extends React.Component {
     i18n.refreshHardware(devices[this.state.selectedPortIndex]);
   };
 
+  handleKeyDown = e => {
+    if (e.keyCode === 16 || e.keyCode === 17)
+      this.setState({ isKeyDown: true });
+  };
+
+  handleKeyUp = e => {
+    if (e.keyCode === 16 || e.keyCode === 17)
+      this.setState({ isKeyDown: false });
+  };
+
   render() {
-    const { classes } = this.props;
-    const { scanFoundDevices, devices } = this.state;
+    const { classes, changeBackgroundColor } = this.props;
+    const { scanFoundDevices, devices, isKeyDown } = this.state;
 
     let loader = null;
     if (this.state.loading) {
@@ -378,7 +399,28 @@ class KeyboardSelect extends React.Component {
             <div className={classes.grow} />
             {connectionButton}
           </CardActions>
-          <ColorButton />
+        </Card>
+        <Card
+          className={classnames(classes.card, classes.paper)}
+          onKeyDown={this.handleKeyDown}
+          onKeyUp={this.handleKeyUp}
+          tabIndex="0"
+        >
+          <Grid container>
+            {colorButtonsAmount.map((colorbutton, i) => (
+              <Grid
+                item
+                xs={3}
+                key={i}
+                className={classnames(classes.grid, classes.paper)}
+              >
+                <ColorButton
+                  changeBackgroundColor={changeBackgroundColor}
+                  isKeyDown={isKeyDown}
+                />
+              </Grid>
+            ))}
+          </Grid>
         </Card>
       </div>
     );

@@ -72,7 +72,13 @@ class App extends React.Component {
       device: null,
       pages: {},
       contextBar: false,
-      cancelPendingOpen: false
+      cancelPendingOpen: false,
+      color: {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1
+      }
     };
   }
   flashing = false;
@@ -203,9 +209,17 @@ class App extends React.Component {
     this.setState({ contextBar: true });
   };
 
+  changeBackgroundColor = color => {
+    this.setState({ color: color });
+  };
+
   render() {
     const { classes } = this.props;
-    const { connected, pages, contextBar } = this.state;
+    const { connected, pages, contextBar, color } = this.state;
+
+    const style = {
+      background: `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+    };
 
     let focus = new Focus();
     let device =
@@ -224,7 +238,7 @@ class App extends React.Component {
               device={device}
               cancelContext={this.cancelContext}
             />
-            <main className={classes.content}>
+            <main className={classes.content} style={style}>
               <Router>
                 <Welcome
                   path="/welcome"
@@ -237,6 +251,7 @@ class App extends React.Component {
                   onConnect={this.onKeyboardConnect}
                   onDisconnect={this.onKeyboardDisconnect}
                   titleElement={() => document.querySelector("#page-title")}
+                  changeBackgroundColor={this.changeBackgroundColor}
                 />
                 <Editor
                   path="/editor"

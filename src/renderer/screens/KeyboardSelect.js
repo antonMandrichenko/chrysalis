@@ -38,7 +38,6 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import { withSnackbar } from "notistack";
-import classnames from "classnames";
 
 import Focus from "@chrysalis-api/focus";
 import Hardware from "@chrysalis-api/hardware";
@@ -46,8 +45,7 @@ import Hardware from "@chrysalis-api/hardware";
 import usb from "usb";
 
 import i18n from "../i18n";
-import ColorButton from "./Editor/ColorButton";
-import { Grid } from "@material-ui/core";
+import ColorPalette from "./ColorPalette";
 
 const styles = theme => ({
   loader: {
@@ -117,10 +115,13 @@ const styles = theme => ({
   },
   grid: {
     margin: `${theme.spacing.unit / 2}px 0`
+  },
+  palette: {
+    display: "flex",
+    justifyContent: "center",
+    alignItem: "center"
   }
 });
-
-const colorButtonsAmount = new Array(16).fill(0);
 
 class KeyboardSelect extends React.Component {
   state = {
@@ -387,48 +388,34 @@ class KeyboardSelect extends React.Component {
     }
 
     return (
-      <div className={classes.main}>
-        <Portal container={this.props.titleElement}>
-          {i18n.app.menu.selectAKeyboard}
-        </Portal>
-        {loader}
-        <Card className={classes.card}>
-          <CardContent className={classes.content}>
-            {preview}
-            {port}
-          </CardContent>
-          <Divider variant="middle" />
-          <CardActions className={classes.cardActions}>
-            {scanDevicesButton}
-            <div className={classes.grow} />
-            {connectionButton}
-          </CardActions>
-        </Card>
-        <Card
-          className={classnames(classes.card, classes.paper)}
-          onKeyDown={this.handleKeyDown}
-          onKeyUp={this.handleKeyUp}
-          tabIndex="0"
-        >
-          <Grid container>
-            {colorButtonsAmount.map((colorbutton, i) => (
-              <Grid
-                item
-                xs={3}
-                key={i}
-                className={classnames(classes.grid, classes.paper)}
-              >
-                <ColorButton
-                  changeColor={this.changeColor}
-                  isKeyDown={isKeyDown}
-                  handleKeyDown={this.handleKeyDown}
-                  handleKeyUp={this.handleKeyUp}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Card>
-      </div>
+      <React.Fragment>
+        <div className={classes.main}>
+          <Portal container={this.props.titleElement}>
+            {i18n.app.menu.selectAKeyboard}
+          </Portal>
+          {loader}
+          <Card className={classes.card}>
+            <CardContent className={classes.content}>
+              {preview}
+              {port}
+            </CardContent>
+            <Divider variant="middle" />
+            <CardActions className={classes.cardActions}>
+              {scanDevicesButton}
+              <div className={classes.grow} />
+              {connectionButton}
+            </CardActions>
+          </Card>
+        </div>
+        <div className={classes.palette}>
+          <ColorPalette
+            changeColor={this.changeColor}
+            isKeyDown={isKeyDown}
+            handleKeyDown={this.handleKeyDown}
+            handleKeyUp={this.handleKeyUp}
+          />
+        </div>
+      </React.Fragment>
     );
   }
 }

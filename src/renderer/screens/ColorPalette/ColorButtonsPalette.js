@@ -5,7 +5,7 @@ import ColorButton from "./ColorButton";
 
 const styles = {
   palette: {
-    width: 500,
+    width: 440,
     padding: 10,
     border: "1px solid black",
     display: "flex",
@@ -28,7 +28,7 @@ const setRandomColor = () => {
   };
 };
 
-let colorButtonsAmount = new Array(14).fill(0).map(() => setRandomColor());
+let colorButtonsAmount = new Array(16).fill(0).map(() => setRandomColor());
 
 function ColorButtonsPalette(props) {
   const {

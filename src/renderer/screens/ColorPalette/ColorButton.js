@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 const styles = {
   root: {
-    padding: 10,
+    padding: 5,
     cursor: "pointer"
   },
   button: {

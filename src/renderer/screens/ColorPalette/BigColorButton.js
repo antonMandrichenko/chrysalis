@@ -10,7 +10,7 @@ const styles = {
   swatch: {
     padding: 5,
     width: 250,
-    height: 150,
+    height: 120,
     background: `linear-gradient(to right, #F00 16.6%,
       #FF7400 16.6%, #FF7400 33.2%,
       #FFF400 33.2%, #FFF400 49.8%, 

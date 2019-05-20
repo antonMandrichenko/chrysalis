@@ -11,7 +11,7 @@ const styles = {
   ourPalette: {
     display: "flex",
     justifyContent: "center",
-    alignItem: "center",
+    alignItems: "center",
     padding: 20
   }
 };
@@ -75,7 +75,7 @@ function ColorPalette(props) {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Paper className={classes.ourPalette}>
         <ColorButtonsPalette
           colorFocusButton={colorFocusButton}
@@ -95,7 +95,7 @@ function ColorPalette(props) {
           setIsFocus={setIsFocus}
         />
       </Paper>
-    </div>
+    </React.Fragment>
   );
 }
 

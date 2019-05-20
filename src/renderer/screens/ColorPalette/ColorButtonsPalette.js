@@ -9,13 +9,12 @@ import ColorButton from "./ColorButton";
 
 const styles = {
   palette: {
-    width: 260,
+    width: 420,
     padding: 10,
     border: "1px solid black",
     display: "flex",
     justifyContent: "center",
-    alignItem: "center",
-    flexWrap: "wrap"
+    alignItems: "center"
   }
 };
 

@@ -45,6 +45,13 @@ function ColorPalette(props) {
   const [prevColor, setPrevColor] = useState(null);
 
   /**
+   * This is Hook that lets add React state "focusButton" to functional components
+   * @param {object} [initialState=0] - Sets initial state for "focusButton".
+   */
+
+  const [focusButton, setFocusButton] = useState(10);
+
+  /**
    * Change "colorFocusButton" and "prevColor" in functional component state
    * @param {object} color Object with keys that defining colors using the Red-green-blue-alpha (RGBA) model
    */
@@ -54,18 +61,42 @@ function ColorPalette(props) {
     setPrevColor(colorFocusButton);
   };
 
+  /**
+   * Change "focusButton" in its state, "colorFocusButton" in ColorPalette's state, "color" in App's state. Modify array of buttons colors
+   * @param {number} index Number of value in array that focusing by mouse
+   * @param {object} color Object with keys that defining colors using the Red-green-blue-alpha (RGBA) model
+   * @param {object} e This property is actually an object containing information about the action that just happened
+   */
+
+  const setIsFocus = (index, color, e) => {
+    setFocusButton(index);
+    setColorFocusButton(color);
+    if (e.shiftKey || e.ctrlKey) changeBackgroundColor(color);
+  };
+
   return (
     <div>
       <Paper className={classes.ourPalette}>
         <ColorButtonsPalette
-          setColorFocusButton={toSetColorFocusButton}
+          // setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
-          changeBackgroundColor={changeBackgroundColor}
+          // changeBackgroundColor={changeBackgroundColor}
+          panelNumber={10}
+          focusButton={focusButton}
+          setIsFocus={setIsFocus}
         />
         <BigColorButton
           setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
           prevColor={prevColor}
+        />
+        <ColorButtonsPalette
+          // setColorFocusButton={toSetColorFocusButton}
+          colorFocusButton={colorFocusButton}
+          // changeBackgroundColor={changeBackgroundColor}
+          panelNumber={20}
+          focusButton={focusButton}
+          setIsFocus={setIsFocus}
         />
       </Paper>
     </div>

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { PhotoshopPicker } from "react-color";
-import { setRandomColor } from "./ColorButtonsPalette";
 
 const styles = {
   root: {
     position: "relative",
-    marginLeft: 20
+    margin: "0 20px"
   },
   swatch: {
     padding: 5,
@@ -30,29 +29,15 @@ const styles = {
   }
 };
 
-const randomColor = setRandomColor();
-
 function BigColorButton(props) {
-  const {
-    classes,
-    setColorFocusButton,
-    colorFocusButton: color,
-    prevColor
-  } = props;
+  const { classes, setColorFocusButton, colorFocusButton: color } = props;
 
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
-  const prevColorButton = prevColor ? prevColor : setRandomColor();
   const colorRGB = `${color.r}, ${color.g}, ${color.b}`;
-  const prevColorRGB = `${prevColorButton.r}, ${prevColorButton.g}, ${
-    prevColorButton.b
-  }`;
-  const randomColorRGB = `${randomColor.r}, ${randomColor.g}, ${randomColor.b}`;
 
   const style = {
-    background: `linear-gradient(45deg, rgba(${colorRGB}, 1) 0%, rgba(${colorRGB}, 0) 80%),
-    linear-gradient(285deg, rgba(${prevColorRGB}, 1) 0%, rgba(${prevColorRGB}, 0) 80%),
-    linear-gradient(165deg, rgba(${randomColorRGB}, 1) 0%, rgba(${randomColorRGB}, 0) 80%)`
+    background: `rgba(${colorRGB}, 1)`
   };
 
   const handleClick = () => {

@@ -2,14 +2,14 @@
  * This is Reactjs functional component that create area for color battons
  * @extends ColorPalette
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import ColorButton from "./ColorButton";
 
 const styles = {
   palette: {
-    width: 440,
+    width: 260,
     padding: 10,
     border: "1px solid black",
     display: "flex",
@@ -37,10 +37,6 @@ const setRandomColor = () => {
   };
 };
 
-/// Creates array of buttons colors and assigns values to it
-
-let colorButtonsAmount = new Array(16).fill(0).map(() => setRandomColor());
-
 /**
  * Reactjs functional component that create area for color battons
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
@@ -53,44 +49,35 @@ function ColorButtonsPalette(props) {
   const {
     classes,
     colorFocusButton,
-    setColorFocusButton,
-    changeBackgroundColor
+    panelNumber,
+    focusButton,
+    setIsFocus
   } = props;
 
-  /**
-   * This is Hook that lets add React state "focusButton" to functional components
-   * @param {object} [initialState=0] - Sets initial state for "focusButton".
-   */
+  const [colorButtonsAmount, setColorButtonsAmount] = useState(
+    new Array(8).fill(0).map(() => setRandomColor())
+  );
 
-  const [focusButton, setFocusButton] = useState(0);
-
-  /**
-   * Change "focusButton" in its state, "colorFocusButton" in ColorPalette's state, "color" in App's state. Modify array of buttons colors
-   * @param {number} index Number of value in array that focusing by mouse
-   * @param {object} color Object with keys that defining colors using the Red-green-blue-alpha (RGBA) model
-   * @param {object} e This property is actually an object containing information about the action that just happened
-   */
-
-  const setIsFocus = (index, color, e) => {
-    setFocusButton(index);
-    setColorFocusButton(color);
-    if (e.shiftKey || e.ctrlKey) changeBackgroundColor(color);
-    colorButtonsAmount = colorButtonsAmount.map((colorButton, i) => {
-      if (focusButton === i) return { ...colorFocusButton };
-      return colorButton;
-    });
-  };
+  useEffect(() => {
+    setColorButtonsAmount(
+      colorButtonsAmount.map((colorButton, i) => {
+        if (focusButton === i + panelNumber) return { ...colorFocusButton };
+        return colorButton;
+      })
+    );
+  }, [colorFocusButton]);
 
   return (
     <Paper className={classes.palette}>
       {colorButtonsAmount.map((colorButton, i) => {
-        const isIdentity = i === focusButton;
+        const indexButton = i + panelNumber;
+        const isIdentity = indexButton === focusButton;
         return (
           <ColorButton
             key={i}
             isFocus={isIdentity}
             setIsFocus={setIsFocus}
-            index={i}
+            index={indexButton}
             color={isIdentity ? colorFocusButton : colorButton}
           />
         );

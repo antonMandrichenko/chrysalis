@@ -13,7 +13,7 @@ const styles = {
     height: 120,
     borderRadius: "50%",
     cursor: "pointer",
-    background: `url(https://cdn.shopify.com/s/files/1/0285/1316/products/pw571-1_1000x1000.jpg?v=1472052730)`,
+    background: `url(https://cdn0.iconfinder.com/data/icons/design-25/24/color_palette_paint_colors-512.png)`,
     backgroundSize: "100% auto"
   },
   popover: {

@@ -15,7 +15,7 @@ const styles = {
   }
 };
 
-const setRandomColor = () => {
+export const setRandomColor = () => {
   const maxValue = 255;
   const randomR = Math.random();
   const randomG = Math.random();
@@ -35,18 +35,15 @@ function ColorButtonsPalette(props) {
     classes,
     colorFocusButton,
     setColorFocusButton,
-    changeColor,
-    isKeyDown,
-    handleKeyDown,
-    handleKeyUp
+    changeBackgroundColor
   } = props;
 
   const [focusButton, setFocusButton] = useState(0);
 
-  const setIsFocus = (index, color) => {
+  const setIsFocus = (index, color, e) => {
     setFocusButton(index);
     setColorFocusButton(color);
-    if (isKeyDown) changeColor(color);
+    if (e.shiftKey || e.ctrlKey) changeBackgroundColor(color);
     colorButtonsAmount = colorButtonsAmount.map((colorButton, i) => {
       if (focusButton === i) return { ...colorFocusButton };
       return colorButton;
@@ -54,12 +51,7 @@ function ColorButtonsPalette(props) {
   };
 
   return (
-    <Paper
-      className={classes.palette}
-      onKeyDown={handleKeyDown}
-      onKeyUp={handleKeyUp}
-      tabIndex="1"
-    >
+    <Paper className={classes.palette}>
       {colorButtonsAmount.map((colorButton, i) => {
         const isIdentity = i === focusButton;
         return (

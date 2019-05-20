@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { PhotoshopPicker } from "react-color";
+import { setRandomColor } from "./ColorButtonsPalette";
 
 const styles = {
   root: {
@@ -9,36 +10,50 @@ const styles = {
   },
   swatch: {
     padding: 5,
-    width: 250,
+    width: 120,
     height: 120,
-    background: `linear-gradient(to right, #F00 16.6%,
-      #FF7400 16.6%, #FF7400 33.2%,
-      #FFF400 33.2%, #FFF400 49.8%, 
-      #41DB00 49.8%, #41DB00 66.5%, 
-      #2618B1 66.5%, #2618B1 83.1%, 
-      #640CAB 83.1%)`,
+    borderRadius: "50%",
     cursor: "pointer"
+  },
+  popover: {
+    position: "absolute",
+    zIndex: "2",
+    bottom: 0,
+    right: 130
+  },
+  cover: {
+    position: "fixed",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0
   }
 };
 
-const popover = {
-  position: "absolute",
-  zIndex: "2",
-  bottom: 0,
-  right: 260
-};
-const cover = {
-  position: "fixed",
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 0
-};
+const randomColor = setRandomColor();
 
 function BigColorButton(props) {
-  const { classes, setColorFocusButton, colorFocusButton } = props;
+  const {
+    classes,
+    setColorFocusButton,
+    colorFocusButton: color,
+    prevColor
+  } = props;
 
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
+
+  const prevColorButton = prevColor ? prevColor : setRandomColor();
+  const colorRGB = `${color.r}, ${color.g}, ${color.b}`;
+  const prevColorRGB = `${prevColorButton.r}, ${prevColorButton.g}, ${
+    prevColorButton.b
+  }`;
+  const randomColorRGB = `${randomColor.r}, ${randomColor.g}, ${randomColor.b}`;
+
+  const style = {
+    background: `linear-gradient(45deg, rgba(${colorRGB}, 1) 0%, rgba(${colorRGB}, 0) 80%),
+    linear-gradient(285deg, rgba(${prevColorRGB}, 1) 0%, rgba(${prevColorRGB}, 0) 80%),
+    linear-gradient(165deg, rgba(${randomColorRGB}, 1) 0%, rgba(${randomColorRGB}, 0) 80%)`
+  };
 
   const handleClick = () => {
     setDisplayColorPicker(!displayColorPicker);
@@ -50,12 +65,12 @@ function BigColorButton(props) {
 
   return (
     <div className={classes.root}>
-      <div className={classes.swatch} onClick={handleClick} />
+      <div className={classes.swatch} style={style} onClick={handleClick} />
       {displayColorPicker ? (
-        <div style={popover}>
-          <div style={cover} onClick={handleClose} />
+        <div className={classes.popover}>
+          <div className={classes.cover} onClick={handleClose} />
           <PhotoshopPicker
-            color={colorFocusButton}
+            color={color}
             onChange={color => {
               setColorFocusButton(color.rgb);
             }}

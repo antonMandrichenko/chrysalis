@@ -14,7 +14,7 @@ const styles = {
 };
 
 function ColorPalette(props) {
-  const { classes, changeColor, isKeyDown, handleKeyDown, handleKeyUp } = props;
+  const { classes, changeBackgroundColor } = props;
 
   const [colorFocusButton, setColorFocusButton] = useState({
     r: 255,
@@ -23,8 +23,11 @@ function ColorPalette(props) {
     a: 1
   });
 
+  const [prevColor, setPrevColor] = useState(null);
+
   const toSetColorFocusButton = color => {
     setColorFocusButton(color);
+    setPrevColor(colorFocusButton);
   };
 
   return (
@@ -33,14 +36,12 @@ function ColorPalette(props) {
         <ColorButtonsPalette
           setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
-          changeColor={changeColor}
-          isKeyDown={isKeyDown}
-          handleKeyDown={handleKeyDown}
-          handleKeyUp={handleKeyUp}
+          changeBackgroundColor={changeBackgroundColor}
         />
         <BigColorButton
           setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
+          prevColor={prevColor}
         />
       </Paper>
     </div>

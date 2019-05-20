@@ -128,8 +128,7 @@ class KeyboardSelect extends React.Component {
     selectedPortIndex: 0,
     opening: false,
     devices: null,
-    loading: false,
-    isKeyDown: false
+    loading: false
   };
 
   findNonSerialKeyboards = deviceList => {
@@ -240,23 +239,9 @@ class KeyboardSelect extends React.Component {
     i18n.refreshHardware(devices[this.state.selectedPortIndex]);
   };
 
-  handleKeyDown = e => {
-    if (e.keyCode === 16 || e.keyCode === 17)
-      this.setState({ isKeyDown: true });
-  };
-
-  handleKeyUp = e => {
-    if (e.keyCode === 16 || e.keyCode === 17)
-      this.setState({ isKeyDown: false });
-  };
-
-  changeColor = color => {
-    if (this.state.isKeyDown) this.props.changeBackgroundColor(color);
-  };
-
   render() {
-    const { classes } = this.props;
-    const { scanFoundDevices, devices, isKeyDown } = this.state;
+    const { classes, changeBackgroundColor } = this.props;
+    const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
     if (this.state.loading) {
@@ -408,12 +393,7 @@ class KeyboardSelect extends React.Component {
           </Card>
         </div>
         <div className={classes.palette}>
-          <ColorPalette
-            changeColor={this.changeColor}
-            isKeyDown={isKeyDown}
-            handleKeyDown={this.handleKeyDown}
-            handleKeyUp={this.handleKeyUp}
-          />
+          <ColorPalette changeBackgroundColor={changeBackgroundColor} />
         </div>
       </React.Fragment>
     );

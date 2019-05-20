@@ -37,7 +37,6 @@ function ColorButton(props) {
       <div
         className={classes.button}
         style={isFocus ? styleInFocus : style}
-        tabIndex="1"
         onClick={setIsFocus.bind(this, index, color)}
       />
     </div>

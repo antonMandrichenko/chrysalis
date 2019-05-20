@@ -78,9 +78,7 @@ function ColorPalette(props) {
     <div>
       <Paper className={classes.ourPalette}>
         <ColorButtonsPalette
-          // setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
-          // changeBackgroundColor={changeBackgroundColor}
           panelNumber={10}
           focusButton={focusButton}
           setIsFocus={setIsFocus}
@@ -91,9 +89,7 @@ function ColorPalette(props) {
           prevColor={prevColor}
         />
         <ColorButtonsPalette
-          // setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
-          // changeBackgroundColor={changeBackgroundColor}
           panelNumber={20}
           focusButton={focusButton}
           setIsFocus={setIsFocus}

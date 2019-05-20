@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { PhotoshopPicker } from "react-color";
+import { SketchPicker } from "react-color";
 
 const styles = {
   root: {
@@ -12,7 +12,9 @@ const styles = {
     width: 120,
     height: 120,
     borderRadius: "50%",
-    cursor: "pointer"
+    cursor: "pointer",
+    background: `url(https://cdn.shopify.com/s/files/1/0285/1316/products/pw571-1_1000x1000.jpg?v=1472052730)`,
+    backgroundSize: "100% auto"
   },
   popover: {
     position: "absolute",
@@ -34,12 +36,6 @@ function BigColorButton(props) {
 
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
-  const colorRGB = `${color.r}, ${color.g}, ${color.b}`;
-
-  const style = {
-    background: `rgba(${colorRGB}, 1)`
-  };
-
   const handleClick = () => {
     setDisplayColorPicker(!displayColorPicker);
   };
@@ -50,11 +46,11 @@ function BigColorButton(props) {
 
   return (
     <div className={classes.root}>
-      <div className={classes.swatch} style={style} onClick={handleClick} />
+      <div className={classes.swatch} onClick={handleClick} />
       {displayColorPicker ? (
         <div className={classes.popover}>
           <div className={classes.cover} onClick={handleClose} />
-          <PhotoshopPicker
+          <SketchPicker
             color={color}
             onChange={color => {
               setColorFocusButton(color.rgb);

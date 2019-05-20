@@ -47,7 +47,6 @@ import usb from "usb";
 
 import i18n from "../i18n";
 import ColorButton from "./Editor/ColorButton";
-import { Grid } from "@material-ui/core";
 
 const styles = theme => ({
   loader: {
@@ -113,10 +112,8 @@ const styles = theme => ({
   paper: {
     display: "flex",
     justifyContent: "center",
-    alignItem: "center"
-  },
-  grid: {
-    margin: `${theme.spacing.unit / 2}px 0`
+    alignItems: "center",
+    padding: 20
   }
 });
 
@@ -128,7 +125,6 @@ class KeyboardSelect extends React.Component {
     opening: false,
     devices: null,
     loading: false
-    // isKeyDown: false
   };
 
   findNonSerialKeyboards = deviceList => {
@@ -245,7 +241,7 @@ class KeyboardSelect extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { scanFoundDevices, devices, isKeyDown } = this.state;
+    const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
     if (this.state.loading) {
@@ -377,43 +373,31 @@ class KeyboardSelect extends React.Component {
     }
 
     return (
-      <div className={classes.main}>
-        <Portal container={this.props.titleElement}>
-          {i18n.app.menu.selectAKeyboard}
-        </Portal>
-        {loader}
-        <Card className={classes.card}>
-          <CardContent className={classes.content}>
-            {preview}
-            {port}
-          </CardContent>
-          <Divider variant="middle" />
-          <CardActions className={classes.cardActions}>
-            {scanDevicesButton}
-            <div className={classes.grow} />
-            {connectionButton}
-          </CardActions>
+      <React.Fragment>
+        <div className={classes.main}>
+          <Portal container={this.props.titleElement}>
+            {i18n.app.menu.selectAKeyboard}
+          </Portal>
+          {loader}
+          <Card className={classes.card}>
+            <CardContent className={classes.content}>
+              {preview}
+              {port}
+            </CardContent>
+            <Divider variant="middle" />
+            <CardActions className={classes.cardActions}>
+              {scanDevicesButton}
+              <div className={classes.grow} />
+              {connectionButton}
+            </CardActions>
+          </Card>
+        </div>
+        <Card className={classnames(classes.card, classes.paper)}>
+          {colorButtonsAmount.map((colorbutton, i) => (
+            <ColorButton key={i} changeColor={this.changeColor} />
+          ))}
         </Card>
-        <Card
-          className={classnames(classes.card, classes.paper)}
-          onKeyDown={this.handleKeyDown}
-          onKeyUp={this.handleKeyUp}
-          tabIndex="0"
-        >
-          <Grid container>
-            {colorButtonsAmount.map((colorbutton, i) => (
-              <Grid
-                item
-                xs={3}
-                key={i}
-                className={classnames(classes.grid, classes.paper)}
-              >
-                <ColorButton changeColor={this.changeColor} />
-              </Grid>
-            ))}
-          </Grid>
-        </Card>
-      </div>
+      </React.Fragment>
     );
   }
 }

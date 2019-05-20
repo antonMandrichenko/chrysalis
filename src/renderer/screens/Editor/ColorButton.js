@@ -3,6 +3,9 @@ import { withStyles } from "@material-ui/core/styles";
 import { SketchPicker } from "react-color";
 
 const styles = {
+  root: {
+    margin: 5
+  },
   swatch: {
     padding: 5,
     background: "#fff",
@@ -68,7 +71,7 @@ function ColorButton(props) {
   };
 
   return (
-    <div>
+    <div className={classes.root}>
       <div className={classes.swatch} onClick={handleClick}>
         <div style={style} />
       </div>

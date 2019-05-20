@@ -235,12 +235,8 @@ class KeyboardSelect extends React.Component {
     i18n.refreshHardware(devices[this.state.selectedPortIndex]);
   };
 
-  changeColor = (color, e) => {
-    if (e.ctrlKey || e.shiftKey) this.props.changeBackgroundColor(color);
-  };
-
   render() {
-    const { classes } = this.props;
+    const { classes, changeBackgroundColor } = this.props;
     const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
@@ -394,7 +390,10 @@ class KeyboardSelect extends React.Component {
         </div>
         <Card className={classnames(classes.card, classes.paper)}>
           {colorButtonsAmount.map((colorbutton, i) => (
-            <ColorButton key={i} changeColor={this.changeColor} />
+            <ColorButton
+              key={i}
+              changeBackgroundColor={changeBackgroundColor}
+            />
           ))}
         </Card>
       </React.Fragment>

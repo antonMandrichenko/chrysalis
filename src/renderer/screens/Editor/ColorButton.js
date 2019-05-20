@@ -38,7 +38,7 @@ const setRandomColor = () => {
 };
 
 function ColorButton(props) {
-  const { classes, changeColor, isKeyDown, handleKeyDown, handleKeyUp } = props;
+  const { classes, changeColor } = props;
 
   const [displayColorPicker, setDisplayColorPicker] = useState(null);
   const [color, setColor] = useState(setRandomColor());
@@ -50,8 +50,8 @@ function ColorButton(props) {
     borderRadius: 2
   };
 
-  const handleClick = () => {
-    if (!isKeyDown) {
+  const handleClick = e => {
+    if (e.ctrlKey || e.shiftKey) {
       setDisplayColorPicker(!displayColorPicker);
     } else {
       changeColor(color);
@@ -62,26 +62,25 @@ function ColorButton(props) {
     setDisplayColorPicker(false);
   };
 
-  const handleChange = color => {
+  const handleChange = (color, e) => {
     setColor(color.rgb);
-    changeColor(color.rgb);
+    changeColor(color.rgb, e);
   };
 
   return (
     <div>
-      <div
-        className={classes.swatch}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        onKeyUp={handleKeyUp}
-        tabIndex="0"
-      >
+      <div className={classes.swatch} onClick={handleClick}>
         <div style={style} />
       </div>
       {displayColorPicker ? (
         <div className={classes.popover}>
           <div className={classes.cover} onClick={handleClose} />
-          <SketchPicker color={color} onChange={handleChange} />
+          <SketchPicker
+            color={color}
+            onChange={(color, e) => {
+              handleChange(color, e);
+            }}
+          />
         </div>
       ) : null}
     </div>

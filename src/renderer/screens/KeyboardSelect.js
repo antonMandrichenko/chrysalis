@@ -127,8 +127,8 @@ class KeyboardSelect extends React.Component {
     selectedPortIndex: 0,
     opening: false,
     devices: null,
-    loading: false,
-    isKeyDown: false
+    loading: false
+    // isKeyDown: false
   };
 
   findNonSerialKeyboards = deviceList => {
@@ -239,18 +239,8 @@ class KeyboardSelect extends React.Component {
     i18n.refreshHardware(devices[this.state.selectedPortIndex]);
   };
 
-  handleKeyDown = e => {
-    if (e.keyCode === 16 || e.keyCode === 17)
-      this.setState({ isKeyDown: true });
-  };
-
-  handleKeyUp = e => {
-    if (e.keyCode === 16 || e.keyCode === 17)
-      this.setState({ isKeyDown: false });
-  };
-
-  changeColor = color => {
-    if (this.state.isKeyDown) this.props.changeBackgroundColor(color);
+  changeColor = (color, e) => {
+    if (e.ctrlKey || e.shiftKey) this.props.changeBackgroundColor(color);
   };
 
   render() {
@@ -418,12 +408,7 @@ class KeyboardSelect extends React.Component {
                 key={i}
                 className={classnames(classes.grid, classes.paper)}
               >
-                <ColorButton
-                  changeColor={this.changeColor}
-                  isKeyDown={isKeyDown}
-                  handleKeyDown={this.handleKeyDown}
-                  handleKeyUp={this.handleKeyUp}
-                />
+                <ColorButton changeColor={this.changeColor} />
               </Grid>
             ))}
           </Grid>

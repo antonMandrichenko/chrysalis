@@ -16,20 +16,21 @@ const styles = {
   }
 };
 
+const numberFirstPanel = 10;
+const numberSecondPanel = 20;
+
 /**
  * Reactjs functional component that create palette for selection background color
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {function} changeBackgroundColor Function for change background color App.js
  */
-
 function ColorPalette(props) {
   const { classes, changeBackgroundColor } = props;
 
   /**
    * This is Hook that lets add React state "colorFocusButton" to function components
-   * @param {object} [initialState={r: 255, g: 255, b: 255, a: 1 }] - Sets initial state for "colorFocusButton".
+   * @param {object} [initialState={r: 255, g: 255, b: 255, a: 1 }] - Sets initial state for "colorFocusButton" (white color).
    */
-
   const [colorFocusButton, setColorFocusButton] = useState({
     r: 255,
     g: 255,
@@ -38,27 +39,17 @@ function ColorPalette(props) {
   });
 
   /**
-   * This is Hook that lets add React state "prevColor" to function components
-   * @param {object} [initialState=null] - Sets initial state "prevColor".
-   */
-
-  const [prevColor, setPrevColor] = useState(null);
-
-  /**
    * This is Hook that lets add React state "focusButton" to functional components
    * @param {object} [initialState=0] - Sets initial state for "focusButton".
    */
-
   const [focusButton, setFocusButton] = useState(10);
 
   /**
    * Change "colorFocusButton" and "prevColor" in functional component state
    * @param {object} color Object with keys that defining colors using the Red-green-blue-alpha (RGBA) model
    */
-
   const toSetColorFocusButton = color => {
     setColorFocusButton(color);
-    setPrevColor(colorFocusButton);
   };
 
   /**
@@ -67,32 +58,29 @@ function ColorPalette(props) {
    * @param {object} color Object with keys that defining colors using the Red-green-blue-alpha (RGBA) model
    * @param {object} e This property is actually an object containing information about the action that just happened
    */
-
   const setIsFocus = (index, color, e) => {
     setFocusButton(index);
     setColorFocusButton(color);
     if (e.shiftKey || e.ctrlKey) changeBackgroundColor(color);
   };
 
+  const propsToChild = {
+    colorFocusButton,
+    focusButton,
+    setIsFocus
+  };
+
   return (
     <React.Fragment>
       <Paper className={classes.ourPalette}>
-        <ColorButtonsPalette
-          colorFocusButton={colorFocusButton}
-          panelNumber={10}
-          focusButton={focusButton}
-          setIsFocus={setIsFocus}
-        />
+        <ColorButtonsPalette {...propsToChild} panelNumber={numberFirstPanel} />
         <BigColorButton
           setColorFocusButton={toSetColorFocusButton}
           colorFocusButton={colorFocusButton}
-          prevColor={prevColor}
         />
         <ColorButtonsPalette
-          colorFocusButton={colorFocusButton}
-          panelNumber={20}
-          focusButton={focusButton}
-          setIsFocus={setIsFocus}
+          {...propsToChild}
+          panelNumber={numberSecondPanel}
         />
       </Paper>
     </React.Fragment>

@@ -1,3 +1,6 @@
+/**
+ * This is Reactjs functional component that create color batton
+ */
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -13,10 +16,24 @@ const styles = {
   }
 };
 
+const maxColorValue = 255;
+
+/**
+ * Reactjs functional component that create area for color buttons
+ * @param {object} classes Property that sets up CSS classes that adding to HTML elements
+ * @param {boolean} isFocus Change CSS styles
+ * @param {function} setIsFocus Callback function from ColorPalette component
+ * @param {number} index Current index of button
+ * @param {object} color Current color of button
+ */
 function ColorButton(props) {
   const { classes, isFocus, setIsFocus, index, color } = props;
 
-  const isNotWhiteColor = color.r !== 255 && color.g !== 255 && color.b !== 255;
+  ///checks background is white or not
+  const isNotWhiteColor =
+    color.r !== maxColorValue &&
+    color.g !== maxColorValue &&
+    color.b !== maxColorValue;
 
   const style = {
     background: `rgb(${color.r}, ${color.g}, ${color.b})`,

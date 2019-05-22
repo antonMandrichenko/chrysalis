@@ -20,7 +20,7 @@ const styles = theme => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: 10,
     border: "1px solid black",
     [theme.breakpoints.down("sm")]: {
       border: "none",

@@ -33,6 +33,10 @@ const styles = theme => ({
     [theme.breakpoints.down("sm")]: {
       bottom: 0,
       left: 50
+    },
+    [theme.breakpoints.up(1320)]: {
+      bottom: 0,
+      left: 42
     }
   },
   cover: {

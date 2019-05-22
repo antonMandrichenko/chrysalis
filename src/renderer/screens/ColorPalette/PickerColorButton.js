@@ -28,7 +28,7 @@ const styles = theme => ({
   popover: {
     position: "absolute",
     zIndex: "2",
-    bottom: 50,
+    bottom: 42,
     left: -130,
     [theme.breakpoints.down("sm")]: {
       bottom: 0,

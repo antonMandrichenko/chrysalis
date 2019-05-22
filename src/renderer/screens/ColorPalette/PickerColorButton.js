@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { SketchPicker } from "react-color";
+import paletteIcon from "./palette.svg";
 
 const styles = {
   root: {
@@ -12,18 +13,20 @@ const styles = {
   },
   swatch: {
     padding: 5,
-    width: 120,
-    height: 120,
+    width: 40,
+    height: 40,
     borderRadius: "50%",
     cursor: "pointer",
-    background: `url(https://cdn0.iconfinder.com/data/icons/design-25/24/color_palette_paint_colors-512.png)`,
-    backgroundSize: "100% auto"
+    backgroundColor: "blue",
+    background: `url(${paletteIcon}) no-repeat center center`,
+    backgroundSize: "50% auto",
+    boxShadow: "0px 11px 21px -9px rgba(0,0,0,0.75)"
   },
   popover: {
     position: "absolute",
     zIndex: "2",
     bottom: 0,
-    right: 130
+    left: 50
   },
   cover: {
     position: "fixed",
@@ -40,7 +43,7 @@ const styles = {
  * @param {function} setColorFocusButton Callback function from ColorPalette component
  * @param {object} colorFocusButton Object with keys that defining colors using the Red-green-blue-alpha (RGBA) model for focus button
  */
-function BigColorButton(props) {
+function PickerColorButton(props) {
   const { classes, setColorFocusButton, colorFocusButton: color } = props;
 
   /**
@@ -81,4 +84,4 @@ function BigColorButton(props) {
   );
 }
 
-export default withStyles(styles)(BigColorButton);
+export default withStyles(styles)(PickerColorButton);

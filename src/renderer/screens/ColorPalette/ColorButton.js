@@ -16,7 +16,7 @@ const styles = {
   }
 };
 
-const maxColorValue = 255;
+const minWhiteColorValue = 220;
 
 /**
  * Reactjs functional component that create area for color buttons
@@ -30,21 +30,21 @@ function ColorButton(props) {
   const { classes, isFocus, setIsFocus, index, color } = props;
 
   ///checks background is white or not
-  const isNotWhiteColor =
-    color.r !== maxColorValue &&
-    color.g !== maxColorValue &&
-    color.b !== maxColorValue;
+  const isWhiteColor =
+    color.r >= minWhiteColorValue &&
+    color.g >= minWhiteColorValue &&
+    color.b >= minWhiteColorValue;
 
   const style = {
     background: `rgb(${color.r}, ${color.g}, ${color.b})`,
-    border: isNotWhiteColor
+    border: !isWhiteColor
       ? `1px solid rgb(${color.r}, ${color.g}, ${color.b})`
       : "1px solid rgb(155, 155, 155)"
   };
 
   const styleInFocus = {
     background: `rgb(${color.r}, ${color.g}, ${color.b})`,
-    boxShadow: isNotWhiteColor
+    boxShadow: !isWhiteColor
       ? `0px 0px 26px 4px rgb(${color.r}, ${color.g}, ${color.b})`
       : `0px 0px 26px 4px rgb(155, 155, 155)`
   };

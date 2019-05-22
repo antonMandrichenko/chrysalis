@@ -3,14 +3,10 @@
  */
 import React, { useState, useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 import ColorButton from "./ColorButton";
-import PickerColorButton from "./PickerColorButton";
 
 const styles = {
   palette: {
-    padding: 10,
-    border: "1px solid black",
     display: "flex",
     justifyContent: "center",
     alignItems: "center"
@@ -34,7 +30,7 @@ const setRandomColor = () => {
   };
 };
 
-const arrayLength = 16;
+const arrayLength = 8;
 
 /**
  * Reactjs functional component that create area for color battons
@@ -50,8 +46,7 @@ function ColorButtonsPalette(props) {
     colorFocusButton,
     panelNumber,
     focusButton,
-    setIsFocus,
-    setColorFocusButton
+    setIsFocus
   } = props;
 
   /**
@@ -75,7 +70,7 @@ function ColorButtonsPalette(props) {
   }, [colorFocusButton]);
 
   return (
-    <Paper className={classes.palette}>
+    <div className={classes.palette}>
       {colorButtonsAmount.map((colorButton, i) => {
         const indexButton = i + panelNumber;
         const isIdentity = indexButton === focusButton;
@@ -89,11 +84,7 @@ function ColorButtonsPalette(props) {
           />
         );
       })}
-      <PickerColorButton
-        setColorFocusButton={setColorFocusButton}
-        colorFocusButton={colorFocusButton}
-      />
-    </Paper>
+    </div>
   );
 }
 

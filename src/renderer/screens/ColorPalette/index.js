@@ -4,18 +4,40 @@
 import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import ColorButtonsPalette from "./ColorButtonsPalette";
+import PickerColorButton from "./PickerColorButton";
 
-const styles = {
-  ourPalette: {
+const styles = theme => ({
+  root: {
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px
+    ${theme.spacing.unit * 3}px`,
+    [theme.breakpoints.down("sm")]: {
+      width: 500
+    }
+  },
+  palette: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20
+    padding: 20,
+    border: "1px solid black",
+    [theme.breakpoints.down("sm")]: {
+      border: "none",
+      flexDirection: "column"
+    }
+  },
+  grid: {
+    padding: 10,
+    [theme.breakpoints.down("sm")]: {
+      marginTop: 20,
+      border: "1px solid black"
+    }
   }
-};
+});
 
 const numberFirstPanel = 10;
+const numberSecondPanel = 20;
 
 /**
  * Reactjs functional component that create palette for selection background color
@@ -68,15 +90,32 @@ function ColorPalette(props) {
   };
 
   return (
-    <React.Fragment>
-      <Paper className={classes.ourPalette}>
-        <ColorButtonsPalette
-          {...propsToChild}
-          panelNumber={numberFirstPanel}
+    <div className={classes.root}>
+      <Paper className={classes.palette}>
+        <Paper className={classes.grid}>
+          <Grid container alignContent="center">
+            <Grid item xs={12} md={6}>
+              <ColorButtonsPalette
+                {...propsToChild}
+                panelNumber={numberFirstPanel}
+                setColorFocusButton={toSetColorFocusButton}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <ColorButtonsPalette
+                {...propsToChild}
+                panelNumber={numberSecondPanel}
+                setColorFocusButton={toSetColorFocusButton}
+              />
+            </Grid>
+          </Grid>
+        </Paper>
+        <PickerColorButton
           setColorFocusButton={toSetColorFocusButton}
+          colorFocusButton={colorFocusButton}
         />
       </Paper>
-    </React.Fragment>
+    </div>
   );
 }
 

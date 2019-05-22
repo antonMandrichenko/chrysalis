@@ -6,10 +6,13 @@ import { withStyles } from "@material-ui/core/styles";
 import { SketchPicker } from "react-color";
 import paletteIcon from "./palette.svg";
 
-const styles = {
+const styles = theme => ({
   root: {
     position: "relative",
-    margin: "0 20px"
+    margin: "0 20px",
+    [theme.breakpoints.down("sm")]: {
+      order: "-1"
+    }
   },
   swatch: {
     padding: 5,
@@ -35,7 +38,7 @@ const styles = {
     bottom: 0,
     left: 0
   }
-};
+});
 
 /**
  * Reactjs functional component that create button to choose colors from Color Picker

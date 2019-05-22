@@ -28,8 +28,12 @@ const styles = theme => ({
   popover: {
     position: "absolute",
     zIndex: "2",
-    bottom: 0,
-    left: 50
+    bottom: 50,
+    left: -130,
+    [theme.breakpoints.down("sm")]: {
+      bottom: 0,
+      left: 50
+    }
   },
   cover: {
     position: "fixed",

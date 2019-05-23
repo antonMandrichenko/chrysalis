@@ -10,21 +10,26 @@ import PickerColorButton from "./PickerColorButton";
 
 const styles = theme => ({
   root: {
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px
-    ${theme.spacing.unit * 3}px`,
-    [theme.breakpoints.down("sm")]: {
-      width: 500
-    }
+    display: "flex",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 150,
+    justifyContent: "center",
+    alignItems: "center"
   },
   palette: {
     display: "flex",
+    height: 70,
     justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
-    border: "1px solid black"
-  },
-  grid: {
-    padding: 10
+    border: "1px solid black",
+    [theme.breakpoints.down("sm")]: {
+      width: 450,
+      height: 112
+    }
   }
 });
 

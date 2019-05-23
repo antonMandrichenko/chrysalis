@@ -18,21 +18,13 @@ const styles = theme => ({
   },
   palette: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
-    border: "1px solid black",
-    [theme.breakpoints.down("sm")]: {
-      border: "none",
-      flexDirection: "column"
-    }
+    border: "1px solid black"
   },
   grid: {
-    padding: 10,
-    [theme.breakpoints.down("sm")]: {
-      marginTop: 20,
-      border: "1px solid black"
-    }
+    padding: 10
   }
 });
 

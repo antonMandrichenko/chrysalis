@@ -11,7 +11,8 @@ const styles = theme => ({
     position: "relative",
     margin: "0 20px",
     [theme.breakpoints.down("sm")]: {
-      order: "-1"
+      marginLeft: 10,
+      marginRight: 0
     }
   },
   swatch: {
@@ -37,6 +38,10 @@ const styles = theme => ({
     [theme.breakpoints.up(1320)]: {
       bottom: 0,
       left: 42
+    },
+    [theme.breakpoints.down(910)]: {
+      bottom: 50,
+      left: 0
     }
   },
   cover: {

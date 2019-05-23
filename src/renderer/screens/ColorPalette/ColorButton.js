@@ -4,7 +4,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const styles = {
+const styles = theme => ({
   root: {
     padding: 5,
     cursor: "pointer"
@@ -12,9 +12,13 @@ const styles = {
   button: {
     width: 40,
     height: 40,
-    borderRadius: 5
+    borderRadius: 5,
+    [theme.breakpoints.down("sm")]: {
+      width: 35,
+      height: 35
+    }
   }
-};
+});
 
 const minWhiteColorValue = 220;
 

@@ -34,6 +34,11 @@ import LoadDefaultKeymap from "./LoadDefaultKeymap";
 
 export const ImportExportDialog = withSnackbar(props => {
   const [dataState, setData] = useState();
+
+  /**
+   * This is Hook that lets add React state "isChange" for change tracking in this dialog
+   * @param {boolean} [initialState=false] - Sets initial state for "isChange"
+   */
   const [isChange, setIsChange] = useState(false);
 
   const data =

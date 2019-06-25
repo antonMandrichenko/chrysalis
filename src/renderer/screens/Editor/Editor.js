@@ -466,6 +466,9 @@ class Editor extends React.Component {
     this.toCloseImportExportDialog();
   };
 
+  /**
+   * Close ImportExportDialog component
+   */
   toCloseImportExportDialog = () => {
     this.setState({ importExportDialogOpen: false });
   };

@@ -22,6 +22,7 @@ import fs from "fs";
 import { version } from "../../../package.json";
 
 import Focus from "@chrysalis-api/focus";
+import FlashRaise from "@chrysalis-api/flash";
 
 import BuildIcon from "@material-ui/icons/Build";
 import Card from "@material-ui/core/Card";
@@ -45,6 +46,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import { getStaticPath } from "../config";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import SaveChangesButton from "../components/SaveChangesButton";
 import i18n from "../i18n";
 
@@ -85,7 +87,8 @@ class FirmwareUpdate extends React.Component {
     this.state = {
       firmwareFilename: "",
       selected: "default",
-      device: props.device || focus.device
+      device: props.device || focus.device,
+      confirmationOpen: false
     };
   }
 
@@ -136,6 +139,16 @@ class FirmwareUpdate extends React.Component {
       filename = this._experimentalFirmwareFilename();
     } else {
       filename = this.state.firmwareFilename;
+    }
+
+    if (this.state.device.info.product === "Raise") {
+      let flashRaise = new FlashRaise();
+      try {
+        await flashRaise.backupSettings();
+        this.setState({ confirmationOpen: true });
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     return this.state.device.flash(focus._port, filename);
@@ -288,6 +301,14 @@ class FirmwareUpdate extends React.Component {
             </SaveChangesButton>
           </CardActions>
         </Card>
+        <ConfirmationDialog
+          title={i18n.firmwareUpdate.raise.reset}
+          open={this.state.confirmationOpen}
+          onConfirm={this.clearLayer}
+          onCancel={this.cancelClear}
+        >
+          {i18n.firmwareUpdate.raise.resetMessage}
+        </ConfirmationDialog>
       </div>
     );
   }

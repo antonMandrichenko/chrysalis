@@ -46,7 +46,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import { getStaticPath } from "../config";
-import ConfirmationDialog from "../components/ConfirmationDialog";
 import SaveChangesButton from "../components/SaveChangesButton";
 import i18n from "../i18n";
 
@@ -87,8 +86,7 @@ class FirmwareUpdate extends React.Component {
     this.state = {
       firmwareFilename: "",
       selected: "default",
-      device: props.device || focus.device,
-      confirmationOpen: false
+      device: props.device || focus.device
     };
   }
 
@@ -143,12 +141,16 @@ class FirmwareUpdate extends React.Component {
 
     if (this.state.device.info.product === "Raise") {
       let flashRaise = new FlashRaise();
-      try {
-        await flashRaise.backupSettings();
-        this.setState({ confirmationOpen: true });
-      } catch (e) {
-        console.log(e);
-      }
+      this.setState({ confirmationOpen: false });
+      return new Promise(async resolve => {
+        try {
+          await flashRaise.backupSettings();
+          await flashRaise.resetKeyboard(focus._port);
+          resolve();
+        } catch (e) {
+          console.log(e);
+        }
+      });
     }
 
     return this.state.device.flash(focus._port, filename);
@@ -301,14 +303,6 @@ class FirmwareUpdate extends React.Component {
             </SaveChangesButton>
           </CardActions>
         </Card>
-        <ConfirmationDialog
-          title={i18n.firmwareUpdate.raise.reset}
-          open={this.state.confirmationOpen}
-          onConfirm={this.clearLayer}
-          onCancel={this.cancelClear}
-        >
-          {i18n.firmwareUpdate.raise.resetMessage}
-        </ConfirmationDialog>
       </div>
     );
   }

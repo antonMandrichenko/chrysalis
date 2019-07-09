@@ -166,7 +166,7 @@ class App extends React.Component {
 
     this.setState({
       connected: true,
-      device: null,
+      device: port,
       pages: pages
     });
     await navigate(pages.keymap ? "/editor" : "/welcome");
@@ -210,7 +210,7 @@ class App extends React.Component {
     let focus = new Focus();
     let device =
       (focus.device && focus.device.info) ||
-      (this.state.device && this.state.device.info);
+      (this.state.device && this.state.device.device.info);
 
     return (
       <MuiThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>

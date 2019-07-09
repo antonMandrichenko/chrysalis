@@ -46,6 +46,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import { getStaticPath } from "../config";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import SaveChangesButton from "../components/SaveChangesButton";
 import i18n from "../i18n";
 
@@ -74,6 +75,10 @@ const styles = theme => ({
   },
   firmwareSelect: {
     marginLeft: theme.spacing.unit * 2
+  },
+  img: {
+    width: "70%",
+    textAlign: "center"
   }
 });
 
@@ -82,11 +87,13 @@ class FirmwareUpdate extends React.Component {
     super(props);
 
     let focus = new Focus();
+    this.fleshRaise = null;
 
     this.state = {
       firmwareFilename: "",
       selected: "default",
-      device: props.device || focus.device
+      device: props.device || focus.device,
+      confirmationOpen: false
     };
   }
 
@@ -115,13 +122,13 @@ class FirmwareUpdate extends React.Component {
   };
 
   _defaultFirmwareFilename = () => {
-    const { vendor, product } = this.state.device.info;
+    const { vendor, product } = this.state.device.device.info;
     const cVendor = vendor.replace("/", ""),
       cProduct = product.replace("/", "");
     return path.join(getStaticPath(), cVendor, cProduct, "default.hex");
   };
   _experimentalFirmwareFilename = () => {
-    const { vendor, product } = this.state.device.info;
+    const { vendor, product } = this.state.device.device.info;
     const cVendor = vendor.replace("/", ""),
       cProduct = product.replace("/", "");
     return path.join(getStaticPath(), cVendor, cProduct, "experimental.hex");
@@ -139,21 +146,12 @@ class FirmwareUpdate extends React.Component {
       filename = this.state.firmwareFilename;
     }
 
-    if (this.state.device.info.product === "Raise") {
-      let flashRaise = new FlashRaise();
-      this.setState({ confirmationOpen: false });
-      return new Promise(async resolve => {
-        try {
-          await flashRaise.backupSettings();
-          await flashRaise.resetKeyboard(focus._port);
-          resolve();
-        } catch (e) {
-          console.log(e);
-        }
-      });
-    }
-
-    return this.state.device.flash(focus._port, filename);
+    return this.state.device.device.flash(
+      focus._port,
+      filename,
+      this.state.device,
+      this.fleshRaise
+    );
   };
 
   upload = async () => {
@@ -163,11 +161,17 @@ class FirmwareUpdate extends React.Component {
       await this._flash();
     } catch (e) {
       console.error(e);
-      this.props.enqueueSnackbar(i18n.firmwareUpdate.flashing.error, {
-        variant: "error"
-      });
+      this.props.enqueueSnackbar(
+        this.state.device.device.info.product === "Raise"
+          ? e.message
+          : i18n.firmwareUpdate.flashing.error,
+        {
+          variant: "error"
+        }
+      );
       this.props.toggleFlashing();
       this.props.onDisconnect();
+      this.setState({ confirmationOpen: false });
       return;
     }
 
@@ -179,9 +183,37 @@ class FirmwareUpdate extends React.Component {
 
         this.props.toggleFlashing();
         this.props.onDisconnect();
+        this.setState({ confirmationOpen: false });
         resolve();
       }, 1000);
     });
+  };
+
+  uploadRaise = async () => {
+    let focus = new Focus();
+    try {
+      const delay = ms => new Promise(res => setTimeout(res, ms));
+      this.fleshRaise = new FlashRaise(focus._port, this.props.device);
+      await this.fleshRaise.backupSettings();
+      await delay(1000);
+      this.setState({ confirmationOpen: true });
+      await this.fleshRaise.createDialog();
+    } catch (e) {
+      console.error(e);
+      this.props.enqueueSnackbar(e.message, {
+        variant: "error"
+      });
+      this.props.toggleFlashing();
+      this.props.onDisconnect();
+      this.setState({ confirmationOpen: false });
+      return;
+    }
+
+    // await this.upload();
+  };
+
+  cancelDialog = () => {
+    this.setState({ confirmationOpen: false });
   };
 
   render() {
@@ -296,13 +328,34 @@ class FirmwareUpdate extends React.Component {
             <div className={classes.grow} />
             <SaveChangesButton
               icon={<CloudUploadIcon />}
-              onClick={this.upload}
+              onClick={
+                this.state.device.device.info.product === "Raise"
+                  ? this.uploadRaise
+                  : this.upload
+              }
               successMessage={i18n.firmwareUpdate.flashing.buttonSuccess}
             >
               {i18n.firmwareUpdate.flashing.button}
             </SaveChangesButton>
           </CardActions>
         </Card>
+        <ConfirmationDialog
+          title={i18n.firmwareUpdate.raise.reset}
+          open={this.state.confirmationOpen}
+          // onConfirm={this.cancelDialog}
+          // onCancel={this.cancelDialog}
+        >
+          {
+            <div>
+              <img
+                className={classes.img}
+                src="./press_esc.png"
+                alt="press_esc"
+              />
+            </div>
+          }
+          {i18n.hardware.updateInstructions}
+        </ConfirmationDialog>
       </div>
     );
   }

@@ -39,6 +39,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
 import Portal from "@material-ui/core/Portal";
 import Select from "@material-ui/core/Select";
+import Grid from "@material-ui/core/Grid";
 import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
@@ -46,8 +47,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import { getStaticPath } from "../config";
-import ConfirmationDialog from "../components/ConfirmationDialog";
 import SaveChangesButton from "../components/SaveChangesButton";
+import CustomDialog from "../components/CustomDialog";
 import i18n from "../i18n";
 
 const styles = theme => ({
@@ -77,8 +78,11 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit * 2
   },
   img: {
-    width: "70%",
-    textAlign: "center"
+    width: "100%"
+  },
+  paper: {
+    color: theme.palette.getContrastText(theme.palette.background.paper),
+    marginBottom: theme.spacing.unit * 2
   }
 });
 
@@ -93,7 +97,14 @@ class FirmwareUpdate extends React.Component {
       firmwareFilename: "",
       selected: "default",
       device: props.device || focus.device,
-      confirmationOpen: false
+      confirmationOpen: false,
+      countdown: 3,
+      buttonText: {
+        3: "Start countdown",
+        2: "Wait",
+        1: "Wait",
+        0: "Press"
+      }
     };
   }
 
@@ -145,6 +156,15 @@ class FirmwareUpdate extends React.Component {
     } else {
       filename = this.state.firmwareFilename;
     }
+    if (this.state.device.device.info.product === "Raise") {
+      let count = setInterval(() => {
+        const { countdown } = this.state;
+        countdown === 0
+          ? clearInterval(count)
+          : this.setState({ countdown: countdown - 1 });
+      }, 1000);
+      await this.fleshRaise.resetKeyboard(focus._port);
+    }
 
     return this.state.device.device.flash(
       focus._port,
@@ -195,21 +215,15 @@ class FirmwareUpdate extends React.Component {
       const delay = ms => new Promise(res => setTimeout(res, ms));
       this.fleshRaise = new FlashRaise(focus._port, this.props.device);
       await this.fleshRaise.backupSettings();
-      await delay(1000);
+      await delay(500);
       this.setState({ confirmationOpen: true });
-      await this.fleshRaise.createDialog();
     } catch (e) {
       console.error(e);
       this.props.enqueueSnackbar(e.message, {
         variant: "error"
       });
-      this.props.toggleFlashing();
-      this.props.onDisconnect();
       this.setState({ confirmationOpen: false });
-      return;
     }
-
-    // await this.upload();
   };
 
   cancelDialog = () => {
@@ -218,7 +232,7 @@ class FirmwareUpdate extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { firmwareFilename } = this.state;
+    const { firmwareFilename, buttonText, countdown } = this.state;
 
     let filename = null;
     if (firmwareFilename) {
@@ -300,6 +314,21 @@ class FirmwareUpdate extends React.Component {
       </FormControl>
     );
 
+    const dialogChildren = (
+      <React.Fragment>
+        <div className={classes.paper}>{i18n.hardware.updateInstructions}</div>
+        <Grid container direction="row" justify="center">
+          <Grid item>
+            <img
+              className={classes.img}
+              src="./press_esc.png"
+              alt="press_esc"
+            />
+          </Grid>
+        </Grid>
+      </React.Fragment>
+    );
+
     return (
       <div className={classes.root}>
         <Portal container={this.props.titleElement}>
@@ -339,23 +368,16 @@ class FirmwareUpdate extends React.Component {
             </SaveChangesButton>
           </CardActions>
         </Card>
-        <ConfirmationDialog
+        <CustomDialog
           title={i18n.firmwareUpdate.raise.reset}
           open={this.state.confirmationOpen}
-          // onConfirm={this.cancelDialog}
-          // onCancel={this.cancelDialog}
+          buttonText={buttonText[countdown]}
+          handleClose={this.cancelDialog}
+          upload={this.upload}
+          countdown={countdown}
         >
-          {
-            <div>
-              <img
-                className={classes.img}
-                src="./press_esc.png"
-                alt="press_esc"
-              />
-            </div>
-          }
-          {i18n.hardware.updateInstructions}
-        </ConfirmationDialog>
+          {dialogChildren}
+        </CustomDialog>
       </div>
     );
   }

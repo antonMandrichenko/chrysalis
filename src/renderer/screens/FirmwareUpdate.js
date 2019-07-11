@@ -214,15 +214,17 @@ class FirmwareUpdate extends React.Component {
     try {
       const delay = ms => new Promise(res => setTimeout(res, ms));
       this.fleshRaise = new FlashRaise(focus._port, this.props.device);
-      await this.fleshRaise.backupSettings();
-      await delay(500);
       this.setState({ confirmationOpen: true });
+      await delay(500);
+      await this.fleshRaise.backupSettings();
     } catch (e) {
       console.error(e);
       this.props.enqueueSnackbar(e.message, {
         variant: "error"
       });
-      this.setState({ confirmationOpen: false });
+      setTimeout(() => {
+        this.setState({ confirmationOpen: false });
+      }, 2000);
     }
   };
 

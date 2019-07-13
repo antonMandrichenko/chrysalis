@@ -77,6 +77,9 @@ const styles = theme => ({
   firmwareSelect: {
     marginLeft: theme.spacing.unit * 2
   },
+  grid: {
+    width: "70%"
+  },
   img: {
     width: "100%"
   },
@@ -98,8 +101,9 @@ class FirmwareUpdate extends React.Component {
       selected: "default",
       device: props.device || focus.device,
       confirmationOpen: false,
-      countdown: 3,
+      countdown: null,
       buttonText: {
+        "": "Uploading ...",
         3: "Start countdown",
         2: "Wait",
         1: "Wait",
@@ -164,6 +168,7 @@ class FirmwareUpdate extends React.Component {
           : this.setState({ countdown: countdown - 1 });
       }, 1000);
       await this.fleshRaise.resetKeyboard(focus._port);
+      this.setState({ countdown: "" });
     }
 
     return this.state.device.device.flash(
@@ -212,11 +217,10 @@ class FirmwareUpdate extends React.Component {
   uploadRaise = async () => {
     let focus = new Focus();
     try {
-      const delay = ms => new Promise(res => setTimeout(res, ms));
       this.fleshRaise = new FlashRaise(focus._port, this.props.device);
       this.setState({ confirmationOpen: true });
-      await delay(500);
       await this.fleshRaise.backupSettings();
+      this.setState({ countdown: 3 });
     } catch (e) {
       console.error(e);
       this.props.enqueueSnackbar(e.message, {
@@ -229,7 +233,9 @@ class FirmwareUpdate extends React.Component {
   };
 
   cancelDialog = () => {
-    this.setState({ confirmationOpen: false });
+    setTimeout(() => {
+      this.setState({ confirmationOpen: false });
+    }, 1500);
   };
 
   render() {
@@ -320,10 +326,11 @@ class FirmwareUpdate extends React.Component {
       <React.Fragment>
         <div className={classes.paper}>{i18n.hardware.updateInstructions}</div>
         <Grid container direction="row" justify="center">
-          <Grid item>
+          <Grid item className={classes.grid}>
             <img
+              // src={"./press_esc.png"}
               className={classes.img}
-              src="./press_esc.png"
+              src={path.join(getStaticPath(), "press_esc.png")}
               alt="press_esc"
             />
           </Grid>
@@ -377,6 +384,7 @@ class FirmwareUpdate extends React.Component {
           handleClose={this.cancelDialog}
           upload={this.upload}
           countdown={countdown}
+          disabled={countdown !== 3}
         >
           {dialogChildren}
         </CustomDialog>

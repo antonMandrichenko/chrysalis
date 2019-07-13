@@ -39,7 +39,7 @@ const styles = theme => ({
 });
 
 const DialogTitle = withStyles(styles)(props => {
-  const { children, classes, onClose } = props;
+  const { children, classes, onClose, disabled } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root}>
       <Typography variant="h6">{children}</Typography>
@@ -47,6 +47,7 @@ const DialogTitle = withStyles(styles)(props => {
         <IconButton
           aria-label="Close"
           className={classes.closeButton}
+          disabled={disabled}
           onClick={onClose}
         >
           <CloseIcon />
@@ -94,17 +95,31 @@ class CustomDialog extends React.Component {
         onClose={this.handleClose}
         aria-labelledby="customized-dialog-title"
         open={this.props.open}
+        maxWidth="md"
       >
-        <DialogTitle id="customized-dialog-title" onClose={this.handleClose}>
+        <DialogTitle
+          id="customized-dialog-title"
+          onClose={this.handleClose}
+          disabled={this.props.disabled}
+        >
           {this.props.title}
         </DialogTitle>
         <DialogContent>{this.props.children}</DialogContent>
-        <DialogActions>
-          <Countdown>{this.props.countdown}</Countdown>
-          <Countbutton onClick={this.props.upload} color="primary">
-            {this.props.buttonText}
-          </Countbutton>
-        </DialogActions>
+        {this.props.countdown !== null && (
+          <DialogActions>
+            <Countdown disabled={this.props.countdown === 0}>
+              {this.props.countdown}
+            </Countdown>
+            <Countbutton
+              onClick={this.props.upload}
+              variant="contained"
+              color="primary"
+              disabled={this.props.disabled}
+            >
+              {this.props.buttonText}
+            </Countbutton>
+          </DialogActions>
+        )}
       </Dialog>
     );
   }

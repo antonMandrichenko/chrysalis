@@ -216,9 +216,9 @@ class FirmwareUpdate extends React.Component {
 
   uploadRaise = async () => {
     let focus = new Focus();
+    this.setState({ confirmationOpen: true, isBeginUpdate: true });
     try {
       this.fleshRaise = new FlashRaise(focus._port, this.props.device);
-      this.setState({ confirmationOpen: true });
       await this.fleshRaise.backupSettings();
       this.setState({ countdown: 3 });
     } catch (e) {
@@ -226,21 +226,22 @@ class FirmwareUpdate extends React.Component {
       this.props.enqueueSnackbar(e.message, {
         variant: "error"
       });
-      setTimeout(() => {
-        this.setState({ confirmationOpen: false });
-      }, 2000);
+      this.setState({ confirmationOpen: false });
     }
   };
 
   cancelDialog = () => {
-    setTimeout(() => {
-      this.setState({ confirmationOpen: false });
-    }, 1500);
+    this.setState({ confirmationOpen: false });
   };
 
   render() {
     const { classes } = this.props;
-    const { firmwareFilename, buttonText, countdown } = this.state;
+    const {
+      firmwareFilename,
+      buttonText,
+      countdown,
+      isBeginUpdate
+    } = this.state;
 
     let filename = null;
     if (firmwareFilename) {
@@ -372,6 +373,7 @@ class FirmwareUpdate extends React.Component {
                   : this.upload
               }
               successMessage={i18n.firmwareUpdate.flashing.buttonSuccess}
+              isBeginUpdate={isBeginUpdate}
             >
               {i18n.firmwareUpdate.flashing.button}
             </SaveChangesButton>

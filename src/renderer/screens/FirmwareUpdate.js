@@ -95,6 +95,7 @@ class FirmwareUpdate extends React.Component {
 
     let focus = new Focus();
     this.fleshRaise = null;
+    this.isDevelopment = process.env.NODE_ENV !== "production";
 
     this.state = {
       firmwareFilename: "",
@@ -329,9 +330,13 @@ class FirmwareUpdate extends React.Component {
         <Grid container direction="row" justify="center">
           <Grid item className={classes.grid}>
             <img
-              // src={"./press_esc.png"}
+              src={
+                this.isDevelopment
+                  ? "./press_esc.png"
+                  : path.join(getStaticPath(), "press_esc.png")
+              }
               className={classes.img}
-              src={path.join(getStaticPath(), "press_esc.png")}
+              // src={path.join(getStaticPath(), "press_esc.png")}
               alt="press_esc"
             />
           </Grid>

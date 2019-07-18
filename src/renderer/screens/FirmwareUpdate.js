@@ -175,7 +175,6 @@ class FirmwareUpdate extends React.Component {
     return this.state.device.device.flash(
       focus._port,
       filename,
-      this.state.device,
       this.fleshRaise
     );
   };
@@ -336,7 +335,6 @@ class FirmwareUpdate extends React.Component {
                   : path.join(getStaticPath(), "press_esc.png")
               }
               className={classes.img}
-              // src={path.join(getStaticPath(), "press_esc.png")}
               alt="press_esc"
             />
           </Grid>

@@ -215,10 +215,9 @@ class FirmwareUpdate extends React.Component {
   };
 
   uploadRaise = async () => {
-    let focus = new Focus();
     this.setState({ confirmationOpen: true, isBeginUpdate: true });
     try {
-      this.fleshRaise = new FlashRaise(focus._port, this.props.device);
+      this.fleshRaise = new FlashRaise(this.props.device);
       await this.fleshRaise.backupSettings();
       this.setState({ countdown: 3 });
     } catch (e) {

@@ -111,10 +111,10 @@ class CustomDialog extends React.Component {
               {this.props.countdown}
             </Countdown>
             <Countbutton
-              onClick={this.props.upload}
+              onClick={this.props.countdown !== 0 ? this.props.upload : ""}
               variant="contained"
-              color="primary"
-              disabled={this.props.disabled}
+              color={this.props.countdown ? "primary" : "secondary"}
+              disabled={this.props.countdown !== 0 ? this.props.disabled : ""}
             >
               {this.props.buttonText}
             </Countbutton>

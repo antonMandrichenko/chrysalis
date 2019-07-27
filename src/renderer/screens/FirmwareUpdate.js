@@ -153,6 +153,7 @@ class FirmwareUpdate extends React.Component {
   _flash = async () => {
     let focus = new Focus();
     let filename;
+    const delay = ms => new Promise(res => setTimeout(res, ms));
 
     if (this.state.selected == "default") {
       filename = this._defaultFirmwareFilename();
@@ -168,6 +169,7 @@ class FirmwareUpdate extends React.Component {
           ? clearInterval(count)
           : this.setState({ countdown: countdown - 1 });
       }, 1000);
+      await delay(500);
       await this.fleshRaise.resetKeyboard(focus._port);
       this.setState({ countdown: "" });
     }

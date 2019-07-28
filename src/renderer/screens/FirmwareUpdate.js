@@ -22,7 +22,7 @@ import fs from "fs";
 import { version } from "../../../package.json";
 
 import Focus from "@chrysalis-api/focus";
-import FlashRaise from "@chrysalis-api/flash";
+import FlashRaise from "@chrysalis-api/flash/lib/chrysalis-flash-raise";
 
 import BuildIcon from "@material-ui/icons/Build";
 import Card from "@material-ui/core/Card";

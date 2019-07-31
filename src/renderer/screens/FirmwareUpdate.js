@@ -237,7 +237,20 @@ class FirmwareUpdate extends React.Component {
     } catch (e) {
       console.error(e);
       this.props.enqueueSnackbar(e.message, {
-        variant: "error"
+        variant: "error",
+        action: (
+          <Button
+            variant="contained"
+            onClick={() => {
+              const shell = Electron.remote && Electron.remote.shell;
+              shell.openExternal(
+                "https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting"
+              );
+            }}
+          >
+            Troubleshooting
+          </Button>
+        )
       });
       this.setState({ confirmationOpen: false });
     }

@@ -25,6 +25,7 @@ import Focus from "@chrysalis-api/focus";
 import FlashRaise from "@chrysalis-api/flash/lib/chrysalis-flash-raise";
 
 import BuildIcon from "@material-ui/icons/Build";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -191,7 +192,20 @@ class FirmwareUpdate extends React.Component {
           ? e.message
           : i18n.firmwareUpdate.flashing.error,
         {
-          variant: "error"
+          variant: "error",
+          action: (
+            <Button
+              variant="contained"
+              onClick={() => {
+                const shell = Electron.remote && Electron.remote.shell;
+                shell.openExternal(
+                  "https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting"
+                );
+              }}
+            >
+              Troubleshooting
+            </Button>
+          )
         }
       );
       this.props.toggleFlashing();

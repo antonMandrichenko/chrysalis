@@ -45,6 +45,7 @@ import Hardware from "@chrysalis-api/hardware";
 import usb from "usb";
 
 import i18n from "../i18n";
+import ColorPalette from "./ColorPalette";
 
 const styles = theme => ({
   loader: {
@@ -106,6 +107,19 @@ const styles = theme => ({
   },
   found: {
     color: green[500]
+  },
+  paper: {
+    display: "flex",
+    justifyContent: "center",
+    alignItem: "center"
+  },
+  grid: {
+    margin: `${theme.spacing.unit / 2}px 0`
+  },
+  palette: {
+    display: "flex",
+    justifyContent: "center",
+    alignItem: "center"
   }
 });
 
@@ -232,7 +246,7 @@ class KeyboardSelect extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, changeBackgroundColor } = this.props;
     const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
@@ -365,24 +379,29 @@ class KeyboardSelect extends React.Component {
     }
 
     return (
-      <div className={classes.main}>
-        <Portal container={this.props.titleElement}>
-          {i18n.app.menu.selectAKeyboard}
-        </Portal>
-        {loader}
-        <Card className={classes.card}>
-          <CardContent className={classes.content}>
-            {preview}
-            {port}
-          </CardContent>
-          <Divider variant="middle" />
-          <CardActions className={classes.cardActions}>
-            {scanDevicesButton}
-            <div className={classes.grow} />
-            {connectionButton}
-          </CardActions>
-        </Card>
-      </div>
+      <React.Fragment>
+        <div className={classes.main}>
+          <Portal container={this.props.titleElement}>
+            {i18n.app.menu.selectAKeyboard}
+          </Portal>
+          {loader}
+          <Card className={classes.card}>
+            <CardContent className={classes.content}>
+              {preview}
+              {port}
+            </CardContent>
+            <Divider variant="middle" />
+            <CardActions className={classes.cardActions}>
+              {scanDevicesButton}
+              <div className={classes.grow} />
+              {connectionButton}
+            </CardActions>
+          </Card>
+        </div>
+        <div className={classes.palette}>
+          <ColorPalette changeBackgroundColor={changeBackgroundColor} />
+        </div>
+      </React.Fragment>
     );
   }
 }

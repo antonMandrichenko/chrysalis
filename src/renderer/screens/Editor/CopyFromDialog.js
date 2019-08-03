@@ -65,7 +65,7 @@ export const CopyFromDialog = props => {
         <Button
           color="primary"
           onClick={() => {
-            setSelectedLayer(-1);
+            setSelectedLayer(null);
             props.onCancel();
           }}
         >
@@ -74,7 +74,7 @@ export const CopyFromDialog = props => {
         <Button
           onClick={() => {
             const layer = selectedLayer;
-            setSelectedLayer(-1);
+            setSelectedLayer(null);
             props.onCopy(layer);
           }}
           color="primary"

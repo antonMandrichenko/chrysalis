@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
@@ -28,35 +28,26 @@ import getLatestVersion from "../../utils/getLatestVersion";
 function UpgradeMenuItem() {
   const [latestVersion, setLatestVersion] = useState(null);
 
-  useEffect(() => {
-    const ac = new AbortController();
-    if (!latestVersion) {
-      getLatestVersion().then(v => {
-        setLatestVersion(v);
-      });
-    }
-    return () => {
-      ac.abort();
-    };
-  });
-
-  if (latestVersion) {
-    if (latestVersion.version <= version) return null;
-
-    return (
-      <React.Fragment>
-        <Divider />
-        <ListItem button component="a" href={latestVersion.url}>
-          <ListItemText
-            primary={i18n.app.menu.upgradeAvailable}
-            secondary={latestVersion.version}
-          />
-        </ListItem>
-      </React.Fragment>
-    );
-  } else {
+  if (!latestVersion) {
+    getLatestVersion().then(v => {
+      setLatestVersion(v);
+    });
     return null;
   }
+
+  if (latestVersion.version <= version) return null;
+
+  return (
+    <React.Fragment>
+      <Divider />
+      <ListItem button component="a" href={latestVersion.url}>
+        <ListItemText
+          primary={i18n.app.menu.upgradeAvailable}
+          secondary={latestVersion.version}
+        />
+      </ListItem>
+    </React.Fragment>
+  );
 }
 
 export { UpgradeMenuItem as default };

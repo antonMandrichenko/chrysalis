@@ -30,7 +30,7 @@ import Typography from "@material-ui/core/Typography";
 import i18n from "../../i18n";
 
 export const CopyFromDialog = props => {
-  const [selectedLayer, setSelectedLayer] = useState(-1);
+  const [selectedLayer, setSelectedLayer] = useState(null);
   return (
     <Dialog
       disableBackdropClick
@@ -78,7 +78,7 @@ export const CopyFromDialog = props => {
             props.onCopy(layer);
           }}
           color="primary"
-          disabled={selectedLayer == -1}
+          disabled={selectedLayer == null}
         >
           {i18n.dialog.ok}
         </Button>

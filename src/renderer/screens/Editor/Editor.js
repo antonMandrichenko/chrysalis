@@ -433,7 +433,10 @@ class Editor extends React.Component {
       }
       newColormap = state.colorMap.slice();
       if (newColormap.length > 0)
-        newColormap[state.currentLayer] = state.colorMap[layer].slice();
+        newColormap[state.currentLayer] =
+          layer < 0
+            ? state.colorMap[state.currentLayer]
+            : state.colorMap[layer].slice();
 
       this.props.startContext();
       return {
@@ -665,7 +668,11 @@ class Editor extends React.Component {
             onKeySelect={this.onKeySelect}
             selectedKey={this.state.currentKeyIndex}
             palette={this.state.palette}
-            colormap={this.state.colorMap[this.state.currentLayer]}
+            colormap={
+              keymap.onlyCustom
+                ? this.state.colorMap[currentLayer]
+                : this.state.colorMap[currentLayer - keymap.default.length]
+            }
             theme={this.props.theme}
           />
         </div>

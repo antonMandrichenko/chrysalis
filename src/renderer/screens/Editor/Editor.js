@@ -281,10 +281,10 @@ class Editor extends React.Component {
     }
   };
 
-   /**
+  /**
    * Converts a layer to a colorMap layer (used parameter keymap.onlyCustom)
    * @param {number} layer Number of current layer
-   * @returns {number} Number of colorMap layer. This is keymap.default item, if number is < 0. 
+   * @returns {number} Number of colorMap layer. This is keymap.default item, if number is < 0.
    */
   setLayerForColormap = layer => {
     const { keymap } = this.state;

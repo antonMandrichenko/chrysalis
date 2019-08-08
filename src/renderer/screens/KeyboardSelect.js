@@ -45,6 +45,7 @@ import Hardware from "@chrysalis-api/hardware";
 import usb from "usb";
 
 import i18n from "../i18n";
+import DemoSwitch from "../components/DemoSwitch";
 
 const styles = theme => ({
   loader: {
@@ -88,7 +89,7 @@ const styles = theme => ({
   },
   connect: {
     verticalAlign: "bottom",
-    marginLeft: 65
+    marginLeft: 0
   },
   cardActions: {
     justifyContent: "center"
@@ -114,7 +115,8 @@ class KeyboardSelect extends React.Component {
     selectedPortIndex: 0,
     opening: false,
     devices: null,
-    loading: false
+    loading: false,
+    isDemo: false
   };
 
   findNonSerialKeyboards = deviceList => {
@@ -173,12 +175,23 @@ class KeyboardSelect extends React.Component {
     });
   };
 
+  onAddMockKeyboards = devices => {
+    const { isDemo } = this.state;
+    this.setState({
+      devices: devices,
+      isDemo: !isDemo
+    });
+  };
+
   scanDevices = async () => {
-    let found = await this.findKeyboards();
-    this.setState({ scanFoundDevices: found });
-    setTimeout(() => {
-      this.setState({ scanFoundDevices: undefined });
-    }, 1000);
+    const { isDemo } = this.state;
+    if (!isDemo) {
+      let found = await this.findKeyboards();
+      this.setState({ scanFoundDevices: found });
+      setTimeout(() => {
+        this.setState({ scanFoundDevices: undefined });
+      }, 1000);
+    }
   };
 
   componentDidMount() {
@@ -233,7 +246,7 @@ class KeyboardSelect extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { scanFoundDevices, devices } = this.state;
+    const { scanFoundDevices, devices, isDemo } = this.state;
 
     let loader = null;
     if (this.state.loading) {
@@ -378,7 +391,11 @@ class KeyboardSelect extends React.Component {
           <Divider variant="middle" />
           <CardActions className={classes.cardActions}>
             {scanDevicesButton}
-            <div className={classes.grow} />
+            {!devices || devices.length === 0 || isDemo ? (
+              <DemoSwitch onAddMockKeyboards={this.onAddMockKeyboards} />
+            ) : (
+              <div className={classes.grow} />
+            )}
             {connectionButton}
           </CardActions>
         </Card>

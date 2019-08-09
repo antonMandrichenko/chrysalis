@@ -150,43 +150,32 @@ class DemoEditor extends React.Component {
       defLayer = parseInt(defLayer) || 0;
       console.log(defLayer);
 
-      let keymap = mockData.keymap;
+      let keymap =
+        JSON.parse(localStorage.getItem("keymap")) || mockData.keymap;
 
-      let defaultKeymap = keymap.default
-        .split(" ")
-        .filter(v => v.length > 0)
-        .map(k => this.keymapDB.parse(parseInt(k)));
-      let customKeymap = keymap.custom
-        .split(" ")
-        .filter(v => v.length > 0)
-        .map(k => this.keymapDB.parse(parseInt(k)));
+      let defaultKeymap =
+        typeof keymap.default === "string"
+          ? keymap.default
+              .split(" ")
+              .filter(v => v.length > 0)
+              .map(k => this.keymapDB.parse(parseInt(k)))
+          : keymap.default;
+      let customKeymap =
+        typeof keymap.custom === "string"
+          ? keymap.custom
+              .split(" ")
+              .filter(v => v.length > 0)
+              .map(k => this.keymapDB.parse(parseInt(k)))
+          : keymap.custom;
       defaultKeymap = this._chunk(defaultKeymap, 80);
       customKeymap = this._chunk(customKeymap, 80);
+      settings.set("keymap.showDefaults", !keymap.onlyCustom);
       console.log(defaultKeymap, customKeymap);
 
-      this.setState({});
-
-      // let empty = true;
-      // for (let layer of keymap.custom) {
-      //   for (let i of layer) {
-      //     if (i.keyCode != 65535) {
-      //       empty = false;
-      //       break;
-      //     }
-      //   }
-      // }
-
-      //   if (empty && !keymap.onlyCustom && keymap.custom.length > 0) {
-      //     console.log("Custom keymap is empty, copying defaults");
-      //     for (let i = 0; i < keymap.default.length; i++) {
-      //       keymap.custom[i] = keymap.default[i].slice();
-      //     }
-      //     keymap.onlyCustom = true;
-      //     await focus.command("keymap", keymap);
-      //   }
-
-      let colorMapData = mockData.colormap;
-      let paletteData = mockData.palette;
+      let colorMapData =
+        JSON.parse(localStorage.getItem("colormap")) || mockData.colormap;
+      let paletteData =
+        JSON.parse(localStorage.getItem("palette")) || mockData.palette;
 
       let palette = this._chunk(
         paletteData
@@ -416,21 +405,21 @@ class DemoEditor extends React.Component {
     this.bottomMenuNeverHide();
   };
 
-  // onApply = async () => {
-  //   this.setState({ saving: true });
-  //   let focus = new Focus();
-  //   await focus.command("keymap", this.state.keymap);
-  //   await focus.command("colormap", this.state.palette, this.state.colorMap);
-  //   this.setState({
-  //     modified: false,
-  //     saving: false,
-  //     isMultiSelected: false,
-  //     selectedPaletteColor: null,
-  //     isColorButtonSelected: false
-  //   });
-  //   console.log("Changes saved.");
-  //   this.props.cancelContext();
-  // };
+  onApply = async () => {
+    this.setState({ saving: true });
+    localStorage.setItem("keymap", JSON.stringify(this.state.keymap));
+    localStorage.setItem("colormap", JSON.stringify(this.state.colorMap));
+    localStorage.setItem("palette", JSON.stringify(this.state.palette));
+    this.setState({
+      modified: false,
+      saving: false,
+      isMultiSelected: false,
+      selectedPaletteColor: null,
+      isColorButtonSelected: false
+    });
+    console.log("Changes saved.");
+    this.props.cancelContext();
+  };
 
   async componentDidMount() {
     const data = await fetch("demoData/demoData.json");
@@ -459,89 +448,89 @@ class DemoEditor extends React.Component {
     }
   };
 
-  // copyFromDialog = () => {
-  //   this.setState({ copyFromOpen: true });
-  // };
-  // cancelCopyFrom = () => {
-  //   this.setState({ copyFromOpen: false });
-  // };
-  // copyFromLayer = layer => {
-  //   this.setState(state => {
-  //     let newKeymap, newColormap;
+  copyFromDialog = () => {
+    this.setState({ copyFromOpen: true });
+  };
+  cancelCopyFrom = () => {
+    this.setState({ copyFromOpen: false });
+  };
+  copyFromLayer = layer => {
+    this.setState(state => {
+      let newKeymap, newColormap;
 
-  //     if (state.keymap.onlyCustom) {
-  //       newKeymap =
-  //         layer < 0
-  //           ? state.keymap.default.slice()
-  //           : state.keymap.custom.slice();
-  //       newKeymap[state.currentLayer] =
-  //         layer < 0
-  //           ? state.keymap.default[layer + state.keymap.default.length].slice()
-  //           : state.keymap.custom[layer].slice();
-  //     } else {
-  //       newKeymap =
-  //         layer < state.keymap.default.length
-  //           ? state.keymap.default.slice()
-  //           : state.keymap.custom.slice();
-  //       newKeymap[state.currentLayer] =
-  //         layer < state.keymap.default.length
-  //           ? state.keymap.default[layer].slice()
-  //           : state.keymap.custom[layer - state.keymap.default.length].slice();
-  //     }
-  //     newColormap = state.colorMap.slice();
-  //     if (newColormap.length > 0)
-  //       newColormap[state.currentLayer] = state.colorMap[layer].slice();
+      if (state.keymap.onlyCustom) {
+        newKeymap =
+          layer < 0
+            ? state.keymap.default.slice()
+            : state.keymap.custom.slice();
+        newKeymap[state.currentLayer] =
+          layer < 0
+            ? state.keymap.default[layer + state.keymap.default.length].slice()
+            : state.keymap.custom[layer].slice();
+      } else {
+        newKeymap =
+          layer < state.keymap.default.length
+            ? state.keymap.default.slice()
+            : state.keymap.custom.slice();
+        newKeymap[state.currentLayer] =
+          layer < state.keymap.default.length
+            ? state.keymap.default[layer].slice()
+            : state.keymap.custom[layer - state.keymap.default.length].slice();
+      }
+      newColormap = state.colorMap.slice();
+      if (newColormap.length > 0)
+        newColormap[state.currentLayer] = state.colorMap[layer].slice();
 
-  //     this.props.startContext();
-  //     return {
-  //       colorMap: newColormap,
-  //       keymap: {
-  //         default: state.keymap.default,
-  //         onlyCustom: state.keymap.onlyCustom,
-  //         custom: newKeymap
-  //       },
-  //       copyFromOpen: false,
-  //       modified: true
-  //     };
-  //   });
-  // };
+      this.props.startContext();
+      return {
+        colorMap: newColormap,
+        keymap: {
+          default: state.keymap.default,
+          onlyCustom: state.keymap.onlyCustom,
+          custom: newKeymap
+        },
+        copyFromOpen: false,
+        modified: true
+      };
+    });
+  };
 
-  // clearLayer = () => {
-  //   this.setState(state => {
-  //     let newKeymap = state.keymap.custom.slice();
-  //     const idx = state.keymap.onlyCustom
-  //       ? state.currentLayer
-  //       : state.currentLayer - state.keymap.default.length;
-  //     newKeymap[idx] = Array(newKeymap[0].length)
-  //       .fill()
-  //       .map(() => ({ keyCode: 0xffff }));
+  clearLayer = () => {
+    this.setState(state => {
+      let newKeymap = state.keymap.custom.slice();
+      const idx = state.keymap.onlyCustom
+        ? state.currentLayer
+        : state.currentLayer - state.keymap.default.length;
+      newKeymap[idx] = Array(newKeymap[0].length)
+        .fill()
+        .map(() => ({ keyCode: 0xffff }));
 
-  //     let newColormap = state.colorMap.slice();
-  //     if (newColormap.length > 0) {
-  //       newColormap[idx] = Array(newColormap[0].length)
-  //         .fill()
-  //         .map(() => 15);
-  //     }
-  //     this.props.startContext();
-  //     return {
-  //       keymap: {
-  //         default: state.keymap.default,
-  //         onlyCustom: state.keymap.onlyCustom,
-  //         custom: newKeymap
-  //       },
-  //       colorMap: newColormap,
-  //       modified: true,
-  //       clearConfirmationOpen: false
-  //     };
-  //   });
-  // };
+      let newColormap = state.colorMap.slice();
+      if (newColormap.length > 0) {
+        newColormap[idx] = Array(newColormap[0].length)
+          .fill()
+          .map(() => 15);
+      }
+      this.props.startContext();
+      return {
+        keymap: {
+          default: state.keymap.default,
+          onlyCustom: state.keymap.onlyCustom,
+          custom: newKeymap
+        },
+        colorMap: newColormap,
+        modified: true,
+        clearConfirmationOpen: false
+      };
+    });
+  };
 
-  // confirmClear = () => {
-  //   this.setState({ clearConfirmationOpen: true });
-  // };
-  // cancelClear = () => {
-  //   this.setState({ clearConfirmationOpen: false });
-  // };
+  confirmClear = () => {
+    this.setState({ clearConfirmationOpen: true });
+  };
+  cancelClear = () => {
+    this.setState({ clearConfirmationOpen: false });
+  };
 
   setMode = mode => {
     this.setState({ mode: mode });
@@ -628,52 +617,52 @@ class DemoEditor extends React.Component {
   cancelImport = () => {
     this.setState({ importExportDialogOpen: false });
   };
-  // importLayer = data => {
-  //   if (data.palette.length > 0) this.setState({ palette: data.palette });
-  //   if (data.keymap.length > 0 && data.colormap.length > 0) {
-  //     const { currentLayer } = this.state;
-  //     if (this.state.keymap.onlyCustom) {
-  //       if (currentLayer >= 0) {
-  //         this.setState(state => {
-  //           let newKeymap = this.state.keymap.custom.slice();
-  //           newKeymap[currentLayer] = data.keymap.slice();
-  //           let newColormap = this.state.colorMap.slice();
-  //           newColormap[currentLayer] = data.colormap.slice();
-  //           console.log(currentLayer, newKeymap);
-  //           return {
-  //             keymap: {
-  //               default: state.keymap.default,
-  //               custom: newKeymap,
-  //               onlyCustom: state.keymap.onlyCustom
-  //             },
-  //             colorMap: newColormap
-  //           };
-  //         });
-  //       }
-  //     } else {
-  //       if (currentLayer >= this.state.keymap.default.length) {
-  //         this.setState(state => {
-  //           const defLength = this.state.keymap.default.length;
-  //           let newKeymap = this.state.keymap.custom.slice();
-  //           newKeymap[currentLayer - defLength] = data.keymap;
-  //           let newColormap = this.state.colorMap.slice();
-  //           newColormap[currentLayer - defLength] = data.colormap.slice();
-  //           return {
-  //             keymap: {
-  //               default: state.keymap.default,
-  //               custom: newKeymap,
-  //               onlyCustom: state.keymap.onlyCustom
-  //             },
-  //             colorMap: newColormap
-  //           };
-  //         });
-  //       }
-  //     }
-  //   }
-  //   this.setState({ modified: true });
-  //   this.props.startContext();
-  //   this.toCloseImportExportDialog();
-  // };
+  importLayer = data => {
+    if (data.palette.length > 0) this.setState({ palette: data.palette });
+    if (data.keymap.length > 0 && data.colormap.length > 0) {
+      const { currentLayer } = this.state;
+      if (this.state.keymap.onlyCustom) {
+        if (currentLayer >= 0) {
+          this.setState(state => {
+            let newKeymap = this.state.keymap.custom.slice();
+            newKeymap[currentLayer] = data.keymap.slice();
+            let newColormap = this.state.colorMap.slice();
+            newColormap[currentLayer] = data.colormap.slice();
+            console.log(currentLayer, newKeymap);
+            return {
+              keymap: {
+                default: state.keymap.default,
+                custom: newKeymap,
+                onlyCustom: state.keymap.onlyCustom
+              },
+              colorMap: newColormap
+            };
+          });
+        }
+      } else {
+        if (currentLayer >= this.state.keymap.default.length) {
+          this.setState(state => {
+            const defLength = this.state.keymap.default.length;
+            let newKeymap = this.state.keymap.custom.slice();
+            newKeymap[currentLayer - defLength] = data.keymap;
+            let newColormap = this.state.colorMap.slice();
+            newColormap[currentLayer - defLength] = data.colormap.slice();
+            return {
+              keymap: {
+                default: state.keymap.default,
+                custom: newKeymap,
+                onlyCustom: state.keymap.onlyCustom
+              },
+              colorMap: newColormap
+            };
+          });
+        }
+      }
+    }
+    this.setState({ modified: true });
+    this.props.startContext();
+    this.toCloseImportExportDialog();
+  };
 
   /**
    * Close ImportExportDialog component

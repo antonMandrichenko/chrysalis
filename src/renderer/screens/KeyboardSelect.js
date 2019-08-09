@@ -115,8 +115,7 @@ class KeyboardSelect extends React.Component {
     selectedPortIndex: 0,
     opening: false,
     devices: null,
-    loading: false,
-    isDemo: false
+    loading: false
   };
 
   findNonSerialKeyboards = deviceList => {
@@ -176,15 +175,15 @@ class KeyboardSelect extends React.Component {
   };
 
   onAddMockKeyboards = devices => {
-    const { isDemo } = this.state;
+    const { isDemo } = this.props;
     this.setState({
-      devices: devices,
-      isDemo: !isDemo
+      devices: devices
     });
+    if (!isDemo) this.props.toggleDemo();
   };
 
   scanDevices = async () => {
-    const { isDemo } = this.state;
+    const { isDemo } = this.props;
     if (!isDemo) {
       let found = await this.findKeyboards();
       this.setState({ scanFoundDevices: found });
@@ -245,8 +244,8 @@ class KeyboardSelect extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
-    const { scanFoundDevices, devices, isDemo } = this.state;
+    const { classes, isDemo } = this.props;
+    const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
     if (this.state.loading) {
@@ -392,7 +391,10 @@ class KeyboardSelect extends React.Component {
           <CardActions className={classes.cardActions}>
             {scanDevicesButton}
             {!devices || devices.length === 0 || isDemo ? (
-              <DemoSwitch onAddMockKeyboards={this.onAddMockKeyboards} />
+              <DemoSwitch
+                onAddMockKeyboards={this.onAddMockKeyboards}
+                isDemo={isDemo}
+              />
             ) : (
               <div className={classes.grow} />
             )}

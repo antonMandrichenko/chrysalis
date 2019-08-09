@@ -150,6 +150,14 @@ class App extends React.Component {
       });
       return [];
     }
+
+    console.log("Connecting to", port.comName);
+    await focus.open(port.comName, port.device);
+    if (process.platform == "darwin") {
+      await spawn("stty", ["-f", port.comName, "clocal"]);
+    }
+    console.log("Probing for Focus support...");
+
     if (isDemo) {
       this.setState({
         connected: true,
@@ -158,12 +166,6 @@ class App extends React.Component {
       await navigate("/demoeditor");
       return;
     }
-    console.log("Connecting to", port.comName);
-    await focus.open(port.comName, port.device);
-    if (process.platform == "darwin") {
-      await spawn("stty", ["-f", port.comName, "clocal"]);
-    }
-    console.log("Probing for Focus support...");
 
     let commands;
     try {

@@ -46,6 +46,7 @@ import usb from "usb";
 
 import i18n from "../i18n";
 import ColorPalette from "./ColorPalette";
+import DemoSwitch from "../components/DemoSwitch";
 
 const styles = theme => ({
   loader: {
@@ -89,7 +90,7 @@ const styles = theme => ({
   },
   connect: {
     verticalAlign: "bottom",
-    marginLeft: 65
+    marginLeft: 0
   },
   cardActions: {
     justifyContent: "center"
@@ -187,12 +188,23 @@ class KeyboardSelect extends React.Component {
     });
   };
 
+  onAddMockKeyboards = devices => {
+    const { isDemo } = this.props;
+    this.setState({
+      devices: devices
+    });
+    if (!isDemo) this.props.toggleDemo();
+  };
+
   scanDevices = async () => {
-    let found = await this.findKeyboards();
-    this.setState({ scanFoundDevices: found });
-    setTimeout(() => {
-      this.setState({ scanFoundDevices: undefined });
-    }, 1000);
+    const { isDemo } = this.props;
+    if (!isDemo) {
+      let found = await this.findKeyboards();
+      this.setState({ scanFoundDevices: found });
+      setTimeout(() => {
+        this.setState({ scanFoundDevices: undefined });
+      }, 1000);
+    }
   };
 
   componentDidMount() {
@@ -246,7 +258,7 @@ class KeyboardSelect extends React.Component {
   };
 
   render() {
-    const { classes, changeBackgroundColor } = this.props;
+    const { classes, isDemo } = this.props;
     const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
@@ -379,29 +391,31 @@ class KeyboardSelect extends React.Component {
     }
 
     return (
-      <React.Fragment>
-        <div className={classes.main}>
-          <Portal container={this.props.titleElement}>
-            {i18n.app.menu.selectAKeyboard}
-          </Portal>
-          {loader}
-          <Card className={classes.card}>
-            <CardContent className={classes.content}>
-              {preview}
-              {port}
-            </CardContent>
-            <Divider variant="middle" />
-            <CardActions className={classes.cardActions}>
-              {scanDevicesButton}
+      <div className={classes.main}>
+        <Portal container={this.props.titleElement}>
+          {i18n.app.menu.selectAKeyboard}
+        </Portal>
+        {loader}
+        <Card className={classes.card}>
+          <CardContent className={classes.content}>
+            {preview}
+            {port}
+          </CardContent>
+          <Divider variant="middle" />
+          <CardActions className={classes.cardActions}>
+            {scanDevicesButton}
+            {!devices || devices.length === 0 || isDemo ? (
+              <DemoSwitch
+                onAddMockKeyboards={this.onAddMockKeyboards}
+                isDemo={isDemo}
+              />
+            ) : (
               <div className={classes.grow} />
-              {connectionButton}
-            </CardActions>
-          </Card>
-        </div>
-        <div className={classes.palette}>
-          <ColorPalette changeBackgroundColor={changeBackgroundColor} />
-        </div>
-      </React.Fragment>
+            )}
+            {connectionButton}
+          </CardActions>
+        </Card>
+      </div>
     );
   }
 }

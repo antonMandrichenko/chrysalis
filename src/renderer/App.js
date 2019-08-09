@@ -38,6 +38,7 @@ import { withSnackbar } from "notistack";
 import KeyboardSelect from "./screens/KeyboardSelect";
 import FirmwareUpdate from "./screens/FirmwareUpdate";
 import Editor from "./screens/Editor/Editor";
+import DemoEditor from "./components/demo/DemoEditor";
 import Preferences from "./screens/Preferences";
 import Welcome from "./screens/Welcome";
 import KeyboardSettings from "./screens/KeyboardSettings";
@@ -78,7 +79,8 @@ class App extends React.Component {
         g: 255,
         b: 255,
         a: 1
-      }
+      },
+      isDemo: false
     };
     localStorage.clear();
   }
@@ -116,6 +118,12 @@ class App extends React.Component {
     });
   }
 
+  toggleDemo = () => {
+    this.setState({
+      isDemo: true
+    });
+  };
+
   toggleDarkMode = () => {
     const nextDarkModeState = !this.state.darkMode;
     this.setState({
@@ -137,6 +145,7 @@ class App extends React.Component {
   };
 
   onKeyboardConnect = async port => {
+    const { isDemo } = this.state;
     focus.close();
 
     if (!port.comName) {
@@ -154,6 +163,16 @@ class App extends React.Component {
       await spawn("stty", ["-f", port.comName, "clocal"]);
     }
     console.log("Probing for Focus support...");
+
+    if (isDemo) {
+      this.setState({
+        connected: true,
+        device: null
+      });
+      await navigate("/demoeditor");
+      return;
+    }
+
     let commands;
     try {
       commands = await focus.probe();
@@ -174,7 +193,8 @@ class App extends React.Component {
     this.setState({
       connected: true,
       device: null,
-      pages: pages
+      pages: pages,
+      isDemo: false
     });
     await navigate(pages.keymap ? "/editor" : "/welcome");
     return commands;
@@ -252,11 +272,22 @@ class App extends React.Component {
                   path="/keyboard-select"
                   onConnect={this.onKeyboardConnect}
                   onDisconnect={this.onKeyboardDisconnect}
+                  toggleDemo={this.toggleDemo}
+                  isDemo={this.state.isDemo}
                   titleElement={() => document.querySelector("#page-title")}
                   changeBackgroundColor={this.changeBackgroundColor}
                 />
                 <Editor
                   path="/editor"
+                  onDisconnect={this.onKeyboardDisconnect}
+                  startContext={this.startContext}
+                  cancelContext={this.cancelContext}
+                  inContext={this.state.contextBar}
+                  titleElement={() => document.querySelector("#page-title")}
+                  appBarElement={() => document.querySelector("#appbar")}
+                />
+                <DemoEditor
+                  path="/demoeditor"
                   onDisconnect={this.onKeyboardDisconnect}
                   startContext={this.startContext}
                   cancelContext={this.cancelContext}

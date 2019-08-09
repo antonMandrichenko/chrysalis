@@ -148,35 +148,22 @@ class DemoEditor extends React.Component {
     try {
       let defLayer = mockData.defaultLayer;
       defLayer = parseInt(defLayer) || 0;
-      console.log(defLayer);
 
-      let keymap =
-        JSON.parse(localStorage.getItem("keymap")) || mockData.keymap;
+      let keymap = mockData.keymap;
 
-      let defaultKeymap =
-        typeof keymap.default === "string"
-          ? keymap.default
-              .split(" ")
-              .filter(v => v.length > 0)
-              .map(k => this.keymapDB.parse(parseInt(k)))
-          : keymap.default;
-      let customKeymap =
-        typeof keymap.custom === "string"
-          ? keymap.custom
-              .split(" ")
-              .filter(v => v.length > 0)
-              .map(k => this.keymapDB.parse(parseInt(k)))
-          : keymap.custom;
+      let defaultKeymap = keymap.default
+        .split(" ")
+        .filter(v => v.length > 0)
+        .map(k => this.keymapDB.parse(parseInt(k)));
+      let customKeymap = keymap.custom
+        .split(" ")
+        .filter(v => v.length > 0)
+        .map(k => this.keymapDB.parse(parseInt(k)));
       defaultKeymap = this._chunk(defaultKeymap, 80);
       customKeymap = this._chunk(customKeymap, 80);
       settings.set("keymap.showDefaults", !keymap.onlyCustom);
-      console.log(defaultKeymap, customKeymap);
-
-      let colorMapData =
-        JSON.parse(localStorage.getItem("colormap")) || mockData.colormap;
-      let paletteData =
-        JSON.parse(localStorage.getItem("palette")) || mockData.palette;
-
+      let colorMapData = mockData.colormap;
+      let paletteData = mockData.palette;
       let palette = this._chunk(
         paletteData
           .split(" ")
@@ -200,16 +187,21 @@ class DemoEditor extends React.Component {
         80
       );
 
+      const keymapFromLS = JSON.parse(localStorage.getItem("keymap"));
+      const colormapFromLS = JSON.parse(localStorage.getItem("colormap"));
+      const paletteFromLS = JSON.parse(localStorage.getItem("palette"));
+
       this.setState({
         defaultLayer: defLayer,
         keymap: {
-          custom: customKeymap,
-          default: defaultKeymap,
-          onlyCustom: keymap.onlyCustom
+          custom: (keymapFromLS && keymapFromLS.custom) || customKeymap,
+          default: (keymapFromLS && keymapFromLS.default) || defaultKeymap,
+          onlyCustom:
+            (keymapFromLS && keymapFromLS.onlyCustom) || keymap.onlyCustom
         },
         showDefaults: !keymap.onlyCustom,
-        palette: palette,
-        colorMap: colorMap
+        palette: paletteFromLS || palette,
+        colorMap: colormapFromLS || colorMap
       });
       this.bottomMenuNeverHide();
     } catch (e) {
@@ -424,21 +416,20 @@ class DemoEditor extends React.Component {
   async componentDidMount() {
     const data = await fetch("demoData/demoData.json");
     this.setState({ mockData: await data.json() });
-    this.scanKeyboard();
-    // this.scanKeyboard().then(() => {
-    //   const { keymap } = this.state;
-    //   const defLayer =
-    //     this.state.defaultLayer >= 126 ? 0 : this.state.defaultLayer;
-    //   let initialLayer = 0;
+    this.scanKeyboard().then(() => {
+      const { keymap } = this.state;
+      const defLayer =
+        this.state.defaultLayer >= 126 ? 0 : this.state.defaultLayer;
+      let initialLayer = 0;
 
-    //   if (!settings.get("keymap.showDefaults")) {
-    //     if (defLayer < keymap.default.length) {
-    //       initialLayer = keymap.onlyCustom ? 0 : keymap.default.length;
-    //     }
-    //   }
+      if (!settings.get("keymap.showDefaults")) {
+        if (defLayer < keymap.default.length) {
+          initialLayer = keymap.onlyCustom ? 0 : keymap.default.length;
+        }
+      }
 
-    //   this.setState({ currentLayer: initialLayer });
-    // });
+      this.setState({ currentLayer: initialLayer });
+    });
   }
 
   UNSAFE_componentWillReceiveProps = nextProps => {

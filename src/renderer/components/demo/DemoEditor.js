@@ -98,6 +98,7 @@ const styles = theme => ({
 
 class DemoEditor extends React.Component {
   state = {
+    mockData: {},
     currentLayer: 0,
     currentKeyIndex: -1,
     currentLedIndex: -1,
@@ -131,49 +132,62 @@ class DemoEditor extends React.Component {
   //   }));
   // };
 
-  // scanKeyboard = async () => {
-  //   let focus = new Focus();
+  scanKeyboard = async () => {
+    const { mockData } = this.state;
+    // let focus = new Focus();
 
-  //   try {
-  //     let defLayer = await focus.command("settings.defaultLayer");
-  //     defLayer = parseInt(defLayer) || 0;
+    // try {
+    let defLayer = mockData.defaultLayer;
+    defLayer = parseInt(defLayer) || 0;
+    // console.log(defLayer);
 
-  //     let keymap = await focus.command("keymap");
+    let keymap = mockData.keymap;
 
-  //     let empty = true;
-  //     for (let layer of keymap.custom) {
-  //       for (let i of layer) {
-  //         if (i.keyCode != 65535) {
-  //           empty = false;
-  //           break;
-  //         }
-  //       }
-  //     }
+    if (!keymap.default && !keymap.custom) {
+      const keymap = keymap.custom.split(" ").filter(v => v.length > 0);
+      // const roLayers = parseInt((await s.request("keymap.roLayers")) || "0");
+      // defaults = keymap.slice(0, this._layerSize * roLayers).join(" ");
+      // custom = keymap
+      //   .slice(this._layerSize * roLayers, keymap.length)
+      //   .join(" ");
+      // onlyCustom = false;
+      // this.legacyInterface = true;
+    }
 
-  //     if (empty && !keymap.onlyCustom && keymap.custom.length > 0) {
-  //       console.log("Custom keymap is empty, copying defaults");
-  //       for (let i = 0; i < keymap.default.length; i++) {
-  //         keymap.custom[i] = keymap.default[i].slice();
-  //       }
-  //       keymap.onlyCustom = true;
-  //       await focus.command("keymap", keymap);
-  //     }
+    // let empty = true;
+    // for (let layer of keymap.custom) {
+    //   for (let i of layer) {
+    //     if (i.keyCode != 65535) {
+    //       empty = false;
+    //       break;
+    //     }
+    //   }
+    // }
 
-  //     let colormap = await focus.command("colormap");
+    //   if (empty && !keymap.onlyCustom && keymap.custom.length > 0) {
+    //     console.log("Custom keymap is empty, copying defaults");
+    //     for (let i = 0; i < keymap.default.length; i++) {
+    //       keymap.custom[i] = keymap.default[i].slice();
+    //     }
+    //     keymap.onlyCustom = true;
+    //     await focus.command("keymap", keymap);
+    //   }
 
-  //     this.setState({
-  //       defaultLayer: defLayer,
-  //       keymap: keymap,
-  //       showDefaults: !keymap.onlyCustom,
-  //       palette: colormap.palette,
-  //       colorMap: colormap.colorMap
-  //     });
-  //     this.bottomMenuNeverHide();
-  //   } catch (e) {
-  //     this.props.enqueueSnackbar(e, { variant: "error" });
-  //     this.props.onDisconnect();
-  //   }
-  // };
+    //   let colormap = await focus.command("colormap");
+
+    //   this.setState({
+    //     defaultLayer: defLayer,
+    //     keymap: keymap,
+    //     showDefaults: !keymap.onlyCustom,
+    //     palette: colormap.palette,
+    //     colorMap: colormap.colorMap
+    //   });
+    //   this.bottomMenuNeverHide();
+    // } catch (e) {
+    //   this.props.enqueueSnackbar(e, { variant: "error" });
+    //   this.props.onDisconnect();
+    // }
+  };
 
   // getCurrentKey() {
   //   if (this.state.currentKeyIndex < 0) return -1;
@@ -380,7 +394,8 @@ class DemoEditor extends React.Component {
 
   async componentDidMount() {
     const data = await fetch("demoData/demoData.json");
-    console.log(await data.json());
+    this.setState({ mockData: await data.json() });
+    this.scanKeyboard();
     // this.scanKeyboard().then(() => {
     //   const { keymap } = this.state;
     //   const defLayer =

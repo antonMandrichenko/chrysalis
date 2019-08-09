@@ -38,6 +38,7 @@ import { withSnackbar } from "notistack";
 import KeyboardSelect from "./screens/KeyboardSelect";
 import FirmwareUpdate from "./screens/FirmwareUpdate";
 import Editor from "./screens/Editor/Editor";
+import DemoEditor from "./components/demo/DemoEditor";
 import Preferences from "./screens/Preferences";
 import Welcome from "./screens/Welcome";
 import KeyboardSettings from "./screens/KeyboardSettings";
@@ -72,7 +73,8 @@ class App extends React.Component {
       device: null,
       pages: {},
       contextBar: false,
-      cancelPendingOpen: false
+      cancelPendingOpen: false,
+      isDemo: false
     };
     localStorage.clear();
   }
@@ -110,6 +112,12 @@ class App extends React.Component {
     });
   }
 
+  toggleDemo = () => {
+    this.setState({
+      isDemo: true
+    });
+  };
+
   toggleDarkMode = () => {
     const nextDarkModeState = !this.state.darkMode;
     this.setState({
@@ -131,6 +139,7 @@ class App extends React.Component {
   };
 
   onKeyboardConnect = async port => {
+    const { isDemo } = this.state;
     focus.close();
 
     if (!port.comName) {
@@ -141,13 +150,21 @@ class App extends React.Component {
       });
       return [];
     }
-
+    if (isDemo) {
+      this.setState({
+        connected: true,
+        device: null
+      });
+      await navigate("/demoeditor");
+      return;
+    }
     console.log("Connecting to", port.comName);
     await focus.open(port.comName, port.device);
     if (process.platform == "darwin") {
       await spawn("stty", ["-f", port.comName, "clocal"]);
     }
     console.log("Probing for Focus support...");
+
     let commands;
     try {
       commands = await focus.probe();
@@ -168,7 +185,8 @@ class App extends React.Component {
     this.setState({
       connected: true,
       device: null,
-      pages: pages
+      pages: pages,
+      isDemo: false
     });
     await navigate(pages.keymap ? "/editor" : "/welcome");
     return commands;
@@ -238,10 +256,21 @@ class App extends React.Component {
                   path="/keyboard-select"
                   onConnect={this.onKeyboardConnect}
                   onDisconnect={this.onKeyboardDisconnect}
+                  toggleDemo={this.toggleDemo}
+                  isDemo={this.state.isDemo}
                   titleElement={() => document.querySelector("#page-title")}
                 />
                 <Editor
                   path="/editor"
+                  onDisconnect={this.onKeyboardDisconnect}
+                  startContext={this.startContext}
+                  cancelContext={this.cancelContext}
+                  inContext={this.state.contextBar}
+                  titleElement={() => document.querySelector("#page-title")}
+                  appBarElement={() => document.querySelector("#appbar")}
+                />
+                <DemoEditor
+                  path="/demoeditor"
                   onDisconnect={this.onKeyboardDisconnect}
                   startContext={this.startContext}
                   cancelContext={this.cancelContext}

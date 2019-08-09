@@ -5,7 +5,6 @@ import SerialPort from "@serialport/stream";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import Hardware from "@chrysalis-api/hardware";
-// import Focus from "@chrysalis-api/focus";
 
 DemoSwitch.propTypes = {
   onAddMockKeyboards: PropTypes.func.isRequired,
@@ -53,28 +52,15 @@ function DemoSwitch(props) {
     return new Promise(resolve => {
       resolve(found_devices);
     });
-    // return found_devices;
   };
-
-  // const findMockKeyboards = async () => {
-  //   let focus = new Focus();
-
-  //   return new Promise(resolve => {
-  //     let mockDevices = [];
-  //     mockFind().then(devices => {
-  //       for (const device of devices) {
-  //         mockDevices.push(device);
-  //       }
-
-  //     });
-  //   });
-  // };
 
   useEffect(() => {
     if (isDemo) {
       setState({ checked: isDemo });
+      mockFind().then(keyboards => {
+        onAddMockKeyboards(keyboards);
+      });
     }
-    mockFind();
   }, []);
 
   const handleChange = name => async e => {

@@ -143,7 +143,7 @@ class DemoEditor extends React.Component {
 
   scanKeyboard = async () => {
     const { mockData } = this.state;
-    // let focus = new Focus();
+    const { device } = this.props;
 
     try {
       let defLayer = mockData.defaultLayer;
@@ -187,9 +187,21 @@ class DemoEditor extends React.Component {
         80
       );
 
-      const keymapFromLS = JSON.parse(localStorage.getItem("keymap"));
-      const colormapFromLS = JSON.parse(localStorage.getItem("colormap"));
-      const paletteFromLS = JSON.parse(localStorage.getItem("palette"));
+      const keymapFromLS = JSON.parse(
+        localStorage.getItem(
+          `keymap_${device.comName}_${device.device.info.product}`
+        )
+      );
+      const colormapFromLS = JSON.parse(
+        localStorage.getItem(
+          `colormap_${device.comName}_${device.device.info.product}`
+        )
+      );
+      const paletteFromLS = JSON.parse(
+        localStorage.getItem(
+          `palette_${device.comName}_${device.device.info.product}`
+        )
+      );
 
       this.setState({
         defaultLayer: defLayer,
@@ -398,10 +410,20 @@ class DemoEditor extends React.Component {
   };
 
   onApply = async () => {
+    const { device } = this.props;
     this.setState({ saving: true });
-    localStorage.setItem("keymap", JSON.stringify(this.state.keymap));
-    localStorage.setItem("colormap", JSON.stringify(this.state.colorMap));
-    localStorage.setItem("palette", JSON.stringify(this.state.palette));
+    localStorage.setItem(
+      `keymap_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.keymap)
+    );
+    localStorage.setItem(
+      `colormap_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.colorMap)
+    );
+    localStorage.setItem(
+      `palette_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.palette)
+    );
     this.setState({
       modified: false,
       saving: false,

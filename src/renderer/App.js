@@ -161,7 +161,11 @@ class App extends React.Component {
     if (isDemo) {
       this.setState({
         connected: true,
-        device: port
+        device: port,
+        pages: {
+          keymap: true,
+          colormap: true
+        }
       });
       await navigate("/demoeditor");
       return;
@@ -246,6 +250,7 @@ class App extends React.Component {
               pages={pages}
               device={device}
               cancelContext={this.cancelContext}
+              isDemo={this.state.isDemo}
             />
             <main className={classes.content}>
               <Router>

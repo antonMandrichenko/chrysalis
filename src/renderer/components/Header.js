@@ -53,7 +53,8 @@ function Header({
   connected,
   pages,
   device,
-  cancelContext
+  cancelContext,
+  isDemo
 }) {
   const [mainMenu, setMainMenuOpen] = useState(false);
   const [boardAnchor, setBoardMenuAnchor] = useState(null);
@@ -107,6 +108,7 @@ function Header({
           pages={pages}
           open={mainMenu}
           closeMenu={closeMainMenu}
+          isDemo={isDemo}
         />
         <div className={classes.grow} />
         {device && (

@@ -68,7 +68,7 @@ const styles = theme => ({
   }
 });
 
-function MainMenu({ open, closeMenu, classes, connected, pages }) {
+function MainMenu({ open, closeMenu, classes, connected, pages, isDemo }) {
   const currentPage = history.location.pathname,
     setCurrentPage = history.navigate;
 
@@ -77,6 +77,7 @@ function MainMenu({ open, closeMenu, classes, connected, pages }) {
       ? "/editor"
       : "/welcome"
     : "/keyboard-select";
+  const editor = isDemo ? "/demoeditor" : "/editor";
 
   return (
     <Drawer open={open} onClose={closeMenu}>
@@ -112,15 +113,17 @@ function MainMenu({ open, closeMenu, classes, connected, pages }) {
             )}
             {pages.keymap && (
               <Link
-                to="/editor"
+                to={editor}
                 style={{
                   textDecoration: "none"
                 }}
               >
                 <EditorMenuItem
-                  selected={currentPage == "/editor"}
+                  selected={currentPage == editor}
                   className={classes.menuItem}
-                  onClick={() => setCurrentPage("/editor")}
+                  onClick={() => {
+                    setCurrentPage(editor);
+                  }}
                 />
               </Link>
             )}

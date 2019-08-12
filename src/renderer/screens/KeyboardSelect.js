@@ -38,6 +38,8 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import { withSnackbar } from "notistack";
+import MockBinding from "@serialport/binding-mock";
+import SerialPort from "@serialport/stream";
 
 import Focus from "@chrysalis-api/focus";
 import Hardware from "@chrysalis-api/hardware";
@@ -174,11 +176,51 @@ class KeyboardSelect extends React.Component {
     });
   };
 
-  onAddMockKeyboards = devices => {
-    const { isDemo } = this.props;
-    this.setState({
-      devices: devices
+  mockFind = async () => {
+    Hardware.serial.forEach((keyboard, index) => {
+      const options = {
+        echo: true,
+        record: true,
+        manufacturer: keyboard.info.displayName,
+        vendorId: keyboard.usb.vendorId,
+        productId: keyboard.usb.productId
+      };
+      SerialPort.Binding = MockBinding;
+      const comName =
+        process.platform == "win32" ? `COM${index}` : `/dev/ttyACM${index}`;
+      MockBinding.createPort(comName, options);
     });
+
+    let portList = await MockBinding.list();
+
+    let found_devices = [];
+
+    for (let port of portList) {
+      for (let device of Hardware.serial) {
+        if (
+          port.productId == device.usb.productId &&
+          port.vendorId == device.usb.vendorId &&
+          port.manufacturer == device.info.displayName
+        ) {
+          let newPort = Object.assign({}, port);
+          newPort.device = device;
+          found_devices.push(newPort);
+        }
+      }
+    }
+    return new Promise(resolve => {
+      resolve(found_devices);
+    });
+  };
+
+  onAddMockKeyboards = async checked => {
+    const { isDemo } = this.props;
+    if (!checked) {
+      const mockKeyboards = await this.mockFind();
+      this.setState({ devices: mockKeyboards });
+    } else {
+      this.setState({ devices: [] });
+    }
     if (!isDemo) this.props.toggleDemo();
   };
 
@@ -194,6 +236,12 @@ class KeyboardSelect extends React.Component {
   };
 
   componentDidMount() {
+    const { isDemo } = this.props;
+    if (isDemo) {
+      this.onAddMockKeyboards(false);
+      this.finder = () => true;
+      return;
+    }
     this.finder = () => {
       this.findKeyboards();
     };

@@ -112,9 +112,9 @@ class App extends React.Component {
     });
   }
 
-  toggleDemo = () => {
+  toggleDemo = condition => {
     this.setState({
-      isDemo: true
+      isDemo: condition
     });
   };
 

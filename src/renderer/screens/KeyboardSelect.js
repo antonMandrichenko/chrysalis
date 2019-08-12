@@ -164,6 +164,7 @@ class KeyboardSelect extends React.Component {
             devices: list
           });
           resolve(list.length > 0);
+          if (list.length > 0) this.props.toggleDemo(false);
         })
         .catch(() => {
           const list = this.findNonSerialKeyboards([]);
@@ -172,6 +173,7 @@ class KeyboardSelect extends React.Component {
             devices: list
           });
           resolve(list.length > 0);
+          if (list.length > 0) this.props.toggleDemo(false);
         });
     });
   };
@@ -221,7 +223,7 @@ class KeyboardSelect extends React.Component {
     } else {
       this.setState({ devices: [] });
     }
-    if (!isDemo) this.props.toggleDemo();
+    if (!isDemo) this.props.toggleDemo(!checked);
   };
 
   scanDevices = async () => {
@@ -235,13 +237,17 @@ class KeyboardSelect extends React.Component {
     }
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { isDemo } = this.props;
-    if (isDemo) {
-      this.onAddMockKeyboards(false);
+
+    if (isDemo && !(await this.findKeyboards())) {
+      await this.onAddMockKeyboards(false);
       this.finder = () => true;
+      usb.on("attach", this.finder);
+      usb.on("detach", this.finder);
       return;
     }
+
     this.finder = () => {
       this.findKeyboards();
     };

@@ -118,9 +118,9 @@ class App extends React.Component {
     });
   }
 
-  toggleDemo = () => {
+  toggleDemo = condition => {
     this.setState({
-      isDemo: true
+      isDemo: condition
     });
   };
 
@@ -167,7 +167,11 @@ class App extends React.Component {
     if (isDemo) {
       this.setState({
         connected: true,
-        device: null
+        device: port,
+        pages: {
+          keymap: true,
+          colormap: true
+        }
       });
       await navigate("/demoeditor");
       return;
@@ -201,13 +205,14 @@ class App extends React.Component {
   };
 
   onKeyboardDisconnect = async () => {
+    const { isDemo } = this.state;
     focus.close();
     this.setState({
       connected: false,
       device: null,
       pages: {}
     });
-    localStorage.clear();
+    if (!isDemo) localStorage.clear();
     await navigate("/keyboard-select");
   };
 
@@ -246,7 +251,7 @@ class App extends React.Component {
     let focus = new Focus();
     let device =
       (focus.device && focus.device.info) ||
-      (this.state.device && this.state.device.info);
+      (this.state.device && this.state.device.device.info);
 
     return (
       <MuiThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>
@@ -259,6 +264,7 @@ class App extends React.Component {
               pages={pages}
               device={device}
               cancelContext={this.cancelContext}
+              isDemo={this.state.isDemo}
             />
             <main className={classes.content} style={style}>
               <Router>
@@ -292,6 +298,7 @@ class App extends React.Component {
                   startContext={this.startContext}
                   cancelContext={this.cancelContext}
                   inContext={this.state.contextBar}
+                  device={this.state.device}
                   titleElement={() => document.querySelector("#page-title")}
                   appBarElement={() => document.querySelector("#appbar")}
                 />
@@ -308,6 +315,8 @@ class App extends React.Component {
                   startContext={this.startContext}
                   cancelContext={this.cancelContext}
                   inContext={this.state.contextBar}
+                  isDemo={this.state.isDemo}
+                  device={this.state.device}
                 />
                 <Preferences
                   path="/preferences"

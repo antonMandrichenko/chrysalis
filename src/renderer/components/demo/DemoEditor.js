@@ -132,6 +132,22 @@ class DemoEditor extends React.Component {
     }));
   };
 
+  saveDataInLS() {
+    const { device } = this.props;
+    localStorage.setItem(
+      `keymap_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.keymap)
+    );
+    localStorage.setItem(
+      `colormap_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.colorMap)
+    );
+    localStorage.setItem(
+      `palette_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.palette)
+    );
+  }
+
   _chunk(a, chunkSize) {
     var R = [];
 
@@ -143,7 +159,7 @@ class DemoEditor extends React.Component {
 
   scanKeyboard = async () => {
     const { mockData } = this.state;
-    // let focus = new Focus();
+    const { device } = this.props;
 
     try {
       let defLayer = mockData.defaultLayer;
@@ -161,7 +177,6 @@ class DemoEditor extends React.Component {
         .map(k => this.keymapDB.parse(parseInt(k)));
       defaultKeymap = this._chunk(defaultKeymap, 80);
       customKeymap = this._chunk(customKeymap, 80);
-      settings.set("keymap.showDefaults", !keymap.onlyCustom);
       let colorMapData = mockData.colormap;
       let paletteData = mockData.palette;
       let palette = this._chunk(
@@ -187,17 +202,33 @@ class DemoEditor extends React.Component {
         80
       );
 
-      const keymapFromLS = JSON.parse(localStorage.getItem("keymap"));
-      const colormapFromLS = JSON.parse(localStorage.getItem("colormap"));
-      const paletteFromLS = JSON.parse(localStorage.getItem("palette"));
+      const keymapFromLS = JSON.parse(
+        localStorage.getItem(
+          `keymap_${device.comName}_${device.device.info.product}`
+        )
+      );
+      const colormapFromLS = JSON.parse(
+        localStorage.getItem(
+          `colormap_${device.comName}_${device.device.info.product}`
+        )
+      );
+      const paletteFromLS = JSON.parse(
+        localStorage.getItem(
+          `palette_${device.comName}_${device.device.info.product}`
+        )
+      );
+      const defaultLayerFromLS = JSON.parse(
+        localStorage.getItem(
+          `defaultLayer_${device.comName}_${device.device.info.product}`
+        )
+      );
 
       this.setState({
-        defaultLayer: defLayer,
+        defaultLayer: defaultLayerFromLS || defLayer,
         keymap: {
           custom: (keymapFromLS && keymapFromLS.custom) || customKeymap,
           default: (keymapFromLS && keymapFromLS.default) || defaultKeymap,
-          onlyCustom:
-            (keymapFromLS && keymapFromLS.onlyCustom) || keymap.onlyCustom
+          onlyCustom: keymapFromLS ? keymapFromLS.onlyCustom : keymap.onlyCustom
         },
         showDefaults: !keymap.onlyCustom,
         palette: paletteFromLS || palette,
@@ -399,9 +430,7 @@ class DemoEditor extends React.Component {
 
   onApply = async () => {
     this.setState({ saving: true });
-    localStorage.setItem("keymap", JSON.stringify(this.state.keymap));
-    localStorage.setItem("colormap", JSON.stringify(this.state.colorMap));
-    localStorage.setItem("palette", JSON.stringify(this.state.palette));
+    this.saveDataInLS();
     this.setState({
       modified: false,
       saving: false,
@@ -430,6 +459,7 @@ class DemoEditor extends React.Component {
 
       this.setState({ currentLayer: initialLayer });
     });
+    this.saveDataInLS();
   }
 
   UNSAFE_componentWillReceiveProps = nextProps => {

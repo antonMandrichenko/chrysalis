@@ -295,6 +295,8 @@ class App extends React.Component {
                   startContext={this.startContext}
                   cancelContext={this.cancelContext}
                   inContext={this.state.contextBar}
+                  isDemo={this.state.isDemo}
+                  device={this.state.device}
                 />
                 <Preferences
                   path="/preferences"

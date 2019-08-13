@@ -180,6 +180,7 @@ class KeyboardSelect extends React.Component {
 
   mockFind = async () => {
     Hardware.serial.forEach((keyboard, index) => {
+      if (keyboard.info.product === "ErgoDox") return;
       const options = {
         echo: true,
         record: true,

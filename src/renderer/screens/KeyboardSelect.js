@@ -217,19 +217,19 @@ class KeyboardSelect extends React.Component {
   };
 
   onAddMockKeyboards = async checked => {
-    const { isDemo } = this.props;
+    const { isDemo, onDisconnect } = this.props;
     if (!checked) {
       const mockKeyboards = await this.mockFind();
       this.setState({ devices: mockKeyboards });
     } else {
       this.setState({ devices: [] });
+      onDisconnect();
     }
     if (!isDemo) this.props.toggleDemo(!checked);
   };
 
   scanDevices = async () => {
-    const { isDemo } = this.props;
-    if (!isDemo) {
+    if (await this.findKeyboards()) {
       let found = await this.findKeyboards();
       this.setState({ scanFoundDevices: found });
       setTimeout(() => {

@@ -132,6 +132,9 @@ class Editor extends React.Component {
     }));
   };
 
+  /**
+   * Saves data in demo mode in local storage
+   */
   saveDataInLS() {
     const { device } = this.props;
     localStorage.setItem(
@@ -148,6 +151,9 @@ class Editor extends React.Component {
     );
   }
 
+  /**
+   * Changes data to the required form in the form of arrays
+   */
   _chunk(a, chunkSize) {
     var R = [];
 
@@ -157,6 +163,9 @@ class Editor extends React.Component {
     return R;
   }
 
+  /**
+   * Scans mock data for demo mode
+   */
   scanMockKeyboard = async () => {
     const { mockData } = this.state;
     const { device } = this.props;

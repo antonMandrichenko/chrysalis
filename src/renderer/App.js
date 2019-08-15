@@ -38,7 +38,6 @@ import { withSnackbar } from "notistack";
 import KeyboardSelect from "./screens/KeyboardSelect";
 import FirmwareUpdate from "./screens/FirmwareUpdate";
 import Editor from "./screens/Editor/Editor";
-import DemoEditor from "./components/demo/DemoEditor";
 import Preferences from "./screens/Preferences";
 import Welcome from "./screens/Welcome";
 import KeyboardSettings from "./screens/KeyboardSettings";
@@ -167,7 +166,7 @@ class App extends React.Component {
           colormap: true
         }
       });
-      await navigate("/demoeditor");
+      await navigate("/editor");
       return;
     }
 
@@ -276,16 +275,8 @@ class App extends React.Component {
                   inContext={this.state.contextBar}
                   titleElement={() => document.querySelector("#page-title")}
                   appBarElement={() => document.querySelector("#appbar")}
-                />
-                <DemoEditor
-                  path="/demoeditor"
-                  onDisconnect={this.onKeyboardDisconnect}
-                  startContext={this.startContext}
-                  cancelContext={this.cancelContext}
-                  inContext={this.state.contextBar}
                   device={this.state.device}
-                  titleElement={() => document.querySelector("#page-title")}
-                  appBarElement={() => document.querySelector("#appbar")}
+                  isDemo={this.state.isDemo}
                 />
                 <FirmwareUpdate
                   path="/firmware-update"

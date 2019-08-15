@@ -47,7 +47,7 @@ import Hardware from "@chrysalis-api/hardware";
 import usb from "usb";
 
 import i18n from "../i18n";
-import DemoSwitch from "../components/DemoSwitch";
+import DemoSwitch from "../components/demo/DemoSwitch";
 
 const styles = theme => ({
   loader: {

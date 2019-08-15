@@ -109,6 +109,19 @@ const styles = theme => ({
   },
   found: {
     color: green[500]
+  },
+  paper: {
+    display: "flex",
+    justifyContent: "center",
+    alignItem: "center"
+  },
+  grid: {
+    margin: `${theme.spacing.unit / 2}px 0`
+  },
+  palette: {
+    display: "flex",
+    justifyContent: "center",
+    alignItem: "center"
   }
 });
 

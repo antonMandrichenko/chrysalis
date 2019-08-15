@@ -38,6 +38,8 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import { withSnackbar } from "notistack";
+import MockBinding from "@serialport/binding-mock";
+import SerialPort from "@serialport/stream";
 
 import Focus from "@chrysalis-api/focus";
 import Hardware from "@chrysalis-api/hardware";
@@ -45,6 +47,7 @@ import Hardware from "@chrysalis-api/hardware";
 import usb from "usb";
 
 import i18n from "../i18n";
+import DemoSwitch from "../components/demo/DemoSwitch";
 
 const styles = theme => ({
   loader: {
@@ -88,7 +91,7 @@ const styles = theme => ({
   },
   connect: {
     verticalAlign: "bottom",
-    marginLeft: 65
+    marginLeft: 0
   },
   cardActions: {
     justifyContent: "center"
@@ -161,6 +164,7 @@ class KeyboardSelect extends React.Component {
             devices: list
           });
           resolve(list.length > 0);
+          if (list.length > 0) this.props.toggleDemo(false);
         })
         .catch(() => {
           const list = this.findNonSerialKeyboards([]);
@@ -169,19 +173,82 @@ class KeyboardSelect extends React.Component {
             devices: list
           });
           resolve(list.length > 0);
+          if (list.length > 0) this.props.toggleDemo(false);
         });
     });
   };
 
-  scanDevices = async () => {
-    let found = await this.findKeyboards();
-    this.setState({ scanFoundDevices: found });
-    setTimeout(() => {
-      this.setState({ scanFoundDevices: undefined });
-    }, 1000);
+  mockFind = async () => {
+    Hardware.serial.forEach((keyboard, index) => {
+      if (keyboard.info.product === "ErgoDox") return;
+      const options = {
+        echo: true,
+        record: true,
+        manufacturer: keyboard.info.displayName,
+        vendorId: keyboard.usb.vendorId,
+        productId: keyboard.usb.productId
+      };
+      SerialPort.Binding = MockBinding;
+      const comName =
+        process.platform == "win32" ? `COM${index}` : `/dev/ttyACM${index}`;
+      MockBinding.createPort(comName, options);
+    });
+
+    let portList = await MockBinding.list();
+
+    let found_devices = [];
+
+    for (let port of portList) {
+      for (let device of Hardware.serial) {
+        if (
+          port.productId == device.usb.productId &&
+          port.vendorId == device.usb.vendorId &&
+          port.manufacturer == device.info.displayName
+        ) {
+          let newPort = Object.assign({}, port);
+          newPort.device = device;
+          found_devices.push(newPort);
+        }
+      }
+    }
+    return new Promise(resolve => {
+      resolve(found_devices);
+    });
   };
 
-  componentDidMount() {
+  onAddMockKeyboards = async checked => {
+    const { isDemo, onDisconnect } = this.props;
+    if (!checked) {
+      const mockKeyboards = await this.mockFind();
+      this.setState({ devices: mockKeyboards });
+    } else {
+      this.setState({ devices: [] });
+      onDisconnect();
+    }
+    if (!isDemo) this.props.toggleDemo(!checked);
+  };
+
+  scanDevices = async () => {
+    if (await this.findKeyboards()) {
+      let found = await this.findKeyboards();
+      this.setState({ scanFoundDevices: found });
+      setTimeout(() => {
+        this.setState({ scanFoundDevices: undefined });
+      }, 1000);
+    }
+  };
+
+  async componentDidMount() {
+    const { isDemo } = this.props;
+
+    if (isDemo && !(await this.findKeyboards())) {
+      await this.onAddMockKeyboards(false);
+      this.finder = () => true;
+      usb.on("attach", this.finder);
+      usb.on("detach", this.finder);
+      return;
+    }
+
     this.finder = () => {
       this.findKeyboards();
     };
@@ -232,7 +299,7 @@ class KeyboardSelect extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, isDemo } = this.props;
     const { scanFoundDevices, devices } = this.state;
 
     let loader = null;
@@ -378,7 +445,14 @@ class KeyboardSelect extends React.Component {
           <Divider variant="middle" />
           <CardActions className={classes.cardActions}>
             {scanDevicesButton}
-            <div className={classes.grow} />
+            {!devices || devices.length === 0 || isDemo ? (
+              <DemoSwitch
+                onAddMockKeyboards={this.onAddMockKeyboards}
+                isDemo={isDemo}
+              />
+            ) : (
+              <div className={classes.grow} />
+            )}
             {connectionButton}
           </CardActions>
         </Card>

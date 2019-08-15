@@ -72,7 +72,8 @@ class App extends React.Component {
       device: null,
       pages: {},
       contextBar: false,
-      cancelPendingOpen: false
+      cancelPendingOpen: false,
+      isDemo: false
     };
     localStorage.clear();
   }
@@ -110,6 +111,12 @@ class App extends React.Component {
     });
   }
 
+  toggleDemo = condition => {
+    this.setState({
+      isDemo: condition
+    });
+  };
+
   toggleDarkMode = () => {
     const nextDarkModeState = !this.state.darkMode;
     this.setState({
@@ -131,6 +138,7 @@ class App extends React.Component {
   };
 
   onKeyboardConnect = async port => {
+    const { isDemo } = this.state;
     focus.close();
 
     if (!port.comName) {
@@ -148,6 +156,20 @@ class App extends React.Component {
       await spawn("stty", ["-f", port.comName, "clocal"]);
     }
     console.log("Probing for Focus support...");
+
+    if (isDemo) {
+      this.setState({
+        connected: true,
+        device: port,
+        pages: {
+          keymap: true,
+          colormap: true
+        }
+      });
+      await navigate("/editor");
+      return;
+    }
+
     let commands;
     try {
       commands = await focus.probe();
@@ -168,20 +190,22 @@ class App extends React.Component {
     this.setState({
       connected: true,
       device: null,
-      pages: pages
+      pages: pages,
+      isDemo: false
     });
     await navigate(pages.keymap ? "/editor" : "/welcome");
     return commands;
   };
 
   onKeyboardDisconnect = async () => {
+    const { isDemo } = this.state;
     focus.close();
     this.setState({
       connected: false,
       device: null,
       pages: {}
     });
-    localStorage.clear();
+    if (!isDemo) localStorage.clear();
     await navigate("/keyboard-select");
   };
 
@@ -212,7 +236,7 @@ class App extends React.Component {
     let focus = new Focus();
     let device =
       (focus.device && focus.device.info) ||
-      (this.state.device && this.state.device.info);
+      (this.state.device && this.state.device.device.info);
 
     return (
       <MuiThemeProvider theme={this.state.darkMode ? darkTheme : lightTheme}>
@@ -225,6 +249,7 @@ class App extends React.Component {
               pages={pages}
               device={device}
               cancelContext={this.cancelContext}
+              isDemo={this.state.isDemo}
             />
             <main className={classes.content}>
               <Router>
@@ -238,6 +263,8 @@ class App extends React.Component {
                   path="/keyboard-select"
                   onConnect={this.onKeyboardConnect}
                   onDisconnect={this.onKeyboardDisconnect}
+                  toggleDemo={this.toggleDemo}
+                  isDemo={this.state.isDemo}
                   titleElement={() => document.querySelector("#page-title")}
                 />
                 <Editor
@@ -248,6 +275,8 @@ class App extends React.Component {
                   inContext={this.state.contextBar}
                   titleElement={() => document.querySelector("#page-title")}
                   appBarElement={() => document.querySelector("#appbar")}
+                  device={this.state.device}
+                  isDemo={this.state.isDemo}
                 />
                 <FirmwareUpdate
                   path="/firmware-update"
@@ -255,6 +284,7 @@ class App extends React.Component {
                   toggleFlashing={this.toggleFlashing}
                   onDisconnect={this.onKeyboardDisconnect}
                   titleElement={() => document.querySelector("#page-title")}
+                  isDemo={this.state.isDemo}
                 />
                 <KeyboardSettings
                   path="/keyboard-settings"
@@ -262,6 +292,8 @@ class App extends React.Component {
                   startContext={this.startContext}
                   cancelContext={this.cancelContext}
                   inContext={this.state.contextBar}
+                  isDemo={this.state.isDemo}
+                  device={this.state.device}
                 />
                 <Preferences
                   path="/preferences"

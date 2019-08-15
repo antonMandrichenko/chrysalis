@@ -101,18 +101,39 @@ class KeyboardSettings extends React.Component {
     working: false
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const focus = new Focus();
+    const { isDemo, device } = this.props;
+    this.setState({
+      showDefaults: settings.get("keymap.showDefaults")
+    });
+    if (isDemo) {
+      let data = await fetch("demoData/demoData.json");
+      data = await data.json();
+      const keymapFromLS = JSON.parse(
+        localStorage.getItem(
+          `keymap_${device.comName}_${device.device.info.product}`
+        )
+      );
+      const defaultLayerFromLS = JSON.parse(
+        localStorage.getItem(
+          `defaultLayer_${device.comName}_${device.device.info.product}`
+        )
+      );
+      let layer = defaultLayerFromLS || data.defaultLayer;
+      layer = layer ? parseInt(layer) : 126;
+      this.setState({
+        keymap: keymapFromLS,
+        defaultLayer: layer <= 126 ? layer : 126
+      });
+      return;
+    }
     focus.command("keymap").then(keymap => {
       this.setState({ keymap: keymap });
     });
     focus.command("settings.defaultLayer").then(layer => {
       layer = layer ? parseInt(layer) : 126;
       this.setState({ defaultLayer: layer <= 126 ? layer : 126 });
-    });
-
-    this.setState({
-      showDefaults: settings.get("keymap.showDefaults")
     });
   }
 
@@ -162,9 +183,22 @@ class KeyboardSettings extends React.Component {
     const focus = new Focus();
 
     const { keymap, defaultLayer, showDefaults } = this.state;
+    const { isDemo, device } = this.props;
 
-    await focus.command("keymap.onlyCustom", keymap.onlyCustom);
-    await focus.command("settings.defaultLayer", defaultLayer);
+    if (isDemo) {
+      localStorage.setItem(
+        `keymap_${device.comName}_${device.device.info.product}`,
+        JSON.stringify(keymap)
+      );
+      localStorage.setItem(
+        `defaultLayer_${device.comName}_${device.device.info.product}`,
+        JSON.stringify(defaultLayer)
+      );
+    } else {
+      await focus.command("keymap.onlyCustom", keymap.onlyCustom);
+      await focus.command("settings.defaultLayer", defaultLayer);
+    }
+
     settings.set("keymap.showDefaults", showDefaults);
     this.setState({ modified: false });
     this.props.cancelContext();

@@ -77,6 +77,8 @@ const styles = theme => ({
   }
 });
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 class FirmwareUpdate extends React.Component {
   constructor(props) {
     super(props);
@@ -86,7 +88,7 @@ class FirmwareUpdate extends React.Component {
     this.state = {
       firmwareFilename: "",
       selected: "default",
-      device: props.device || focus.device
+      device: props.device.device || focus.device
     };
   }
 
@@ -142,11 +144,16 @@ class FirmwareUpdate extends React.Component {
     return this.state.device.flash(focus._port, filename);
   };
 
+  _mockFlash = async () => {
+    await delay(4000);
+  };
+
   upload = async () => {
+    const { isDemo } = this.props;
     await this.props.toggleFlashing();
 
     try {
-      await this._flash();
+      isDemo ? await this._mockFlash() : await this._flash();
     } catch (e) {
       console.error(e);
       this.props.enqueueSnackbar(i18n.firmwareUpdate.flashing.error, {

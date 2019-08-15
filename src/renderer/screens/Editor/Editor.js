@@ -98,6 +98,7 @@ const styles = theme => ({
 
 class Editor extends React.Component {
   state = {
+    mockData: {},
     currentLayer: 0,
     currentKeyIndex: -1,
     currentLedIndex: -1,
@@ -131,43 +132,151 @@ class Editor extends React.Component {
     }));
   };
 
+  saveDataInLS() {
+    const { device } = this.props;
+    localStorage.setItem(
+      `keymap_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.keymap)
+    );
+    localStorage.setItem(
+      `colormap_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.colorMap)
+    );
+    localStorage.setItem(
+      `palette_${device.comName}_${device.device.info.product}`,
+      JSON.stringify(this.state.palette)
+    );
+  }
+
+  _chunk(a, chunkSize) {
+    var R = [];
+
+    for (var i = 0; i < a.length; i += chunkSize)
+      R.push(a.slice(i, i + chunkSize));
+
+    return R;
+  }
+
+  scanMockKeyboard = async () => {
+    const { mockData } = this.state;
+    const { device } = this.props;
+
+    let defLayer = mockData.defaultLayer;
+    defLayer = parseInt(defLayer) || 0;
+
+    let keymap = mockData.keymap;
+
+    let defaultKeymap = keymap.default
+      .split(" ")
+      .filter(v => v.length > 0)
+      .map(k => this.keymapDB.parse(parseInt(k)));
+    let customKeymap = keymap.custom
+      .split(" ")
+      .filter(v => v.length > 0)
+      .map(k => this.keymapDB.parse(parseInt(k)));
+    defaultKeymap = this._chunk(defaultKeymap, 80);
+    customKeymap = this._chunk(customKeymap, 80);
+    let colorMapData = mockData.colormap;
+    let paletteData = mockData.palette;
+    let palette = this._chunk(
+      paletteData
+        .split(" ")
+        .filter(v => v.length > 0)
+        .map(k => parseInt(k)),
+      3
+    ).map(color => {
+      return {
+        r: color[0],
+        g: color[1],
+        b: color[2],
+        rgb: `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+      };
+    });
+
+    let colorMap = this._chunk(
+      colorMapData
+        .split(" ")
+        .filter(v => v.length > 0)
+        .map(k => parseInt(k)),
+      80
+    );
+
+    const keymapFromLS = JSON.parse(
+      localStorage.getItem(
+        `keymap_${device.comName}_${device.device.info.product}`
+      )
+    );
+    const colormapFromLS = JSON.parse(
+      localStorage.getItem(
+        `colormap_${device.comName}_${device.device.info.product}`
+      )
+    );
+    const paletteFromLS = JSON.parse(
+      localStorage.getItem(
+        `palette_${device.comName}_${device.device.info.product}`
+      )
+    );
+    const defaultLayerFromLS = JSON.parse(
+      localStorage.getItem(
+        `defaultLayer_${device.comName}_${device.device.info.product}`
+      )
+    );
+
+    this.setState({
+      defaultLayer: defaultLayerFromLS || defLayer,
+      keymap: {
+        custom: (keymapFromLS && keymapFromLS.custom) || customKeymap,
+        default: (keymapFromLS && keymapFromLS.default) || defaultKeymap,
+        onlyCustom: keymapFromLS ? keymapFromLS.onlyCustom : keymap.onlyCustom
+      },
+      showDefaults: !keymap.onlyCustom,
+      palette: paletteFromLS || palette,
+      colorMap: colormapFromLS || colorMap
+    });
+  };
+
   scanKeyboard = async () => {
     let focus = new Focus();
+    const { isDemo } = this.props;
 
     try {
-      let defLayer = await focus.command("settings.defaultLayer");
-      defLayer = parseInt(defLayer) || 0;
+      if (isDemo) {
+        await this.scanMockKeyboard();
+      } else {
+        let defLayer = await focus.command("settings.defaultLayer");
+        defLayer = parseInt(defLayer) || 0;
 
-      let keymap = await focus.command("keymap");
+        let keymap = await focus.command("keymap");
 
-      let empty = true;
-      for (let layer of keymap.custom) {
-        for (let i of layer) {
-          if (i.keyCode != 65535) {
-            empty = false;
-            break;
+        let empty = true;
+        for (let layer of keymap.custom) {
+          for (let i of layer) {
+            if (i.keyCode != 65535) {
+              empty = false;
+              break;
+            }
           }
         }
-      }
 
-      if (empty && !keymap.onlyCustom && keymap.custom.length > 0) {
-        console.log("Custom keymap is empty, copying defaults");
-        for (let i = 0; i < keymap.default.length; i++) {
-          keymap.custom[i] = keymap.default[i].slice();
+        if (empty && !keymap.onlyCustom && keymap.custom.length > 0) {
+          console.log("Custom keymap is empty, copying defaults");
+          for (let i = 0; i < keymap.default.length; i++) {
+            keymap.custom[i] = keymap.default[i].slice();
+          }
+          keymap.onlyCustom = true;
+          await focus.command("keymap", keymap);
         }
-        keymap.onlyCustom = true;
-        await focus.command("keymap", keymap);
+
+        let colormap = await focus.command("colormap");
+
+        this.setState({
+          defaultLayer: defLayer,
+          keymap: keymap,
+          showDefaults: !keymap.onlyCustom,
+          palette: colormap.palette,
+          colorMap: colormap.colorMap
+        });
       }
-
-      let colormap = await focus.command("colormap");
-
-      this.setState({
-        defaultLayer: defLayer,
-        keymap: keymap,
-        showDefaults: !keymap.onlyCustom,
-        palette: colormap.palette,
-        colorMap: colormap.colorMap
-      });
       this.bottomMenuNeverHide();
     } catch (e) {
       this.props.enqueueSnackbar(e, { variant: "error" });
@@ -363,10 +472,15 @@ class Editor extends React.Component {
   };
 
   onApply = async () => {
+    const { isDemo } = this.props;
     this.setState({ saving: true });
     let focus = new Focus();
-    await focus.command("keymap", this.state.keymap);
-    await focus.command("colormap", this.state.palette, this.state.colorMap);
+    if (isDemo) {
+      this.saveDataInLS();
+    } else {
+      await focus.command("keymap", this.state.keymap);
+      await focus.command("colormap", this.state.palette, this.state.colorMap);
+    }
     this.setState({
       modified: false,
       saving: false,
@@ -378,7 +492,12 @@ class Editor extends React.Component {
     this.props.cancelContext();
   };
 
-  componentDidMount() {
+  async componentDidMount() {
+    const { isDemo } = this.props;
+    if (isDemo) {
+      const data = await fetch("demoData/demoData.json");
+      this.setState({ mockData: await data.json() });
+    }
     this.scanKeyboard().then(() => {
       const { keymap } = this.state;
       const defLayer =
@@ -393,6 +512,7 @@ class Editor extends React.Component {
 
       this.setState({ currentLayer: initialLayer });
     });
+    if (isDemo) this.saveDataInLS();
   }
 
   UNSAFE_componentWillReceiveProps = nextProps => {

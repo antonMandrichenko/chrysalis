@@ -153,7 +153,14 @@ class KeyGroupCodeUnwrapped extends React.Component {
 const KeyGroupCode = withStyles(styles)(KeyGroupCodeUnwrapped);
 
 const KeyButton = withStyles(styles)(props => {
-  const { keyInfo, selected, onKeySelect, disabled, mask } = props;
+  const {
+    keyInfo,
+    selected,
+    onKeySelect,
+    disabled,
+    mask,
+    withModifiers
+  } = props;
 
   return (
     <Button
@@ -164,7 +171,8 @@ const KeyButton = withStyles(styles)(props => {
       disabled={disabled}
     >
       {(keyInfo.labels.top &&
-        `${keyInfo.labels.top}${keyInfo.labels.primary}`) ||
+        withModifiers &&
+        `${keyInfo.labels.top} ${keyInfo.labels.primary}`) ||
         keyInfo.labels.verbose ||
         keyInfo.labels.primary}
     </Button>
@@ -338,6 +346,7 @@ class KeyGroupListUnwrapped extends React.Component {
                 selected={layer == index}
                 key={index}
                 onKeySelect={onKeySelect}
+                withModifiers={withModifiers}
               />
             );
           });
@@ -396,6 +405,7 @@ class KeyGroupListUnwrapped extends React.Component {
           selected={selected || key.code == keyCode}
           onKeySelect={onKeySelect}
           mask={mask}
+          withModifiers={withModifiers}
         />
       );
     });

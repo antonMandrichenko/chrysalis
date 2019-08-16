@@ -76,7 +76,9 @@ const styles = theme => ({
   }
 });
 
-import { baseKeyCodeTable } from "@chrysalis-api/keymap";
+import { baseKeyCodeTable, KeymapDB } from "@chrysalis-api/keymap";
+
+const keymap = new KeymapDB();
 
 const keyGroups = baseKeyCodeTable
   .map(item => {
@@ -151,7 +153,14 @@ class KeyGroupCodeUnwrapped extends React.Component {
 const KeyGroupCode = withStyles(styles)(KeyGroupCodeUnwrapped);
 
 const KeyButton = withStyles(styles)(props => {
-  const { keyInfo, selected, onKeySelect, disabled, mask } = props;
+  const {
+    keyInfo,
+    selected,
+    onKeySelect,
+    disabled,
+    mask,
+    withModifiers
+  } = props;
 
   return (
     <Button
@@ -161,7 +170,11 @@ const KeyButton = withStyles(styles)(props => {
       onClick={() => onKeySelect(keyInfo.code | mask)}
       disabled={disabled}
     >
-      {keyInfo.labels.verbose || keyInfo.labels.primary}
+      {(keyInfo.labels.top &&
+        withModifiers &&
+        `${keyInfo.labels.top} ${keyInfo.labels.primary}`) ||
+        keyInfo.labels.verbose ||
+        keyInfo.labels.primary}
     </Button>
   );
 });
@@ -333,6 +346,7 @@ class KeyGroupListUnwrapped extends React.Component {
                 selected={layer == index}
                 key={index}
                 onKeySelect={onKeySelect}
+                withModifiers={withModifiers}
               />
             );
           });
@@ -361,14 +375,37 @@ class KeyGroupListUnwrapped extends React.Component {
     const itemList = items || baseKeyCodeTable[group].keys;
 
     const keyList = itemList.map(key => {
+      let selected = false;
+      const delta = selectedKey - 49169;
+      const selectedKeyNumber = delta - 256 * Math.floor(delta / 256);
+      const isWithMask = mask !== 0 && mask + key.code == selectedKey;
+      const isModifierWhenHeld =
+        selectedKey >= 49169 &&
+        selectedKey <= 51217 &&
+        key.code == selectedKeyNumber;
+
+      if (isWithMask || isModifierWhenHeld) {
+        if (keymap.keymapCodeTable[selectedKey]) {
+          key = keymap.keymapCodeTable[selectedKey];
+        } else {
+          key = {
+            code: selectedKey,
+            labels: {
+              primary: `#${selectedKey}`
+            }
+          };
+        }
+        selected = true;
+      }
       return (
         <KeyButton
           key={key.code}
           disabled={disabled}
           keyInfo={key}
-          selected={key.code == keyCode}
+          selected={selected || key.code == keyCode}
           onKeySelect={onKeySelect}
           mask={mask}
+          withModifiers={withModifiers}
         />
       );
     });

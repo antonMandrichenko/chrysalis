@@ -43,7 +43,7 @@ const styles = () => ({
     left: "50%",
     transform: "translateX(-50%)",
     flexGrow: 1,
-    zIndex: 5,
+    zIndex: 6,
     height: 580,
     overflowY: "scroll",
     backgroundColor: "#f5f5f5",
@@ -54,7 +54,7 @@ const styles = () => ({
     bottom: 550,
     right: 40,
     cursor: "pointer",
-    zIndex: 6
+    zIndex: 7
   }
 });
 

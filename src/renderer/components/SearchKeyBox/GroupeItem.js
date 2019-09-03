@@ -20,10 +20,53 @@
 import React from "react";
 
 import { withStyles } from "@material-ui/core/styles";
-
+import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+
+/*GroupeItem.propTypes = {
+  groupName: PropTypes.string.isRequired,
+  keys: PropTypes.array.isRequired,
+  keySelect: PropTypes.func.isRequired,
+  selectedKeyCode: PropTypes.number.isRequired
+};*/
+
+const styles = theme => ({
+  wrapper: {
+    border: 1,
+    padding: 5,
+    marginBottom: 15
+  },
+  background: {
+    backgroundColor: "darkgray"
+  },
+  key: {
+    color: "gold"
+  },
+  root: {
+    minHeight: 200,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "flex-start",
+    alignContent: "flex-start"
+  },
+  button: {
+    margin: 5,
+    padding: 1,
+    color: "#f1f1f1",
+    borderColor: "#darkgray"
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    textAlign: "left",
+    color: "#ccdad1bd",
+    marginBottom: 2,
+    font: "400 17px Arial",
+    backgroundColor: "#4e4e4e"
+  }
+});
 
 /**
  * Reactjs functional component that create color button
@@ -33,34 +76,6 @@ import Button from "@material-ui/core/Button";
  * @param {function} onKeySelect Callback function from Editor component that change key's value on the keyboard layout
  * @param {number} selectedKeyCode Property - new key's code to wich we can change keyboard layout, we highlight it in red.
  */
-
-const styles = theme => ({
-  wrapper: {
-    border: 1,
-    padding: 5,
-    marginBottom: 15
-  },
-  key: {
-    boxSizing: "border-box"
-  },
-  root: {
-    flexGrow: 1,
-    height: 200,
-
-    overflowX: "hidden"
-  },
-  button: {
-    margin: theme.spacing.unit * 1,
-    padding: 1
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: "center",
-    color: "#000000bd",
-    marginBottom: 15,
-    font: "400 13.3333px Arial"
-  }
-});
 
 const GroupeItem = props => {
   const { classes, groupName, keys, keySelect, selectedKeyCode } = props;
@@ -98,13 +113,15 @@ const GroupeItem = props => {
     );
   });
   return (
-    <Grid item md={3} sm={6} className={classes.wrapper}>
-      <Paper className={classes.paper} xs={12}>
-        {groupName}
+    <Grid item md={4} sm={6} className={classes.wrapper}>
+      <Paper className={classes.background}>
+        <Paper className={classes.paper} xs={12}>
+          {groupName}
+        </Paper>
+        <Grid container className={classes.root}>
+          {keyMap}
+        </Grid>
       </Paper>
-      <Grid container className={classes.root} spacing={2}>
-        {keyMap}
-      </Grid>
     </Grid>
   );
 };

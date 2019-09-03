@@ -20,7 +20,7 @@
 import React from "react";
 
 import { withStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
+/*import PropTypes from "prop-types";*/
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
@@ -39,23 +39,21 @@ const styles = theme => ({
     marginBottom: 15
   },
   background: {
-    backgroundColor: "darkgray"
+    backgroundColor: "lavender"
   },
-  key: {
-    color: "gold"
-  },
+  key: {},
   root: {
-    minHeight: 200,
     display: "flex",
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",
-    alignContent: "flex-start"
+    alignContent: "flex-start",
+    alignSelf: "stretch"
   },
   button: {
-    margin: 5,
+    margin: 3,
     padding: 1,
-    color: "#f1f1f1",
+    color: "darkgray",
     borderColor: "#darkgray"
   },
   paper: {

@@ -20,7 +20,7 @@
 import React, { Component } from "react";
 
 import { withStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
+/*import PropTypes from "prop-types";*/
 import Grid from "@material-ui/core/Grid";
 import CloseIcon from "@material-ui/icons/Close";
 
@@ -43,6 +43,7 @@ const styles = () => ({
     left: "50%",
     transform: "translateX(-50%)",
     flexGrow: 1,
+    alignItems: "stretch",
     zIndex: 6,
     height: 580,
     overflowY: "scroll",

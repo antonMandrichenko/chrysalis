@@ -45,14 +45,15 @@ const styles = () => ({
     flexGrow: 1,
     alignItems: "stretch",
     zIndex: 6,
-    height: 580,
+    height: "85vh",
+    width: "80vw",
     overflowY: "scroll",
     backgroundColor: "#f5f5f5",
     boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)"
   },
   close: {
     position: "fixed",
-    bottom: 550,
+    bottom: "82vh",
     right: 40,
     cursor: "pointer",
     zIndex: 7
@@ -98,7 +99,7 @@ class SearchKeyBox extends Component {
     return (
       <div className={classes.wrapper}>
         <CloseIcon className={classes.close} onClick={onSettingClose} />
-        <Grid container className={classes.root} spacing={8} sm={10}>
+        <Grid container className={classes.root} spacing={8}>
           {groupeList}
         </Grid>
       </div>

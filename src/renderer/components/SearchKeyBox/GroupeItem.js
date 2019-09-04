@@ -39,16 +39,13 @@ const styles = theme => ({
     marginBottom: 15
   },
   background: {
-    backgroundColor: "lavender"
+    backgroundColor: "lavender",
+    height: "100%"
   },
   key: {},
   root: {
     display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "flex-start",
-    alignContent: "flex-start",
-    alignSelf: "stretch"
+    justifyСontent: "space-evenly"
   },
   button: {
     margin: 3,
@@ -97,6 +94,7 @@ const GroupeItem = props => {
         item
         md={3}
         className={classes.key}
+        alignContent="center"
         onClick={() => keySelect(groupName, code)}
       >
         <Button

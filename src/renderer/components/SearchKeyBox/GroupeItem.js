@@ -93,8 +93,8 @@ const GroupeItem = props => {
         id={code}
         item
         md={3}
+        lg={2}
         className={classes.key}
-        alignContent="center"
         onClick={() => keySelect(groupName, code)}
       >
         <Button

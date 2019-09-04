@@ -500,7 +500,7 @@ class KeySelector extends React.Component {
 
   render() {
     const { classes, currentKeyCode, disabled } = this.props;
-    const { showPopap, selectedGroup, actualKeycode } = this.state;
+    const { selectedGroup, actualKeycode } = this.state;
     let groupIndex = selectedGroup,
       keyCode = currentKeyCode;
 
@@ -531,10 +531,8 @@ class KeySelector extends React.Component {
     return (
       <Paper className={classes.root}>
         <SearchKeyBox
-          showPopap={showPopap}
           onKeySelect={this.onKeySelect}
           currentKeyCode={actualKeycode}
-          onSettingClose={this.onSettingClose}
         />
         <div className={classes.keygroup}>
           <KeyGroup

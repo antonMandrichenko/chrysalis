@@ -14,13 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This is Reactjs functional component that show us list of groupe name of keys
- */
 import React, { Component } from "react";
 
 import { withStyles } from "@material-ui/core/styles";
-/*import PropTypes from "prop-types";*/
+import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Fab from "@material-ui/core/Fab";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -32,13 +29,6 @@ import Fade from "@material-ui/core/Fade";
 import { baseKeyCodeTable } from "@chrysalis-api/keymap";
 
 import GroupItem from "./GroupItem";
-
-/*SearchKeyBox.propTypes = {
-  showPopap: PropTypes.bool.isRequired,
-  onKeySelect: PropTypes.func.isRequired,
-  currentKeyCode: PropTypes.number.isRequired,
-  onSettingClose: PropTypes.func.isRequired
-};*/
 
 const styles = theme => ({
   modal: {
@@ -72,47 +62,53 @@ const styles = theme => ({
 });
 
 /**
- * Reactjs functional component that create color button
+ * Reactjs component that creates menu for choise key from all keys list
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
- * @param {function} onKeySelect Callback function from Editor component that change key's value on the keyboard layout
- * @param {number} currentKeyCode Property that show us current key's value adn code that could be changed on the keyboard layout
- * @param {string} selectedGroupe New key's groupe
- * @param {number} selectedKeyCode New key's code to wich we can change keyboard layout
- * @param {object} baseKeyCodeTable Imported module - it is Data Base of keys
+ * @param {function} onKeySelect Callback function from Editor component that changes key's value on the keyboard layout and closes modal window
+ * @param {number} currentKeyCode Property that shows current key's value
  */
 
 class SearchKeyBox extends Component {
   state = {
-    selectedGroupe: null,
     selectedKeyCode: this.props.currentKeyCode,
     open: false
   };
 
+  /**
+   * Opens modal window with keys list
+   */
   handleOpen = () => {
     this.setState({
       open: true
     });
   };
 
+  /**
+   * Closes modal window with keys list
+   */
   handleClose = () => {
     this.setState({
       open: false
     });
   };
 
-  keySelect = (groupName, code) => {
-    this.setState(state => ({
-      selectedGroupe: (state.selectedGroupe = groupName),
-      selectedKeyCode: (state.selectedKeyCode = code),
+  /**
+   * Changes state of component and calls function from Editor
+   * @param {number} code Unique number from keymap database
+   */
+  keySelect = code => {
+    this.setState({
+      selectedKeyCode: code,
       open: false
-    }));
+    });
     this.props.onKeySelect(code);
   };
 
   render() {
     const { classes } = this.props;
-    const { open } = this.state;
+    const { open, selectedKeyCode } = this.state;
     let isLastItem = false;
+    
     const bigGroupInStart = baseKeyCodeTable.reduce((newArray, group) => {
       if (group.keys.length > 35) {
         isLastItem = true;
@@ -132,11 +128,11 @@ class SearchKeyBox extends Component {
 
     const groupeList = bigGroupInStart.map((group, index) => (
       <GroupItem
-        key={group.groupName.toString()}
+        key={group.groupName}
         groupName={group.groupName}
         keys={group.keys}
         keySelect={this.keySelect}
-        selectedKeyCode={this.state.selectedKeyCode}
+        selectedKeyCode={selectedKeyCode}
         numderContGrids={bigGroupInStart.length === index + 1 ? 8 : 4}
         numderLgItemsGrids={bigGroupInStart.length === index + 1 ? 1 : 2}
         numderMdItemsGrids={bigGroupInStart.length === index + 1 ? 1 : 2}
@@ -180,5 +176,10 @@ class SearchKeyBox extends Component {
     );
   }
 }
+
+SearchKeyBox.propTypes = {
+  onKeySelect: PropTypes.func.isRequired,
+  currentKeyCode: PropTypes.number.isRequired
+};
 
 export default withStyles(styles)(SearchKeyBox);

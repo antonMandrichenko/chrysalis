@@ -101,7 +101,7 @@ const GroupeItem = props => {
             md={numderMdItemsGrids}
             lg={numderLgItemsGrids}
             className={classes.key}
-            onClick={() => keySelect(groupName, code)}
+            onClick={() => keySelect(code)}
           >
             <Button
               variant={code === selectedKeyCode ? "contained" : "outlined"}

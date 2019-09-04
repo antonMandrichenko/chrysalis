@@ -36,13 +36,12 @@ const styles = theme => ({
   wrapper: {
     border: 1,
     padding: 5,
-    marginBottom: 15
+    marginBottom: 3
   },
   background: {
     backgroundColor: "lavender",
     height: "100%"
   },
-  key: {},
   root: {
     display: "flex",
     justifyСontent: "space-evenly"
@@ -50,15 +49,19 @@ const styles = theme => ({
   button: {
     margin: 3,
     padding: 1,
-    color: "darkgray",
-    borderColor: "#darkgray"
+    minWidth: "50px",
+    width: "90%",
+    color: "#676363",
+    borderColor: "#darkgray",
+    fontSize: "0.7rem",
+    fontWeight: 900
   },
   paper: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing.unit,
     textAlign: "left",
     color: "#ccdad1bd",
     marginBottom: 2,
-    font: "400 17px Arial",
+    font: "400 15px Arial",
     backgroundColor: "#4e4e4e"
   }
 });
@@ -73,43 +76,47 @@ const styles = theme => ({
  */
 
 const GroupeItem = props => {
-  const { classes, groupName, keys, keySelect, selectedKeyCode } = props;
+  const {
+    classes,
+    groupName,
+    keys,
+    keySelect,
+    selectedKeyCode,
+    numderContGrids,
+    numderLgItemsGrids,
+    numderMdItemsGrids
+  } = props;
 
   const keyMap = keys.map(key => {
     const {
       code,
       labels: { primary }
     } = key;
-    if (!primary) return null;
-    let colorBtn = "",
-      variantBtn = "outlined";
-    if (code === selectedKeyCode) {
-      colorBtn = "secondary";
-      variantBtn = "contained";
-    }
     return (
-      <Grid
-        key={code}
-        id={code}
-        item
-        md={3}
-        lg={2}
-        className={classes.key}
-        onClick={() => keySelect(groupName, code)}
-      >
-        <Button
-          variant={variantBtn}
-          color={colorBtn}
-          className={classes.button}
-          xs
-        >
-          {primary}
-        </Button>
-      </Grid>
+      <React.Fragment key={code}>
+        {primary ? (
+          <Grid
+            id={code}
+            item
+            md={numderMdItemsGrids}
+            lg={numderLgItemsGrids}
+            className={classes.key}
+            onClick={() => keySelect(groupName, code)}
+          >
+            <Button
+              variant={code === selectedKeyCode ? "contained" : "outlined"}
+              color={code === selectedKeyCode ? "secondary" : null}
+              className={classes.button}
+            >
+              {primary}
+            </Button>
+          </Grid>
+        ) : null}
+      </React.Fragment>
     );
   });
   return (
-    <Grid item md={4} sm={6} className={classes.wrapper}>
+    <Grid item md={numderContGrids} className={classes.wrapper}>
       <Paper className={classes.background}>
         <Paper className={classes.paper} xs={12}>
           {groupName}

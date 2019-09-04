@@ -108,7 +108,7 @@ class SearchKeyBox extends Component {
     const { classes } = this.props;
     const { open, selectedKeyCode } = this.state;
     let isLastItem = false;
-    
+
     const bigGroupInStart = baseKeyCodeTable.reduce((newArray, group) => {
       if (group.keys.length > 35) {
         isLastItem = true;

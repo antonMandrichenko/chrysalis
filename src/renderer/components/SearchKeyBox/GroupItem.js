@@ -20,17 +20,20 @@
 import React from "react";
 
 import { withStyles } from "@material-ui/core/styles";
-/*import PropTypes from "prop-types";*/
+import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 
-/*GroupeItem.propTypes = {
+GroupeItem.propTypes = {
+  classes: PropTypes.object.isRequired,
   groupName: PropTypes.string.isRequired,
-  keys: PropTypes.array.isRequired,
   keySelect: PropTypes.func.isRequired,
-  selectedKeyCode: PropTypes.number.isRequired
-};*/
+  selectedKeyCode: PropTypes.number.isRequired,
+  numderContGrids: PropTypes.number.isRequired,
+  numderLgItemsGrids: PropTypes.number.isRequired,
+  numderMdItemsGrids: PropTypes.number.isRequired
+};
 
 const styles = theme => ({
   wrapper: {
@@ -70,12 +73,14 @@ const styles = theme => ({
  * Reactjs functional component that create color button
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {string} groupName Property that get name of keys groupe
- * @param {array} keys Property array of kay value and key code of groupName
- * @param {function} onKeySelect Callback function from Editor component that change key's value on the keyboard layout
- * @param {number} selectedKeyCode Property - new key's code to wich we can change keyboard layout, we highlight it in red.
+ * @param {function} keySelect Callback function from Editor component that change key's value on the keyboard layout
+ * @param {number} selectedKeyCode Property - new key's code we can change keyboard layout (highlight it in red).
+ * @param {number} numderContGrids Defines the number of grids the container grid component is going to use.
+ * @param {number} numderLgItemsGrids Defines the number of grids the item grid component is going to use in lg breakpoints.
+ * @param {number} numderMdItemsGrids Defines the number of grids the item grid component is going to use in md breakpoints.
  */
 
-const GroupeItem = props => {
+function GroupeItem(props) {
   const {
     classes,
     groupName,
@@ -127,6 +132,6 @@ const GroupeItem = props => {
       </Paper>
     </Grid>
   );
-};
+}
 
 export default withStyles(styles)(GroupeItem);

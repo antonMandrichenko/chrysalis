@@ -23,8 +23,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import Button from "@material-ui/core/Button";
-import Fab from "@material-ui/core/Fab";
-import SettingsIcon from "@material-ui/icons/Settings";
+// import Fab from "@material-ui/core/Fab";
+// import SettingsIcon from "@material-ui/icons/Settings";
 import Paper from "@material-ui/core/Paper";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
@@ -70,12 +70,6 @@ const styles = theme => ({
   },
   checkboxRoot: {
     padding: "12px 4px 12px 12px"
-  },
-  margin: {
-    margin: 15
-  },
-  extendedIcon: {
-    marginRight: theme.spacing.unit * 1
   }
 });
 
@@ -477,23 +471,11 @@ class KeySelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showPopap: false,
+      anchorEl: null,
       selectedGroup: -1,
       actualKeycode: props.currentKeyCode
     };
   }
-
-  onSettingOpen = () => {
-    this.setState(state => ({
-      showPopap: (state.showPopap = true)
-    }));
-  };
-
-  onSettingClose = () => {
-    this.setState(state => ({
-      showPopap: (state.showPopap = false)
-    }));
-  };
 
   UNSAFE_componentWillReceiveProps = nextProps => {
     this.setState({
@@ -550,16 +532,6 @@ class KeySelector extends React.Component {
     }
     return (
       <Paper className={classes.root}>
-        <Fab
-          variant="extended"
-          color="primary"
-          aria-label="add"
-          className={classes.margin}
-          onClick={this.onSettingOpen}
-        >
-          <SettingsIcon className={classes.extendedIcon} />
-          Setting
-        </Fab>
         <SearchKeyBox
           showPopap={showPopap}
           onKeySelect={this.onKeySelect}

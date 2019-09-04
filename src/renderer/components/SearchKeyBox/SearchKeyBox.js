@@ -1,6 +1,6 @@
 // -*- mode: js-jsx -*-
 /* Chrysalis -- Kaleidoscope Command Center
- * Copyright (C) 2018, 2019  Keyboardio, Inc.
+ * Copyright (C) 2019  Keyboardio, Inc.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -31,7 +31,7 @@ import Fade from "@material-ui/core/Fade";
 
 import { baseKeyCodeTable } from "@chrysalis-api/keymap";
 
-import GroupeItem from "./GroupeItem";
+import GroupItem from "./GroupItem";
 
 /*SearchKeyBox.propTypes = {
   showPopap: PropTypes.bool.isRequired,
@@ -131,7 +131,7 @@ class SearchKeyBox extends Component {
     }, []);
 
     const groupeList = bigGroupInStart.map((group, index) => (
-      <GroupeItem
+      <GroupItem
         key={group.groupName.toString()}
         groupName={group.groupName}
         keys={group.keys}

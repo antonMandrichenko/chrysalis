@@ -17,17 +17,12 @@
 
 import React from "react";
 
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import ArrowDropUpIcon from "@material-ui/icons/ArrowDropUp";
-import Button from "@material-ui/core/Button";
+import SearchKeyBox from "../../components/SearchKeyBox";
+
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
+import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
@@ -528,10 +523,6 @@ class KeySelector extends React.Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  onMenuClose = () => {
-    this.setState({ anchorEl: null });
-  };
-
   onMenuItemClick = (_, index) => {
     this.setState({
       anchorEl: null,
@@ -546,8 +537,7 @@ class KeySelector extends React.Component {
 
   render() {
     const { classes, currentKeyCode, disabled } = this.props;
-    const { anchorEl, selectedGroup, actualKeycode } = this.state;
-
+    const { selectedGroup, actualKeycode } = this.state;
     let groupIndex = selectedGroup,
       keyCode = currentKeyCode;
 
@@ -575,48 +565,12 @@ class KeySelector extends React.Component {
         }
       });
     }
-
-    const keyGroupItems = keyGroups.map((group, index) => {
-      return (
-        <MenuItem
-          key={group}
-          selected={index == groupIndex}
-          onClick={event => this.onMenuItemClick(event, index)}
-        >
-          {i18n.editor.groups[group] || group}
-        </MenuItem>
-      );
-    });
-
     return (
       <Paper className={classes.root}>
-        <List className={classes.type}>
-          <ListItem button className={classes.typeSelector} disabled={disabled}>
-            <ListItemText
-              onClick={this.onListItemClick}
-              primary={
-                <span>
-                  {i18n.editor.keyType}
-                  <span style={{ float: "right" }}>
-                    {anchorEl ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
-                  </span>
-                </span>
-              }
-              secondary={
-                i18n.editor.groups[keyGroups[groupIndex]] ||
-                keyGroups[groupIndex]
-              }
-            />
-          </ListItem>
-        </List>
-        <Menu
-          disabled
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.onMenuClose}
-        >
-          {keyGroupItems}
-        </Menu>
+        <SearchKeyBox
+          onKeySelect={this.onKeySelect}
+          currentKeyCode={actualKeycode}
+        />
         <div className={classes.keygroup}>
           <KeyGroup
             disabled={disabled}

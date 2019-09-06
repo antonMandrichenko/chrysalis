@@ -42,11 +42,10 @@ const styles = theme => ({
     marginBottom: 3
   },
   background: {
-    height: "95%",
+    height: "100%",
     margin: "0 5px",
     [theme.breakpoints.down("md")]: {
-      paddingBottom: 8,
-      height: "100%"
+      paddingBottom: 8
     }
   },
   root: {

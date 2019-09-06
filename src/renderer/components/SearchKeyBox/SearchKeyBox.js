@@ -47,6 +47,7 @@ const styles = theme => ({
     backgroundColor: "#f5f5f5",
     boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)",
     padding: "13px 8px 0",
+    overflowY: "auto",
     [theme.breakpoints.down("md")]: {
       overflowY: "scroll"
     }

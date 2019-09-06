@@ -23,6 +23,13 @@ const styles = () => ({
   }
 });
 
+/**
+ * Reactjs functional component that creates blocks with two or other keys group
+ * @param {object} classes Property that sets up CSS classes that adding to HTML elements
+ * @param {array} groups Keys groups what will render
+ * @param {function} renderKeyMap Callback function from GroupItem component that renders key buttons in grid container
+ * @param {object} classButton className of buttons from parent component
+ */
 function MultipleKeysGroup(props) {
   const { groups, renderKeyMap, classes, classButton } = props;
   return (

@@ -93,6 +93,12 @@ function GroupItem(props) {
     numderMdItemsGrids
   } = props;
 
+  /**
+   * Renders key buttons
+   * @param {object} group Keys group
+   * @param {number} md Type of md prop
+   * @param {number} lg Type of lg prop
+   */
   const keyMap = (group, md, lg) =>
     group.keys.map(key => {
       const {
@@ -123,11 +129,19 @@ function GroupItem(props) {
       );
     });
 
+  /**
+   * Renders key buttons in grid container
+   * @param {object} group Keys group
+   * @param {number} md Type of md prop
+   * @param {number} lg Type of lg prop
+   * @param {string} className Class name for grid container
+   */
   const renderKeyMap = (group, md, lg, className) => (
     <Grid container className={className}>
       {keyMap(group, md, lg)}
     </Grid>
   );
+  
   return (
     <Grid item md={numderContGrids} className={classes.wrapper}>
       <Paper className={classes.background}>

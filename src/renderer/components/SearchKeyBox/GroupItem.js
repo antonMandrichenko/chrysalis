@@ -24,10 +24,11 @@ import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import MultipleKeysGroup from "./MultipleKeysGroup";
 
-GroupeItem.propTypes = {
+GroupItem.propTypes = {
   classes: PropTypes.object.isRequired,
-  groupName: PropTypes.string.isRequired,
+  group: PropTypes.object.isRequired,
   keySelect: PropTypes.func.isRequired,
   selectedKeyCode: PropTypes.number.isRequired,
   numderContGrids: PropTypes.number.isRequired,
@@ -38,23 +39,22 @@ GroupeItem.propTypes = {
 const styles = theme => ({
   wrapper: {
     border: 1,
-    padding: 5,
     marginBottom: 3
   },
   background: {
-    backgroundColor: "lavender",
-    height: "100%"
+    height: "95%",
+    margin: "0 5px"
   },
   root: {
     display: "flex",
-    justifyСontent: "space-evenly"
+    justifyСontent: "space-evenly",
+    padding: "0 2px"
   },
   button: {
     margin: 3,
     padding: 1,
     minWidth: "50px",
     width: "90%",
-    color: "#676363",
     borderColor: "#darkgray",
     fontSize: "0.7rem",
     fontWeight: 900
@@ -62,76 +62,97 @@ const styles = theme => ({
   paper: {
     padding: theme.spacing.unit,
     textAlign: "left",
-    color: "#ccdad1bd",
-    marginBottom: 2,
-    font: "400 15px Arial",
-    backgroundColor: "#4e4e4e"
+    color: "black",
+    marginBottom: 4,
+    font: "800 15px Arial",
+    backgroundColor: "#c7c4c496"
   }
 });
 
 /**
  * Reactjs functional component that create color button
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
- * @param {string} groupName Property that get name of keys groupe
+ * @param {object} group Keys group
  * @param {function} keySelect Callback function from Editor component that change key's value on the keyboard layout
+ * @param {boolean} isUnited Is multiple group
  * @param {number} selectedKeyCode Property - new key's code we can change keyboard layout (highlight it in red).
  * @param {number} numderContGrids Defines the number of grids the container grid component is going to use.
  * @param {number} numderLgItemsGrids Defines the number of grids the item grid component is going to use in lg breakpoints.
  * @param {number} numderMdItemsGrids Defines the number of grids the item grid component is going to use in md breakpoints.
  */
 
-function GroupeItem(props) {
+function GroupItem(props) {
   const {
     classes,
-    groupName,
-    keys,
+    group,
     keySelect,
+    isUnited,
     selectedKeyCode,
     numderContGrids,
     numderLgItemsGrids,
     numderMdItemsGrids
   } = props;
 
-  const keyMap = keys.map(key => {
-    const {
-      code,
-      labels: { primary }
-    } = key;
-    return (
-      <React.Fragment key={code}>
-        {primary ? (
-          <Grid
-            id={code}
-            item
-            md={numderMdItemsGrids}
-            lg={numderLgItemsGrids}
-            className={classes.key}
-            onClick={() => keySelect(code)}
-          >
-            <Button
-              variant={code === selectedKeyCode ? "contained" : "outlined"}
-              color={code === selectedKeyCode ? "secondary" : null}
-              className={classes.button}
+  const keyMap = (group, md, lg) =>
+    group.keys.map(key => {
+      const {
+        code,
+        labels: { primary }
+      } = key;
+      return (
+        <React.Fragment key={code}>
+          {primary ? (
+            <Grid
+              id={code}
+              item
+              md={md}
+              lg={lg}
+              className={classes.key}
+              onClick={() => keySelect(code)}
             >
-              {primary}
-            </Button>
-          </Grid>
-        ) : null}
-      </React.Fragment>
-    );
-  });
+              <Button
+                variant={code === selectedKeyCode ? "contained" : "outlined"}
+                color={code === selectedKeyCode ? "primary" : null}
+                className={classes.button}
+              >
+                {primary}
+              </Button>
+            </Grid>
+          ) : null}
+        </React.Fragment>
+      );
+    });
+
+  const renderKeyMap = (group, md, lg, className) => (
+    <Grid container className={className}>
+      {keyMap(group, md, lg)}
+    </Grid>
+  );
   return (
     <Grid item md={numderContGrids} className={classes.wrapper}>
       <Paper className={classes.background}>
         <Paper className={classes.paper} xs={12}>
-          {groupName}
+          {group.groupName.toUpperCase()}
         </Paper>
-        <Grid container className={classes.root}>
-          {keyMap}
-        </Grid>
+        {isUnited ? (
+          <MultipleKeysGroup
+            groups={group.innerGroup}
+            renderKeyMap={renderKeyMap}
+            classButton={classes.button}
+          />
+        ) : (
+          <React.Fragment>
+            {renderKeyMap(
+              group,
+              numderMdItemsGrids,
+              numderLgItemsGrids,
+              classes.root
+            )}
+          </React.Fragment>
+        )}
       </Paper>
     </Grid>
   );
 }
 
-export default withStyles(styles)(GroupeItem);
+export default withStyles(styles)(GroupItem);

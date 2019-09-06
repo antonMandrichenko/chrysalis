@@ -20,7 +20,7 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import Fab from "@material-ui/core/Fab";
-import SettingsIcon from "@material-ui/icons/Settings";
+import KeyboardIcon from "@material-ui/icons/Keyboard";
 import CloseIcon from "@material-ui/icons/Close";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -44,9 +44,9 @@ const styles = theme => ({
   root: {
     width: "100%",
     height: "100%",
-    overflowY: "scroll",
     backgroundColor: "#f5f5f5",
-    boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)"
+    boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)",
+    padding: "13px 8px 0"
   },
   close: {
     position: "absolute",
@@ -54,12 +54,46 @@ const styles = theme => ({
     cursor: "pointer"
   },
   margin: {
-    margin: 15
+    margin: "15px 10px",
+    width: 170
   },
   extendedIcon: {
     marginRight: theme.spacing.unit * 1
   }
 });
+
+const orderArray = [
+  { group: "Letters", isUnite: false },
+  { group: "Digits & Spacing", isUnite: true },
+  { group: "Fx keys", isUnite: false },
+  { group: "Punctuation & special letters", isUnite: false },
+  { group: "Navigation & Miscellaneous", isUnite: true },
+  { group: "Number pud", isUnite: false },
+  { group: "Modifiers", isUnite: false },
+  { group: "Shift to layer", isUnite: false },
+  { group: "Lock layer", isUnite: false },
+  { group: "Media", isUnite: false },
+  { group: "One shot modifiers", isUnite: false },
+  { group: "Led effects", isUnite: false },
+  { group: "One shot layers", isUnite: false },
+  { group: "Leader", isUnite: false },
+  { group: "Space cadet", isUnite: false },
+  { group: "Mouse configuration options", isUnite: true },
+  { group: "Steno", isUnite: false }
+];
+
+const orederArrayWithKeys = orderArray.map(item =>
+  !item.isUnite
+    ? baseKeyCodeTable.filter(group => item.group === group.groupName)[0]
+    : {
+        groupName: item.group,
+        innerGroup: baseKeyCodeTable.filter(group =>
+          item.group.includes(
+            group.groupName.slice(0, group.groupName.indexOf(" "))
+          )
+        )
+      }
+);
 
 /**
  * Reactjs component that creates menu for choise key from all keys list
@@ -107,35 +141,17 @@ class SearchKeyBox extends Component {
   render() {
     const { classes } = this.props;
     const { open, selectedKeyCode } = this.state;
-    let isLastItem = false;
 
-    const bigGroupInStart = baseKeyCodeTable.reduce((newArray, group) => {
-      if (group.keys.length > 35) {
-        isLastItem = true;
-        return [...newArray, group];
-      }
-      if (group.keys.length > 15 && group.keys.length <= 35) {
-        return [group, ...newArray];
-      } else {
-        if (isLastItem) {
-          let lastItem = newArray.pop();
-          return [...newArray, group, lastItem];
-        } else {
-          return [...newArray, group];
-        }
-      }
-    }, []);
-
-    const groupeList = bigGroupInStart.map((group, index) => (
+    const groupeList = orederArrayWithKeys.map((group, index) => (
       <GroupItem
         key={group.groupName}
-        groupName={group.groupName}
-        keys={group.keys}
+        group={group}
         keySelect={this.keySelect}
+        isUnited={Boolean(group.innerGroup)}
         selectedKeyCode={selectedKeyCode}
-        numderContGrids={bigGroupInStart.length === index + 1 ? 8 : 4}
-        numderLgItemsGrids={bigGroupInStart.length === index + 1 ? 1 : 2}
-        numderMdItemsGrids={bigGroupInStart.length === index + 1 ? 1 : 2}
+        numderContGrids={orederArrayWithKeys.length === index + 1 ? 8 : 4}
+        numderLgItemsGrids={orederArrayWithKeys.length === index + 1 ? 1 : 2}
+        numderMdItemsGrids={orederArrayWithKeys.length === index + 1 ? 1 : 2}
       />
     ));
 
@@ -148,8 +164,8 @@ class SearchKeyBox extends Component {
           className={classes.margin}
           onClick={this.handleOpen}
         >
-          <SettingsIcon className={classes.extendedIcon} />
-          Setting
+          <KeyboardIcon className={classes.extendedIcon} />
+          KEYCUP VALUE
         </Fab>
         <Modal
           aria-labelledby="transition-modal-title"

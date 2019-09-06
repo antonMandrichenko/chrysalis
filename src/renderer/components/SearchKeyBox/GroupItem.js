@@ -43,7 +43,11 @@ const styles = theme => ({
   },
   background: {
     height: "95%",
-    margin: "0 5px"
+    margin: "0 5px",
+    [theme.breakpoints.down("md")]: {
+      paddingBottom: 8,
+      height: "100%"
+    }
   },
   root: {
     display: "flex",
@@ -141,9 +145,9 @@ function GroupItem(props) {
       {keyMap(group, md, lg)}
     </Grid>
   );
-  
+
   return (
-    <Grid item md={numderContGrids} className={classes.wrapper}>
+    <Grid item md={numderContGrids} sm={12} className={classes.wrapper}>
       <Paper className={classes.background}>
         <Paper className={classes.paper} xs={12}>
           {group.groupName.toUpperCase()}

@@ -46,7 +46,10 @@ const styles = theme => ({
     height: "100%",
     backgroundColor: "#f5f5f5",
     boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)",
-    padding: "13px 8px 0"
+    padding: "13px 8px 0",
+    [theme.breakpoints.down("md")]: {
+      overflowY: "scroll"
+    }
   },
   close: {
     position: "absolute",
@@ -151,7 +154,7 @@ class SearchKeyBox extends Component {
         selectedKeyCode={selectedKeyCode}
         numderContGrids={orederArrayWithKeys.length === index + 1 ? 8 : 4}
         numderLgItemsGrids={orederArrayWithKeys.length === index + 1 ? 1 : 2}
-        numderMdItemsGrids={orederArrayWithKeys.length === index + 1 ? 1 : 2}
+        numderMdItemsGrids={orederArrayWithKeys.length === index + 1 ? 2 : 3}
       />
     ));
 

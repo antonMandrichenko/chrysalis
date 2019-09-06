@@ -38,7 +38,7 @@ function MultipleKeysGroup(props) {
         <React.Fragment key={group.groupName}>
           {group.groupName.includes("Mouse") ? (
             <React.Fragment>
-              <Grid item xs={3} className={classes.itemName}>
+              <Grid item xs={3} sm={2} className={classes.itemName}>
                 <Button
                   variant="contained"
                   color="secondary"
@@ -52,13 +52,13 @@ function MultipleKeysGroup(props) {
                     .toUpperCase()}
                 </Button>
               </Grid>
-              <Grid item xs={9} className={classes.itemKeys}>
-                {renderKeyMap(group, 3, 3)}
+              <Grid item xs={9} sm={10} className={classes.itemKeys}>
+                {renderKeyMap(group, 4, 3)}
               </Grid>
             </React.Fragment>
           ) : (
             <Grid item xs={12}>
-              {renderKeyMap(group, 2, 2, classes.container)}
+              {renderKeyMap(group, 3, 2, classes.container)}
             </Grid>
           )}
         </React.Fragment>

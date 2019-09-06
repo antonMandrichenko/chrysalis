@@ -169,7 +169,7 @@ class SearchKeyBox extends Component {
           onClick={this.handleOpen}
         >
           <KeyboardIcon className={classes.extendedIcon} />
-          KEYCUP VALUE
+          Key config
         </Fab>
         <Modal
           aria-labelledby="transition-modal-title"

@@ -24,8 +24,6 @@ import KeyboardIcon from "@material-ui/icons/Keyboard";
 import CloseIcon from "@material-ui/icons/Close";
 import Modal from "@material-ui/core/Modal";
 
-import { baseKeyCodeTable } from "@chrysalis-api/keymap";
-
 import GroupItem from "./GroupItem";
 
 const styles = theme => ({
@@ -100,23 +98,6 @@ const orderArray = [
   { group: "Steno", isUnite: false, displayName: "Steno" }
 ];
 
-const orederArrayWithKeys = orderArray.map(item =>
-  !item.isUnite
-    ? {
-        ...baseKeyCodeTable.filter(group => item.group === group.groupName)[0],
-        displayName: item.displayName
-      }
-    : {
-        groupName: item.group,
-        displayName: item.displayName,
-        innerGroup: baseKeyCodeTable.filter(group =>
-          item.group.includes(
-            group.groupName.slice(0, group.groupName.indexOf(" "))
-          )
-        )
-      }
-);
-
 /**
  * Reactjs component that creates menu for choise key from all keys list
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
@@ -127,8 +108,38 @@ const orederArrayWithKeys = orderArray.map(item =>
 class SearchKeyBox extends Component {
   state = {
     selectedKeyCode: this.props.currentKeyCode,
-    open: false
+    open: false,
+    orderArrayWithKeys: []
   };
+
+  componentDidMount() {
+    this.setState({
+      orderArrayWithKeys: this.toOrderArrayWithKeys()
+    });
+  }
+
+  /**
+   * Creates array for render component
+   */
+  toOrderArrayWithKeys = () =>
+    orderArray.map(item =>
+      !item.isUnite
+        ? {
+            ...this.props.baseKeyCodeTable.filter(
+              group => item.group === group.groupName
+            )[0],
+            displayName: item.displayName
+          }
+        : {
+            groupName: item.group,
+            displayName: item.displayName,
+            innerGroup: this.props.baseKeyCodeTable.filter(group =>
+              item.group.includes(
+                group.groupName.slice(0, group.groupName.indexOf(" "))
+              )
+            )
+          }
+    );
 
   /**
    * Opens modal window with keys list
@@ -153,26 +164,23 @@ class SearchKeyBox extends Component {
    * @param {number} code Unique number from keymap database
    */
   keySelect = code => {
-    this.setState({
-      selectedKeyCode: code,
-      open: false
-    });
+    this.handleClose();
     this.props.onKeySelect(code);
   };
 
   render() {
-    const { classes } = this.props;
-    const { open, selectedKeyCode } = this.state;
-    const groupeList = orederArrayWithKeys.map((group, index) => (
+    const { classes, currentKeyCode } = this.props;
+    const { open, orderArrayWithKeys } = this.state;
+    const groupeList = orderArrayWithKeys.map((group, index) => (
       <GroupItem
         key={group.groupName}
         group={group}
         keySelect={this.keySelect}
         isUnited={Boolean(group.innerGroup)}
-        selectedKeyCode={selectedKeyCode}
-        numderContGrids={orederArrayWithKeys.length === index + 1 ? 8 : 4}
-        numderLgItemsGrids={orederArrayWithKeys.length === index + 1 ? 1 : 2}
-        numderMdItemsGrids={orederArrayWithKeys.length === index + 1 ? 2 : 3}
+        selectedKeyCode={currentKeyCode}
+        numderContGrids={orderArrayWithKeys.length === index + 1 ? 8 : 4}
+        numderLgItemsGrids={orderArrayWithKeys.length === index + 1 ? 1 : 2}
+        numderMdItemsGrids={orderArrayWithKeys.length === index + 1 ? 2 : 3}
       />
     ));
 
@@ -210,7 +218,8 @@ class SearchKeyBox extends Component {
 
 SearchKeyBox.propTypes = {
   onKeySelect: PropTypes.func.isRequired,
-  currentKeyCode: PropTypes.number.isRequired
+  currentKeyCode: PropTypes.number.isRequired,
+  baseKeyCodeTable: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(SearchKeyBox);

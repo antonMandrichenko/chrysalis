@@ -533,6 +533,7 @@ class KeySelector extends React.Component {
         <SearchKeyBox
           onKeySelect={this.onKeySelect}
           currentKeyCode={actualKeycode}
+          baseKeyCodeTable={baseKeyCodeTable}
         />
         <div className={classes.keygroup}>
           <KeyGroup

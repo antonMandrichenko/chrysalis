@@ -23,8 +23,6 @@ import Fab from "@material-ui/core/Fab";
 import KeyboardIcon from "@material-ui/icons/Keyboard";
 import CloseIcon from "@material-ui/icons/Close";
 import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
 
 import { baseKeyCodeTable } from "@chrysalis-api/keymap";
 
@@ -145,7 +143,6 @@ class SearchKeyBox extends Component {
   render() {
     const { classes } = this.props;
     const { open, selectedKeyCode } = this.state;
-
     const groupeList = orederArrayWithKeys.map((group, index) => (
       <GroupItem
         key={group.groupName}
@@ -178,19 +175,13 @@ class SearchKeyBox extends Component {
           open={open}
           onClose={this.handleClose}
           closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500
-          }}
         >
-          <Fade in={open}>
-            <div className={classes.wrapper}>
-              <CloseIcon className={classes.close} onClick={this.handleClose} />
-              <Grid container className={classes.root} spacing={8}>
-                {groupeList}
-              </Grid>
-            </div>
-          </Fade>
+          <div className={classes.wrapper}>
+            <CloseIcon className={classes.close} onClick={this.handleClose} />
+            <Grid container className={classes.root} spacing={8}>
+              {groupeList}
+            </Grid>
+          </div>
         </Modal>
       </React.Fragment>
     );

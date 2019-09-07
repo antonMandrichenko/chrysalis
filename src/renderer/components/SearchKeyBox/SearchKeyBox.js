@@ -107,7 +107,6 @@ const orderArray = [
 
 class SearchKeyBox extends Component {
   state = {
-    selectedKeyCode: this.props.currentKeyCode,
     open: false,
     orderArrayWithKeys: []
   };

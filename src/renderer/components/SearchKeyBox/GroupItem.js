@@ -149,7 +149,7 @@ function GroupItem(props) {
     <Grid item md={numderContGrids} sm={12} className={classes.wrapper}>
       <Paper className={classes.background}>
         <Paper className={classes.paper} xs={12}>
-          {group.groupName.toUpperCase()}
+          {group.displayName.toUpperCase()}
         </Paper>
         {isUnited ? (
           <MultipleKeysGroup

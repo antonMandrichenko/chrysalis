@@ -65,30 +65,50 @@ const styles = theme => ({
 });
 
 const orderArray = [
-  { group: "Letters", isUnite: false },
-  { group: "Digits & Spacing", isUnite: true },
-  { group: "Fx keys", isUnite: false },
-  { group: "Punctuation & special letters", isUnite: false },
-  { group: "Navigation & Miscellaneous", isUnite: true },
-  { group: "Number pud", isUnite: false },
-  { group: "Modifiers", isUnite: false },
-  { group: "Shift to layer", isUnite: false },
-  { group: "Lock layer", isUnite: false },
-  { group: "Media", isUnite: false },
-  { group: "One shot modifiers", isUnite: false },
-  { group: "Led effects", isUnite: false },
-  { group: "One shot layers", isUnite: false },
-  { group: "Leader", isUnite: false },
-  { group: "Space cadet", isUnite: false },
-  { group: "Mouse configuration options", isUnite: true },
-  { group: "Steno", isUnite: false }
+  { group: "Letters", isUnite: false, displayName: "Letters" },
+  { group: "Digits & Spacing", isUnite: true, displayName: "Digits & Spacing" },
+  { group: "Fx keys", isUnite: false, displayName: "Fx keys" },
+  {
+    group: "Punctuation",
+    isUnite: false,
+    displayName: "Punctuation & special letters"
+  },
+  {
+    group: "Navigation & Miscellaneous",
+    isUnite: true,
+    displayName: "Navigation & Miscellaneous"
+  },
+  { group: "Numpad", isUnite: false, displayName: "Number pud" },
+  { group: "Modifiers", isUnite: false, displayName: "Modifiers" },
+  { group: "Shift to layer", isUnite: false, displayName: "Shift to layer" },
+  { group: "Lock layer to", isUnite: false, displayName: "Lock layer" },
+  { group: "Media", isUnite: false, displayName: "Media" },
+  {
+    group: "OneShot modifiers",
+    isUnite: false,
+    displayName: "One shot modifiers"
+  },
+  { group: "LED Effect", isUnite: false, displayName: "Led effects" },
+  { group: "OneShot layers", isUnite: false, displayName: "One shot layers" },
+  { group: "Leader", isUnite: false, displayName: "Leader" },
+  { group: "SpaceCadet", isUnite: false, displayName: "Space cadet" },
+  {
+    group: "Mouse configuration options",
+    isUnite: true,
+    displayName: "Mouse configuration options"
+  },
+  { group: "Steno", isUnite: false, displayName: "Steno" }
 ];
 
 const orederArrayWithKeys = orderArray.map(item =>
   !item.isUnite
-    ? baseKeyCodeTable.filter(group => item.group === group.groupName)[0]
+    ? {
+        ...baseKeyCodeTable.filter(group => item.group === group.groupName)[0],
+        displayName: item.displayName
+      }
     : {
         groupName: item.group,
+        displayName: item.displayName,
         innerGroup: baseKeyCodeTable.filter(group =>
           item.group.includes(
             group.groupName.slice(0, group.groupName.indexOf(" "))

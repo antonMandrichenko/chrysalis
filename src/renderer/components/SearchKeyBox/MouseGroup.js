@@ -1,3 +1,19 @@
+// -*- mode: js-jsx -*-
+/* Chrysalis -- Kaleidoscope Command Center
+ * Copyright (C) 2019  Keyboardio, Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,6 +36,13 @@ const styles = () => ({
   }
 });
 
+/**
+ * Reactjs functional component that creates blocks with mouse config keys
+ * @param {object} classes Property that sets up CSS classes that adding to HTML elements
+ * @param {array} group Keys group what will render
+ * @param {function} renderKeyMap Callback function from GroupItem component that renders key buttons in grid container
+ * @param {object} classButton className of buttons from parent component
+ */
 function MouseGroup(props) {
   const { group, classes, renderKeyMap, classButton } = props;
   return (

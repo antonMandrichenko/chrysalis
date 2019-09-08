@@ -172,4 +172,4 @@ function GroupItem(props) {
   );
 }
 
-export default withStyles(styles)(GroupItem);
+export default React.memo(withStyles(styles)(GroupItem));

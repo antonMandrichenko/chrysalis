@@ -117,6 +117,10 @@ class SearchKeyBox extends Component {
     });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.open !== this.state.open;
+  }
+
   /**
    * Creates array for render component
    */

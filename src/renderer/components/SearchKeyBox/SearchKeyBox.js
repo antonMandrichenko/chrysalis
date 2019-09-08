@@ -103,6 +103,7 @@ const orderArray = [
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {function} onKeySelect Callback function from Editor component that changes key's value on the keyboard layout and closes modal window
  * @param {number} currentKeyCode Property that shows current key's value
+ * @param {array} baseKeyCodeTable Database of keys for keyboard
  */
 
 class SearchKeyBox extends Component {
@@ -122,7 +123,7 @@ class SearchKeyBox extends Component {
   }
 
   /**
-   * Creates array for render component
+   * Creates array for render keys list
    */
   toOrderArrayWithKeys = () =>
     orderArray.map(item =>
@@ -220,6 +221,7 @@ class SearchKeyBox extends Component {
 }
 
 SearchKeyBox.propTypes = {
+  classes: PropTypes.object.isRequired,
   onKeySelect: PropTypes.func.isRequired,
   currentKeyCode: PropTypes.number.isRequired,
   baseKeyCodeTable: PropTypes.array.isRequired

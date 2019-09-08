@@ -27,8 +27,12 @@ import Button from "@material-ui/core/Button";
 import MultipleKeysGroup from "./MultipleKeysGroup";
 
 GroupItem.propTypes = {
-  classes: PropTypes.object.isRequired,
-  group: PropTypes.object.isRequired,
+  classes: PropTypes.objectOf(PropTypes.string.isRequired).isRequired,
+  group: PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    groupName: PropTypes.string.isRequired,
+    keys: PropTypes.array
+  }).isRequired,
   keySelect: PropTypes.func.isRequired,
   selectedKeyCode: PropTypes.number.isRequired,
   numderContGrids: PropTypes.number.isRequired,

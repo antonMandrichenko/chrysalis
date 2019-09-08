@@ -221,10 +221,20 @@ class SearchKeyBox extends Component {
 }
 
 SearchKeyBox.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.objectOf(PropTypes.string.isRequired).isRequired,
   onKeySelect: PropTypes.func.isRequired,
   currentKeyCode: PropTypes.number.isRequired,
-  baseKeyCodeTable: PropTypes.array.isRequired
+  baseKeyCodeTable: PropTypes.arrayOf(
+    PropTypes.shape({
+      groupName: PropTypes.string.isRequired,
+      keys: PropTypes.arrayOf(
+        PropTypes.shape({
+          code: PropTypes.number.isRequired,
+          labels: PropTypes.object.isRequired
+        }).isRequired
+      )
+    })
+  ).isRequired
 };
 
 export default withStyles(styles)(SearchKeyBox);

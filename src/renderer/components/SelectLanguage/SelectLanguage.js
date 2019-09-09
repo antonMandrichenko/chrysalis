@@ -50,7 +50,7 @@ class SelectLanguage extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, scanKeyboard } = this.props;
     const { anchorEl, language } = this.state;
     const open = Boolean(anchorEl);
     const languageList = Object.keys(languagesDB).map(item => (
@@ -59,6 +59,7 @@ class SelectLanguage extends Component {
         language={item}
         onClose={this.handleCloseLanguage}
         languageSelect={this.languageSelect}
+        scanKeyboard={scanKeyboard}
       >
         {item}
       </LanguageItem>

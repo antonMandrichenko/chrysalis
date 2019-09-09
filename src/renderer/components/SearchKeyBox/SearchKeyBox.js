@@ -76,7 +76,7 @@ const orderArray = [
     isUnite: true,
     displayName: "Navigation & Miscellaneous"
   },
-  { group: "Numpad", isUnite: false, displayName: "Number pud" },
+  { group: "Numpad", isUnite: false, displayName: "Number pad" },
   { group: "Modifiers", isUnite: false, displayName: "Modifiers" },
   { group: "Shift to layer", isUnite: false, displayName: "Shift to layer" },
   { group: "Lock layer to", isUnite: false, displayName: "Lock layer" },
@@ -137,10 +137,13 @@ class SearchKeyBox extends Component {
         : {
             groupName: item.group,
             displayName: item.displayName,
-            innerGroup: this.props.baseKeyCodeTable.filter(group =>
-              item.group.includes(
-                group.groupName.slice(0, group.groupName.indexOf(" "))
-              )
+            innerGroup: this.props.baseKeyCodeTable.filter(
+              group =>
+                item.group.includes(
+                  group.groupName.slice(0, group.groupName.indexOf(" "))
+                ) ||
+                (item.group === "Navigation & Miscellaneous" &&
+                  group.groupName === "Blank")
             )
           }
     );

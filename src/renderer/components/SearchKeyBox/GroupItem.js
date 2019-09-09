@@ -76,6 +76,8 @@ const styles = theme => ({
   }
 });
 
+const isTransparent = key => key === "Transparent";
+
 /**
  * Reactjs functional component that create color button
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
@@ -110,11 +112,11 @@ function GroupItem(props) {
     group.keys.map(key => {
       const {
         code,
-        labels: { primary }
+        labels: { primary, verbose }
       } = key;
       return (
         <React.Fragment key={code}>
-          {primary ? (
+          {primary || isTransparent(verbose) ? (
             <Grid
               id={code}
               item
@@ -128,7 +130,7 @@ function GroupItem(props) {
                 color={code === selectedKeyCode ? "primary" : null}
                 className={classes.button}
               >
-                {primary}
+                {primary || (isTransparent(verbose) && "Transp.")}
               </Button>
             </Grid>
           ) : null}

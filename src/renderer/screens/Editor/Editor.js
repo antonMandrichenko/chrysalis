@@ -133,7 +133,8 @@ class Editor extends React.Component {
 
   scanKeyboard = async () => {
     let focus = new Focus();
-
+    console.log("Update scanKeyboard");
+    console.log(focus);
     try {
       let defLayer = await focus.command("settings.defaultLayer");
       defLayer = parseInt(defLayer) || 0;
@@ -799,6 +800,7 @@ class Editor extends React.Component {
               disabled={isReadOnly}
               onKeySelect={this.onKeyChange}
               currentKeyCode={this.getCurrentKey()}
+              scanKeyboard={this.scanKeyboard}
             />
           )) ||
             (mode == "colormap" && (

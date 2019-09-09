@@ -500,7 +500,7 @@ class KeySelector extends React.Component {
   };
 
   render() {
-    const { classes, currentKeyCode, disabled } = this.props;
+    const { classes, currentKeyCode, disabled, scanKeyboard } = this.props;
     const { selectedGroup, actualKeycode } = this.state;
     let groupIndex = selectedGroup,
       keyCode = currentKeyCode;
@@ -535,7 +535,7 @@ class KeySelector extends React.Component {
           onKeySelect={this.onKeySelect}
           currentKeyCode={actualKeycode}
         />
-        <SelectLanguage />
+        <SelectLanguage scanKeyboard={scanKeyboard} />
         <div className={classes.keygroup}>
           <KeyGroup
             disabled={disabled}

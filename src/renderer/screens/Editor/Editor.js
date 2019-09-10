@@ -44,7 +44,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import Focus from "@chrysalis-api/focus";
-import { KeymapDB } from "@chrysalis-api/keymap";
+import Keymap, { KeymapDB } from "@chrysalis-api/keymap";
 
 import ColorPalette from "../../components/ColorPalette";
 import KeySelector from "./KeySelector";
@@ -133,9 +133,12 @@ class Editor extends React.Component {
 
   scanKeyboard = async () => {
     let focus = new Focus();
-    console.log("Update scanKeyboard");
-    console.log(focus);
     try {
+      /**
+       * Create property language to the object 'options', to call KeymapDB in Keymap and modify languagu layout
+       */
+      let deviceLeng = { ...focus.device, language: true };
+      focus.commands.keymap = new Keymap(deviceLeng);
       let defLayer = await focus.command("settings.defaultLayer");
       defLayer = parseInt(defLayer) || 0;
 

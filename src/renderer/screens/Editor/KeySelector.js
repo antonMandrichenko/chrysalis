@@ -26,6 +26,7 @@ import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
+import List from "@material-ui/core/List";
 import { withStyles } from "@material-ui/core/styles";
 
 import i18n from "../../i18n";
@@ -530,11 +531,13 @@ class KeySelector extends React.Component {
     }
     return (
       <Paper className={classes.root}>
-        <SearchKeyBox
-          onKeySelect={this.onKeySelect}
-          currentKeyCode={actualKeycode}
-          baseKeyCodeTable={baseKeyCodeTable}
-        />
+        <List className={classes.type}>
+          <SearchKeyBox
+            onKeySelect={this.onKeySelect}
+            currentKeyCode={actualKeycode}
+            baseKeyCodeTable={baseKeyCodeTable}
+          />
+        </List>
         <div className={classes.keygroup}>
           <KeyGroup
             disabled={disabled}

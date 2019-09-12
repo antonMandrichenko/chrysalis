@@ -541,7 +541,9 @@ class KeySelector extends React.Component {
           />
           <SelectLanguage
             scanKeyboard={this.props.scanKeyboard}
-            startContext={this.props.startContext}
+            currentLanguageLayout={this.props.currentLanguageLayout}
+            onModified={this.props.onModified}
+            doCancelContext={this.props.doCancelContext}
           />
         </List>
         <div className={classes.keygroup}>

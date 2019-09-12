@@ -1,6 +1,6 @@
 // -*- mode: js-jsx -*-
 /* Chrysalis -- Kaleidoscope Command Center
- * Copyright (C) 2018, 2019  Keyboardio, Inc.
+ * Copyright (C) 2019  Keyboardio, Inc.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -60,6 +60,13 @@ class SelectLanguage extends Component {
     anchorEl: null,
     language: localStorage.getItem("language") || "english"
   };
+
+  componentDidMount() {
+    const language = localStorage.getItem("language") || "english";
+    this.setState({
+      language
+    });
+  }
   handleOpenLanguage = evt => {
     this.setState({
       anchorEl: evt.currentTarget

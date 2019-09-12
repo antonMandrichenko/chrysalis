@@ -118,7 +118,6 @@ class Editor extends React.Component {
     isColorButtonSelected: false
   };
   keymapDB = new KeymapDB();
-
   /**
    * Bottom menu never hide and automatically select a key at launch and have this shown in the bottom menu
    */
@@ -139,6 +138,7 @@ class Editor extends React.Component {
        */
       let deviceLeng = { ...focus.device, language: true };
       focus.commands.keymap = new Keymap(deviceLeng);
+      this.keymapDB = new KeymapDB();
       let defLayer = await focus.command("settings.defaultLayer");
       defLayer = parseInt(defLayer) || 0;
 

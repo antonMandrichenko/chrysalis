@@ -115,7 +115,8 @@ class Editor extends React.Component {
     copyFromOpen: false,
     importExportDialogOpen: false,
     isMultiSelected: false,
-    isColorButtonSelected: false
+    isColorButtonSelected: false,
+    currentLanguageLayout: localStorage.getItem("language") || "english"
   };
   keymapDB = new KeymapDB();
   /**
@@ -376,10 +377,19 @@ class Editor extends React.Component {
       saving: false,
       isMultiSelected: false,
       selectedPaletteColor: null,
-      isColorButtonSelected: false
+      isColorButtonSelected: false,
+      currentLanguageLayout: localStorage.getItem("language") || "english"
     });
     console.log("Changes saved.");
     this.props.cancelContext();
+  };
+  //Creacte func to open Contextbar and SaveButton
+  onModified = () => {
+    this.setState({
+      modified: true
+    });
+    console.log(this.state.currentLanguageLayout);
+    this.props.startContext();
   };
 
   componentDidMount() {
@@ -400,6 +410,7 @@ class Editor extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps = nextProps => {
+    localStorage.setItem("language", this.state.currentLanguageLayout);
     if (this.props.inContext && !nextProps.inContext) {
       this.scanKeyboard();
       this.setState({ modified: false });
@@ -804,7 +815,9 @@ class Editor extends React.Component {
               onKeySelect={this.onKeyChange}
               currentKeyCode={this.getCurrentKey()}
               scanKeyboard={this.scanKeyboard}
-              startContext={this.props.startContext}
+              currentLanguageLayout={this.state.currentLanguageLayout}
+              doCancelContext={this.props.doCancelContext}
+              onModified={this.onModified}
             />
           )) ||
             (mode == "colormap" && (

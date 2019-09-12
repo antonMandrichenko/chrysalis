@@ -39,11 +39,22 @@ const styles = theme => ({
  */
 
 function LanguageItem(props) {
-  const { classes, language, onClose, languageSelect, scanKeyboard } = props;
+  const {
+    classes,
+    language,
+    onClose,
+    languageSelect,
+    scanKeyboard,
+    onModified,
+    doCancelContext,
+    currentLanguageLayout
+  } = props;
   const onItemClick = () => {
     localStorage.setItem("language", `${language}`);
     languageSelect(language);
     scanKeyboard();
+    //Callback from App.js to open contextBar
+    language == currentLanguageLayout ? doCancelContext() : onModified();
     onClose();
   };
   return (

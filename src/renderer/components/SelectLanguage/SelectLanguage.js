@@ -86,7 +86,13 @@ class SelectLanguage extends Component {
   };
 
   render() {
-    const { classes, scanKeyboard } = this.props;
+    const {
+      classes,
+      scanKeyboard,
+      doCancelContext,
+      onModified,
+      currentLanguageLayout
+    } = this.props;
     const { anchorEl, language } = this.state;
     const open = Boolean(anchorEl);
     const languageList = Object.keys(languagesDB).map(item => (
@@ -96,6 +102,10 @@ class SelectLanguage extends Component {
           onClose={this.handleCloseLanguage}
           languageSelect={this.languageSelect}
           scanKeyboard={scanKeyboard}
+          //Add methods to open and close ContextBar
+          currentLanguageLayout={currentLanguageLayout}
+          onModified={onModified}
+          doCancelContext={doCancelContext}
         >
           {item}
         </LanguageItem>

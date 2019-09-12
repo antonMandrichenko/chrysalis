@@ -804,6 +804,7 @@ class Editor extends React.Component {
               onKeySelect={this.onKeyChange}
               currentKeyCode={this.getCurrentKey()}
               scanKeyboard={this.scanKeyboard}
+              startContext={this.props.startContext}
             />
           )) ||
             (mode == "colormap" && (

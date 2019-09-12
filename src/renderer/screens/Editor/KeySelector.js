@@ -539,7 +539,10 @@ class KeySelector extends React.Component {
             currentKeyCode={actualKeycode}
             baseKeyCodeTable={baseKeyCodeTable}
           />
-          <SelectLanguage scanKeyboard={this.props.scanKeyboard} />
+          <SelectLanguage
+            scanKeyboard={this.props.scanKeyboard}
+            startContext={this.props.startContext}
+          />
         </List>
         <div className={classes.keygroup}>
           <KeyGroup

@@ -58,7 +58,7 @@ const styles = theme => ({
 class SelectLanguage extends Component {
   state = {
     anchorEl: null,
-    language: "Language"
+    language: localStorage.getItem("language") || "english"
   };
   handleOpenLanguage = evt => {
     this.setState({

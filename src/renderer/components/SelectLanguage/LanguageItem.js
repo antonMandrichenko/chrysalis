@@ -38,7 +38,7 @@ const styles = theme => ({
  * @param {function} doCancelContext Callback function from App -> Editor -> KeySelector components. Close ContextBar
  * @param {function} onModified Callback function from Editor -> KeySelector components. Open ContextBar and activate saveButton
  * @param {string} currentLanguageLayout String value, that passes the state of Editor of saved language
- * @param {string} onNewLanguageLayout String value, that passes the state of Editor of new language layout to compare it with currentLanguageLayout
+ * @param {string} onNewLanguageLayout Callback function from Editor -> KeySelector components to to set State of new Language
  */
 
 function LanguageItem(props) {

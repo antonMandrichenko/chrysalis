@@ -543,6 +543,8 @@ class KeySelector extends React.Component {
             scanKeyboard={this.props.scanKeyboard}
             currentLanguageLayout={this.props.currentLanguageLayout}
             onModified={this.props.onModified}
+            newLanguageLayout={this.props.newLanguageLayout}
+            onNewLanguageLayout={this.props.onNewLanguageLayout}
             doCancelContext={this.props.doCancelContext}
           />
         </List>

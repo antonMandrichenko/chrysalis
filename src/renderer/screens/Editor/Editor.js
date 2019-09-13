@@ -116,7 +116,8 @@ class Editor extends React.Component {
     importExportDialogOpen: false,
     isMultiSelected: false,
     isColorButtonSelected: false,
-    currentLanguageLayout: localStorage.getItem("language") || "english"
+    currentLanguageLayout: localStorage.getItem("language") || "english",
+    newLanguageLayout: localStorage.getItem("language") || "english"
   };
   keymapDB = new KeymapDB();
   /**
@@ -380,6 +381,7 @@ class Editor extends React.Component {
       isColorButtonSelected: false,
       currentLanguageLayout: localStorage.getItem("language") || "english"
     });
+    console.log(this.state.currentLanguageLayout);
     console.log("Changes saved.");
     this.props.cancelContext();
   };
@@ -390,6 +392,12 @@ class Editor extends React.Component {
     });
     console.log(this.state.currentLanguageLayout);
     this.props.startContext();
+  };
+  // Callback function to set State of new Language
+  onNewLanguageLayout = () => {
+    this.setState({
+      newLanguageLayout: localStorage.getItem("language") || "english"
+    });
   };
 
   componentDidMount() {
@@ -410,8 +418,10 @@ class Editor extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps = nextProps => {
-    localStorage.setItem("language", this.state.currentLanguageLayout);
     if (this.props.inContext && !nextProps.inContext) {
+      //Set local Storage to return previous language layout
+      localStorage.setItem("language", this.state.currentLanguageLayout);
+      this.onNewLanguageLayout();
       this.scanKeyboard();
       this.setState({ modified: false });
     }
@@ -816,6 +826,8 @@ class Editor extends React.Component {
               currentKeyCode={this.getCurrentKey()}
               scanKeyboard={this.scanKeyboard}
               currentLanguageLayout={this.state.currentLanguageLayout}
+              newLanguageLayout={this.state.newLanguageLayout}
+              onNewLanguageLayout={this.onNewLanguageLayout}
               doCancelContext={this.props.doCancelContext}
               onModified={this.onModified}
             />

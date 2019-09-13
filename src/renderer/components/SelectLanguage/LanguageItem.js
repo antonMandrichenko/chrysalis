@@ -24,7 +24,6 @@ import ListItemText from "@material-ui/core/ListItemText";
 const styles = theme => ({
   root: {
     minWidth: 130,
-    padding: theme.spacing.unit * 1,
     maxWidth: 360
   }
 });
@@ -50,7 +49,8 @@ function LanguageItem(props) {
     onModified,
     doCancelContext,
     currentLanguageLayout,
-    onNewLanguageLayout
+    onNewLanguageLayout,
+    selected
   } = props;
   const onItemClick = () => {
     localStorage.setItem("language", `${language}`);
@@ -64,8 +64,13 @@ function LanguageItem(props) {
     onClose();
   };
   return (
-    <ListItem button onClick={onItemClick} className={classes.root}>
-      <ListItemText className={classes.root}>{language}</ListItemText>
+    <ListItem
+      selected={selected}
+      button
+      onClick={onItemClick}
+      className={classes.root}
+    >
+      <ListItemText className={classes.root}>{props.children}</ListItemText>
     </ListItem>
   );
 }

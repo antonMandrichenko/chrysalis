@@ -390,7 +390,6 @@ class Editor extends React.Component {
     this.setState({
       modified: true
     });
-    console.log(this.state.currentLanguageLayout);
     this.props.startContext();
   };
   // Callback function to set State of new Language

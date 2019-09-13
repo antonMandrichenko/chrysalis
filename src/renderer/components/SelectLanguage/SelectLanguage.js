@@ -17,7 +17,7 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-
+import path from "path";
 import { withStyles } from "@material-ui/core/styles";
 // languagesDB is data base, typeof object
 import { languagesDB } from "@chrysalis-api/keymap";
@@ -28,6 +28,9 @@ import LanguageItem from "./LanguageItem";
 import Popper from "@material-ui/core/Popper";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
+
+import { getStaticPath } from "../../config";
 
 const styles = theme => ({
   root: {
@@ -44,6 +47,9 @@ const styles = theme => ({
   },
   menu: {
     width: "100%"
+  },
+  img: {
+    width: "70%"
   }
 });
 
@@ -63,6 +69,8 @@ class SelectLanguage extends Component {
   state = {
     anchorEl: null
   };
+
+  isDevelopment = process.env.NODE_ENV !== "production";
 
   handleOpenLanguage = evt => {
     this.setState({
@@ -85,14 +93,34 @@ class SelectLanguage extends Component {
       currentLanguageLayout,
       onNewLanguageLayout
     } = this.props;
+    let currentLanguage = localStorage.getItem("language") || "english";
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
+    const childrenItems = item => (
+      <Grid container>
+        <Grid item sm={4}>
+          <img
+            src={
+              this.isDevelopment
+                ? `./${item}.png`
+                : path.join(getStaticPath(), `${item}.png`)
+            }
+            className={classes.img}
+            alt="press_esc"
+          />
+        </Grid>
+        <Grid item sm={8}>
+          {item}
+        </Grid>
+      </Grid>
+    );
     const languageList = Object.keys(languagesDB).map(item => (
       <div key={item.toString()}>
         <LanguageItem
           language={item}
           onClose={this.handleCloseLanguage}
           scanKeyboard={scanKeyboard}
+          selected={item === currentLanguage}
           //doCancelContext/onModified - callbacks  to close/open contextBar and saveButton
           //currentLanguageLayout - is state in Editor of saved language by saveButton
           currentLanguageLayout={currentLanguageLayout}
@@ -101,7 +129,7 @@ class SelectLanguage extends Component {
           //Callback to change state of chosen language is Editor.js
           onNewLanguageLayout={onNewLanguageLayout}
         >
-          {item}
+          {childrenItems(item)}
         </LanguageItem>
         <Divider />
       </div>

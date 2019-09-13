@@ -117,7 +117,6 @@ class SearchKeyBox extends Component {
   baseKeyCodeTable = KeymapDB.updateBaseKeyCode();
 
   componentDidMount() {
-    this.baseKeyCodeTable = KeymapDB.updateBaseKeyCode();
     this.setState({
       orderArrayWithKeys: this.toOrderArrayWithKeys(this.baseKeyCodeTable)
     });

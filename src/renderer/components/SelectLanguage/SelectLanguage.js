@@ -51,22 +51,19 @@ const styles = theme => ({
  * Reactjs class component that select new language layout
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {HTMLAnchorElement} anchorEl HTMLAnchorElement which is a relative element for our list of languages
- * @param {string} language String value, that passes the value to the LanguageItem component to select language layout
  * @param {function} scanKeyboard Callback function from Editor -> KeySelector components. Without parametrs, this function call KeymapDB in Keymap and modify languagu layout
+ * @param {function} doCancelContext Callback function from App -> Editor -> KeySelector components. Close ContextBar
+ * @param {function} onModified Callback function from Editor -> KeySelector components. Open ContextBar and activate saveButton
+ * @param {string} currentLanguageLayout String value, that passes the state of Editor of saved language
+ * @param {string} onNewLanguageLayout String value, that passes the state of Editor of new language layout to compare it with currentLanguageLayout  
+ 
  */
 
 class SelectLanguage extends Component {
   state = {
-    anchorEl: null,
-    language: localStorage.getItem("language") || "english"
+    anchorEl: null
   };
 
-  componentDidMount() {
-    const language = localStorage.getItem("language") || "english";
-    this.setState({
-      language
-    });
-  }
   handleOpenLanguage = evt => {
     this.setState({
       anchorEl: evt.currentTarget
@@ -79,33 +76,30 @@ class SelectLanguage extends Component {
     });
   };
 
-  languageSelect = newLeng => {
-    this.setState({
-      language: newLeng
-    });
-  };
-
   render() {
     const {
       classes,
       scanKeyboard,
       doCancelContext,
       onModified,
-      currentLanguageLayout
+      currentLanguageLayout,
+      onNewLanguageLayout
     } = this.props;
-    const { anchorEl, language } = this.state;
+    const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
     const languageList = Object.keys(languagesDB).map(item => (
       <div key={item.toString()}>
         <LanguageItem
           language={item}
           onClose={this.handleCloseLanguage}
-          languageSelect={this.languageSelect}
           scanKeyboard={scanKeyboard}
-          //Add methods to open and close ContextBar
+          //doCancelContext/onModified - callbacks  to close/open contextBar and saveButton
+          //currentLanguageLayout - is state in Editor of saved language by saveButton
           currentLanguageLayout={currentLanguageLayout}
           onModified={onModified}
           doCancelContext={doCancelContext}
+          //Callback to change state of chosen language is Editor.js
+          onNewLanguageLayout={onNewLanguageLayout}
         >
           {item}
         </LanguageItem>
@@ -121,7 +115,7 @@ class SelectLanguage extends Component {
           className={classes.button}
           onClick={this.handleOpenLanguage}
         >
-          {language}
+          {this.props.newLanguageLayout}
           <TranslateIcon className={classes.rightIcon} />
         </Button>
         <Popper
@@ -143,7 +137,12 @@ class SelectLanguage extends Component {
 
 SelectLanguage.propTypes = {
   classes: PropTypes.object.isRequired,
-  scanKeyboard: PropTypes.func.isRequired
+  scanKeyboard: PropTypes.func.isRequired,
+  onNewLanguageLayout: PropTypes.func.isRequired,
+  doCancelContext: PropTypes.func.isRequired,
+  onModified: PropTypes.func.isRequired,
+  currentLanguageLayout: PropTypes.any,
+  newLanguageLayout: PropTypes.any
 };
 
 export default withStyles(styles)(SelectLanguage);

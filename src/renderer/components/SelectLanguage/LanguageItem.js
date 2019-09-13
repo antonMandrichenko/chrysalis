@@ -34,8 +34,11 @@ const styles = theme => ({
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {string} language String value, that become new language layout and set local storage
  * @param {function} onClose Callback function from SelectLanguage component. Close current language list.
- * @param {function} languageSelect Callback function from SelectLanguage component. Set state of the SelectLanguage.
- * @param {function} scanKeyboard Callback function from Editor -> KeySelector -> SelectLanguage components. Without parametrs, this function call KeymapDB in Keymap and modify languagu layout
+ * @param {function} scanKeyboard Callback function from Editor -> KeySelector components. Without parametrs, this function call KeymapDB in Keymap and modify languagu layout
+ * @param {function} doCancelContext Callback function from App -> Editor -> KeySelector components. Close ContextBar
+ * @param {function} onModified Callback function from Editor -> KeySelector components. Open ContextBar and activate saveButton
+ * @param {string} currentLanguageLayout String value, that passes the state of Editor of saved language
+ * @param {string} onNewLanguageLayout String value, that passes the state of Editor of new language layout to compare it with currentLanguageLayout
  */
 
 function LanguageItem(props) {
@@ -43,17 +46,20 @@ function LanguageItem(props) {
     classes,
     language,
     onClose,
-    languageSelect,
     scanKeyboard,
     onModified,
     doCancelContext,
-    currentLanguageLayout
+    currentLanguageLayout,
+    onNewLanguageLayout
   } = props;
   const onItemClick = () => {
     localStorage.setItem("language", `${language}`);
-    languageSelect(language);
     scanKeyboard();
-    //Callback from App.js to open contextBar
+    //Callback to change state of chosen language is Editor.js
+    onNewLanguageLayout();
+
+    //doCancelContext/onModified - callbacks  to close/open contextBar and saveButton
+    //currentLanguageLayout - is state in Editor of saved language by saveButton
     language == currentLanguageLayout ? doCancelContext() : onModified();
     onClose();
   };
@@ -68,8 +74,12 @@ LanguageItem.propTypes = {
   classes: PropTypes.object.isRequired,
   language: PropTypes.any,
   onClose: PropTypes.func.isRequired,
-  languageSelect: PropTypes.func.isRequired,
-  scanKeyboard: PropTypes.func.isRequired
+  onNewLanguageLayout: PropTypes.func.isRequired,
+  doCancelContext: PropTypes.func.isRequired,
+  onModified: PropTypes.func.isRequired,
+  scanKeyboard: PropTypes.func.isRequired,
+  currentLanguageLayout: PropTypes.any,
+  newLanguageLayout: PropTypes.any
 };
 
 export default withStyles(styles)(LanguageItem);

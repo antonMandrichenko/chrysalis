@@ -40,7 +40,8 @@ const styles = theme => ({
   },
   button: {
     margin: 15,
-    minWidth: 145
+    minWidth: 145,
+    padding: "5px 5px 0"
   },
   rightIcon: {
     marginLeft: theme.spacing.unit * 1
@@ -133,8 +134,14 @@ class SelectLanguage extends Component {
           className={classes.button}
           onClick={this.handleOpenLanguage}
         >
-          {currentLanguageLayout}
-          <TranslateIcon className={classes.rightIcon} />
+          <Grid container>
+            <Grid item xs={8}>
+              {childrenItems(currentLanguageLayout)}
+            </Grid>
+            <Grid item xs={4}>
+              <TranslateIcon className={classes.rightIcon} />
+            </Grid>
+          </Grid>
         </Button>
         <Popper
           open={open}

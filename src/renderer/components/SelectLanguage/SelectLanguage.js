@@ -40,7 +40,7 @@ const styles = theme => ({
   },
   button: {
     margin: 15,
-    minWidth: 145,
+    width: 170,
     padding: "5px 5px 0"
   },
   rightIcon: {
@@ -94,7 +94,7 @@ class SelectLanguage extends Component {
     const open = Boolean(anchorEl);
     const childrenItems = item => (
       <Grid container>
-        <Grid item sm={4}>
+        <Grid item xs={4}>
           <img
             src={
               this.isDevelopment
@@ -105,7 +105,7 @@ class SelectLanguage extends Component {
             alt="press_esc"
           />
         </Grid>
-        <Grid item sm={8}>
+        <Grid item xs={8}>
           {item}
         </Grid>
       </Grid>
@@ -127,10 +127,10 @@ class SelectLanguage extends Component {
     ));
 
     return (
-      <div>
+      <React.Fragment>
         <Button
           variant="contained"
-          color="default"
+          color="primary"
           className={classes.button}
           onClick={this.handleOpenLanguage}
         >
@@ -146,8 +146,8 @@ class SelectLanguage extends Component {
         <Popper
           open={open}
           anchorEl={anchorEl}
-          placement="top-start"
-          disablePortal={true}
+          placement="top"
+          // disablePortal={true}
         >
           <ClickAwayListener onClickAway={this.handleCloseLanguage}>
             <List component="nav" className={classes.root}>
@@ -155,7 +155,7 @@ class SelectLanguage extends Component {
             </List>
           </ClickAwayListener>
         </Popper>
-      </div>
+      </React.Fragment>
     );
   }
 }

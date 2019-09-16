@@ -149,11 +149,7 @@ class SelectLanguage extends Component {
             </Grid>
           </Grid>
         </Button>
-        <Popper
-          open={open}
-          anchorEl={anchorEl}
-          placement="top"
-        >
+        <Popper open={open} anchorEl={anchorEl} placement="top">
           <ClickAwayListener onClickAway={this.handleCloseLanguage}>
             <List component="nav" className={classes.root}>
               {languageList}

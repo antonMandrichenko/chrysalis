@@ -44,9 +44,6 @@ const styles = theme => ({
     width: 170,
     padding: "5px 5px 0"
   },
-  rightIcon: {
-    marginLeft: theme.spacing.unit * 1
-  },
   menu: {
     width: "100%"
   },
@@ -102,7 +99,7 @@ class SelectLanguage extends Component {
       }
       return (
         <Grid container>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <img
               src={
                 this.isDevelopment
@@ -113,7 +110,7 @@ class SelectLanguage extends Component {
               alt="flag"
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             {name}
           </Grid>
         </Grid>
@@ -148,7 +145,7 @@ class SelectLanguage extends Component {
               {childrenItems(currentLanguageLayout)}
             </Grid>
             <Grid item xs={2}>
-              <TranslateIcon className={classes.rightIcon} />
+              <TranslateIcon />
             </Grid>
           </Grid>
         </Button>

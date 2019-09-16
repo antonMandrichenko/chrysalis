@@ -153,7 +153,6 @@ class SelectLanguage extends Component {
           open={open}
           anchorEl={anchorEl}
           placement="top"
-          // disablePortal={true}
         >
           <ClickAwayListener onClickAway={this.handleCloseLanguage}>
             <List component="nav" className={classes.root}>

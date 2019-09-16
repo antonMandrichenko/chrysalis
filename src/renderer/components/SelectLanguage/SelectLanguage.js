@@ -58,10 +58,8 @@ const styles = theme => ({
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {HTMLAnchorElement} anchorEl HTMLAnchorElement which is a relative element for our list of languages
  * @param {function} scanKeyboard Callback function from Editor -> KeySelector components. Without parametrs, this function call KeymapDB in Keymap and modify languagu layout
- * @param {function} doCancelContext Callback function from App -> Editor -> KeySelector components. Close ContextBar
- * @param {function} onModified Callback function from Editor -> KeySelector components. Open ContextBar and activate saveButton
  * @param {string} currentLanguageLayout String value, that passes the state of Editor of saved language
- * @param {string} onNewLanguageLayout String value, that passes the state of Editor of new language layout to compare it with currentLanguageLayout  
+ * @param {string} onChangeLanguageLayout String value, that passes the state of Editor of new language layout to compare it with currentLanguageLayout  
  
  */
 
@@ -88,12 +86,9 @@ class SelectLanguage extends Component {
     const {
       classes,
       scanKeyboard,
-      doCancelContext,
-      onModified,
       currentLanguageLayout,
-      onNewLanguageLayout
+      onChangeLanguageLayout
     } = this.props;
-    let currentLanguage = localStorage.getItem("language") || "english";
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
     const childrenItems = item => (
@@ -120,14 +115,9 @@ class SelectLanguage extends Component {
           language={item}
           onClose={this.handleCloseLanguage}
           scanKeyboard={scanKeyboard}
-          selected={item === currentLanguage}
-          //doCancelContext/onModified - callbacks  to close/open contextBar and saveButton
-          //currentLanguageLayout - is state in Editor of saved language by saveButton
+          selected={item === currentLanguageLayout}
           currentLanguageLayout={currentLanguageLayout}
-          onModified={onModified}
-          doCancelContext={doCancelContext}
-          //Callback to change state of chosen language is Editor.js
-          onNewLanguageLayout={onNewLanguageLayout}
+          onChangeLanguageLayout={onChangeLanguageLayout}
         >
           {childrenItems(item)}
         </LanguageItem>
@@ -143,7 +133,7 @@ class SelectLanguage extends Component {
           className={classes.button}
           onClick={this.handleOpenLanguage}
         >
-          {this.props.newLanguageLayout}
+          {currentLanguageLayout}
           <TranslateIcon className={classes.rightIcon} />
         </Button>
         <Popper
@@ -166,11 +156,8 @@ class SelectLanguage extends Component {
 SelectLanguage.propTypes = {
   classes: PropTypes.object.isRequired,
   scanKeyboard: PropTypes.func.isRequired,
-  onNewLanguageLayout: PropTypes.func.isRequired,
-  doCancelContext: PropTypes.func.isRequired,
-  onModified: PropTypes.func.isRequired,
-  currentLanguageLayout: PropTypes.any,
-  newLanguageLayout: PropTypes.any
+  onChangeLanguageLayout: PropTypes.func.isRequired,
+  currentLanguageLayout: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(SelectLanguage);

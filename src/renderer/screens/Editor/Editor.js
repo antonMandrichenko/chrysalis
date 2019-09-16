@@ -389,7 +389,7 @@ class Editor extends React.Component {
   // Callback function to set State of new Language
   onChangeLanguageLayout = () => {
     this.setState({
-      currentLanguageLayout: localStorage.getItem("language") || "english"
+      currentLanguageLayout: settings.get("keyboard.language")
     });
   };
 

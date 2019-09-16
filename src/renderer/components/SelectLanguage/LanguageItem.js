@@ -16,6 +16,7 @@
  */
 import React from "react";
 import PropTypes from "prop-types";
+import settings from "electron-settings";
 
 import { withStyles } from "@material-ui/core/styles";
 import ListItem from "@material-ui/core/ListItem";
@@ -47,7 +48,7 @@ function LanguageItem(props) {
     selected
   } = props;
   const onItemClick = () => {
-    localStorage.setItem("language", `${language}`);
+    settings.set("keyboard.language", `${language}`);
     scanKeyboard(language);
     //Callback to change state of chosen language is Editor.js
     onChangeLanguageLayout();

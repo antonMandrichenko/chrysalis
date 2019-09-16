@@ -30,6 +30,7 @@ import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 
+import Focus from "@chrysalis-api/focus";
 import { getStaticPath } from "../../config";
 
 const styles = theme => ({
@@ -92,24 +93,32 @@ class SelectLanguage extends Component {
     } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
-    const childrenItems = item => (
-      <Grid container>
-        <Grid item xs={4}>
-          <img
-            src={
-              this.isDevelopment
-                ? `./${item}.png`
-                : path.join(getStaticPath(), `${item}.png`)
-            }
-            className={classes.img}
-            alt="press_esc"
-          />
+    let focus = new Focus();
+    const isISO = focus.device && focus.device.info.keyboardType === "ISO";
+    const childrenItems = item => {
+      let name = item;
+      if (item === "english") {
+        name = isISO ? `${item}-UK` : `${item}-US`;
+      }
+      return (
+        <Grid container>
+          <Grid item xs={4}>
+            <img
+              src={
+                this.isDevelopment
+                  ? `./${name}.png`
+                  : path.join(getStaticPath(), `${name}.png`)
+              }
+              className={classes.img}
+              alt="flag"
+            />
+          </Grid>
+          <Grid item xs={8}>
+            {name}
+          </Grid>
         </Grid>
-        <Grid item xs={8}>
-          {item}
-        </Grid>
-      </Grid>
-    );
+      );
+    };
     const languageList = Object.keys(languagesDB).map(item => (
       <div key={item.toString()}>
         <LanguageItem
@@ -135,10 +144,10 @@ class SelectLanguage extends Component {
           onClick={this.handleOpenLanguage}
         >
           <Grid container>
-            <Grid item xs={8}>
+            <Grid item xs={10}>
               {childrenItems(currentLanguageLayout)}
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={2}>
               <TranslateIcon className={classes.rightIcon} />
             </Grid>
           </Grid>

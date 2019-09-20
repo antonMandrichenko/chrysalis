@@ -96,6 +96,8 @@ const styles = theme => ({
   }
 });
 
+let initUnderlowColormap = Array(65).fill(15);
+
 class Editor extends React.Component {
   state = {
     currentLayer: 0,
@@ -160,13 +162,18 @@ class Editor extends React.Component {
       }
 
       let colormap = await focus.command("colormap");
+      let colormapWithUnderglow = colormap.colorMap.map((colormap, index) =>
+        colormap.concat(
+          settings.get(`colorMapUndeglow${index}`) || initUnderlowColormap
+        )
+      );
 
       this.setState({
         defaultLayer: defLayer,
         keymap: keymap,
         showDefaults: !keymap.onlyCustom,
         palette: colormap.palette,
-        colorMap: colormap.colorMap
+        colorMap: colormapWithUnderglow
       });
       this.bottomMenuNeverHide();
     } catch (e) {
@@ -180,6 +187,8 @@ class Editor extends React.Component {
 
     let layer = parseInt(this.state.currentLayer),
       keyIndex = parseInt(this.state.currentKeyIndex);
+
+    if (keyIndex >= 80) return 0;
 
     if (this.state.keymap.onlyCustom) {
       if (layer < 0) {
@@ -365,8 +374,12 @@ class Editor extends React.Component {
   onApply = async () => {
     this.setState({ saving: true });
     let focus = new Focus();
+    let colorMapForFocus = this.state.colorMap.map((colorLayer, index) => {
+      settings.set(`colorMapUndeglow${index}`, colorLayer.slice(80));
+      return colorLayer.slice(0, 80);
+    });
     await focus.command("keymap", this.state.keymap);
-    await focus.command("colormap", this.state.palette, this.state.colorMap);
+    await focus.command("colormap", this.state.palette, colorMapForFocus);
     this.setState({
       modified: false,
       saving: false,

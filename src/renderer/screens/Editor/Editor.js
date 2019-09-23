@@ -160,7 +160,7 @@ class Editor extends React.Component {
       }
 
       let colormap = await focus.command("colormap");
-     
+
       this.setState({
         defaultLayer: defLayer,
         keymap: keymap,

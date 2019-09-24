@@ -23,6 +23,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import ColorButtonsArea from "./ColorButtonsArea";
 import PickerColorButton from "./PickerColorButton";
+import UndeglowColorButton from "./UndeglowColorButton";
 import { setColorTamplate } from "../../../renderer/utils/setTemplates";
 import i18n from "../../i18n";
 
@@ -54,7 +55,7 @@ const styles = theme => ({
     padding: 10,
     minHeight: 80,
     [theme.breakpoints.down("sm")]: {
-      width: 455
+      width: 505
     }
   }
 });
@@ -80,7 +81,9 @@ function ColorPalette(props) {
     disabled,
     selected,
     isColorButtonSelected,
-    onColorButtonSelect
+    onColorButtonSelect,
+    theme,
+    toChangeAllUnderglowsColor
   } = props;
 
   /**
@@ -159,6 +162,15 @@ function ColorPalette(props) {
         >
           {i18n.components.pickerColorButton}
         </PickerColorButton>
+        <UndeglowColorButton
+          colorFocusButton={colorFocusButton}
+          indexFocusButton={indexFocusButton}
+          disabled={disabled}
+          theme={theme}
+          toChangeAllUnderglowsColor={toChangeAllUnderglowsColor}
+        >
+          {i18n.components.underglowColorButton}
+        </UndeglowColorButton>
       </Paper>
     </div>
   );

@@ -14,24 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * This is Reactjs functional component that create button for change color of all undeglow elements
- */
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
 import { setButtonSizeTamplate } from "../../../renderer/utils/setTemplates";
 
 UndeglowColorButton.propTypes = {
-  //   classes: PropTypes.object.isRequired,
-  //   isFocus: PropTypes.bool.isRequired,
-  //   setIsFocus: PropTypes.func.isRequired,
-  //   index: PropTypes.number.isRequired,
-  //   color: PropTypes.object.isRequired,
-  //   disabled: PropTypes.bool.isRequired,
-  //   isSelected: PropTypes.bool
+  classes: PropTypes.object.isRequired,
+  colorFocusButton: PropTypes.object,
+  indexFocusButton: PropTypes.number,
+  theme: PropTypes.object.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  toChangeAllUnderglowsColor: PropTypes.func.isRequired
 };
 
 const styles = theme => ({
@@ -59,16 +55,13 @@ const styleDisabled = {
   cursor: "default"
 };
 
-///Minimum value for rendering border on white button
-// const minWhiteColorValue = 140;
-
 /**
- * Reactjs functional component that create color button
+ * This is Reactjs functional component that create button for change color of all undeglow elements
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
- * @param {boolean} isFocus Change CSS styles
- * @param {function} setIsFocus Callback function from ColorPalette component. Parameters are: first - index of color button in palette (from 0 to 15), second - object with keys that defining colors using the Red-green-blue-alpha (RGBA) model, third - event
- * @param {number} index Current index of button
- * @param {object} color Current color of button
+ * @param {boolean} colorFocusButton Set color for UndeglowColorButton if any color button in palette is selected
+ * @param {function} indexFocusButton Numder of selected color button in palette from 0 to 15, is not selected - null
+ * @param {number} theme To use theme object from Material UI
+ * @param {object} toChangeAllUnderglowsColor Callback function from Editor component. Parameter is index of color palette from 0 to 15
  * @param {boolean} disabled Property that disable component
  */
 function UndeglowColorButton(props) {
@@ -80,7 +73,6 @@ function UndeglowColorButton(props) {
     theme,
     toChangeAllUnderglowsColor
   } = props;
-  console.log(props, indexFocusButton);
 
   const style = {
     background:

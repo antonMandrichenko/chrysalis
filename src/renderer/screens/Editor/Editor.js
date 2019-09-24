@@ -627,6 +627,9 @@ class Editor extends React.Component {
     this.setState({ importExportDialogOpen: false });
   };
 
+  /**
+   * Changes color of all keyboard underglows
+   */
   toChangeAllUnderglowsColor = colorIndex => {
     const { currentLayer } = this.state;
     this.setState(state => {

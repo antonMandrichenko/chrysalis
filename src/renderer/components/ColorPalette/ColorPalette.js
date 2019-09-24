@@ -35,7 +35,9 @@ ColorPalette.propTypes = {
   disabled: PropTypes.bool.isRequired,
   selected: PropTypes.any,
   isColorButtonSelected: PropTypes.bool.isRequired,
-  onColorButtonSelect: PropTypes.func.isRequired
+  onColorButtonSelect: PropTypes.func.isRequired,
+  theme: PropTypes.object.isRequired,
+  toChangeAllUnderglowsColor: PropTypes.func.isRequired
 };
 
 const styles = theme => ({
@@ -71,6 +73,8 @@ const styles = theme => ({
  * @param {boolean} isMultiSelected Property of state Editor.js component, that gives a possibility to change colors of keyboard
  * @param {boolean} isColorButtonSelected Property for disabled PickerColorButton
  * @param {function} onColorButtonSelect Callback function from Editor component for change state of selected color button in palette
+ * @param {number} theme To use theme object from Material UI
+ * @param {object} toChangeAllUnderglowsColor Callback function from Editor component. Parameter is index of color palette from 0 to 15
  */
 function ColorPalette(props) {
   const {

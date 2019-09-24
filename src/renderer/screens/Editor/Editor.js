@@ -627,6 +627,21 @@ class Editor extends React.Component {
     this.setState({ importExportDialogOpen: false });
   };
 
+  toChangeAllUnderglowsColor = colorIndex => {
+    const { currentLayer } = this.state;
+    this.setState(state => {
+      let colormap = state.colorMap.slice();
+      colormap[currentLayer] = colormap[currentLayer].fill(colorIndex, 69);
+      return {
+        // isMultiSelected: true,
+        colorMap: colormap,
+        // selectedPaletteColor: colorIndex,
+        modified: true
+      };
+    });
+    this.props.startContext();
+  };
+
   render() {
     const { classes } = this.props;
     const { keymap, palette, isColorButtonSelected } = this.state;
@@ -669,6 +684,7 @@ class Editor extends React.Component {
             palette={this.state.palette}
             colormap={this.state.colorMap[this.state.currentLayer]}
             theme={this.props.theme}
+            setMode={this.setMode}
           />
         </div>
       </Fade>
@@ -815,6 +831,8 @@ class Editor extends React.Component {
                 selected={this.state.selectedPaletteColor}
                 isColorButtonSelected={isColorButtonSelected}
                 onColorButtonSelect={this.onColorButtonSelect}
+                theme={this.props.theme}
+                toChangeAllUnderglowsColor={this.toChangeAllUnderglowsColor}
               />
             ))}
         </Slide>

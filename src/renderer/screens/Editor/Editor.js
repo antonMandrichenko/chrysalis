@@ -636,9 +636,7 @@ class Editor extends React.Component {
       let colormap = state.colorMap.slice();
       colormap[currentLayer] = colormap[currentLayer].fill(colorIndex, 69);
       return {
-        // isMultiSelected: true,
         colorMap: colormap,
-        // selectedPaletteColor: colorIndex,
         modified: true
       };
     });

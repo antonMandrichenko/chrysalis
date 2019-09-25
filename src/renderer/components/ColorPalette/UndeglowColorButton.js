@@ -95,7 +95,11 @@ function UndeglowColorButton(props) {
         <Button
           variant="contained"
           className={classes.button}
-          style={!+indexFocusButton || disabled ? styleDisabled : style}
+          style={
+            (!+indexFocusButton && indexFocusButton !== 0) || disabled
+              ? styleDisabled
+              : style
+          }
           onClick={toChangeAllUnderglowsColor.bind(this, indexFocusButton)}
         >
           {"LED"}

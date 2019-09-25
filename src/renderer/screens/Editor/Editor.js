@@ -131,6 +131,13 @@ class Editor extends React.Component {
     }));
   };
 
+  bottomMenuNeverHideFromUnderglow = () => {
+    this.setState(state => ({
+      currentKeyIndex: state.currentKeyIndex !== -1 ? state.currentKeyIndex : 0,
+      currentLedIndex: state.currentLedIndex !== -1 ? state.currentLedIndex : 0
+    }));
+  };
+
   scanKeyboard = async () => {
     let focus = new Focus();
 
@@ -488,9 +495,11 @@ class Editor extends React.Component {
     this.setState({ clearConfirmationOpen: false });
   };
 
-  setMode = mode => {
+  setMode = (mode, isUnderglow) => {
     this.setState({ mode: mode });
-    this.bottomMenuNeverHide();
+    !isUnderglow
+      ? this.bottomMenuNeverHide()
+      : this.bottomMenuNeverHideFromUnderglow();
   };
 
   onColorButtonSelect = (action, colorIndex) => {
@@ -764,7 +773,10 @@ class Editor extends React.Component {
                 this.setMode(mode);
               }}
             >
-              <ToggleButton value="layout" disabled={mode == "layout"}>
+              <ToggleButton
+                value="layout"
+                disabled={this.state.currentKeyIndex >= 80 || mode == "layout"}
+              >
                 <Tooltip title={i18n.editor.layoutMode}>
                   <KeyboardIcon />
                 </Tooltip>

@@ -442,7 +442,9 @@ class Editor extends React.Component {
       }
       newColormap = state.colorMap.slice();
       if (newColormap.length > 0)
-        newColormap[state.currentLayer] = state.colorMap[layer].slice();
+        newColormap[state.currentLayer] = state.colorMap[
+          layer >= 0 ? layer : state.currentLayer
+        ].slice();
 
       this.props.startContext();
       return {

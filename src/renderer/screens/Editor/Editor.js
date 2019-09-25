@@ -642,7 +642,7 @@ class Editor extends React.Component {
   toChangeAllUnderglowsColor = colorIndex => {
     const { currentLayer } = this.state;
     const beginForChange = 69;
-    const endForChange = 130;
+    const endForChange = 131;
     this.setState(state => {
       let colormap = state.colorMap.slice();
       colormap[currentLayer] = colormap[currentLayer].fill(

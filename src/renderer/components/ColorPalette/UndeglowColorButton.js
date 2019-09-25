@@ -24,7 +24,11 @@ import { setButtonSizeTamplate } from "../../../renderer/utils/setTemplates";
 UndeglowColorButton.propTypes = {
   classes: PropTypes.object.isRequired,
   colorFocusButton: PropTypes.object,
-  indexFocusButton: PropTypes.number,
+  indexFocusButton: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.number,
+    PropTypes.oneOf([null])
+  ]),
   theme: PropTypes.object.isRequired,
   disabled: PropTypes.bool.isRequired,
   toChangeAllUnderglowsColor: PropTypes.func.isRequired
@@ -76,12 +80,12 @@ function UndeglowColorButton(props) {
 
   const style = {
     background:
-      indexFocusButton !== null &&
+      colorFocusButton !== null &&
       `rgb(${colorFocusButton.r}, ${colorFocusButton.g}, ${
         colorFocusButton.b
       })`,
     color:
-      indexFocusButton !== null &&
+      colorFocusButton !== null &&
       theme.palette.getContrastText(colorFocusButton.rgb)
   };
 
@@ -91,7 +95,7 @@ function UndeglowColorButton(props) {
         <Button
           variant="contained"
           className={classes.button}
-          style={indexFocusButton === null || disabled ? styleDisabled : style}
+          style={!+indexFocusButton || disabled ? styleDisabled : style}
           onClick={toChangeAllUnderglowsColor.bind(this, indexFocusButton)}
         >
           {"LED"}

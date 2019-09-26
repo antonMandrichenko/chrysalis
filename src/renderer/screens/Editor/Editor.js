@@ -44,7 +44,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 
 import Focus from "@chrysalis-api/focus";
-import { KeymapDB } from "@chrysalis-api/keymap";
+import Keymap, { KeymapDB } from "@chrysalis-api/keymap";
 
 import ColorPalette from "../../components/ColorPalette";
 import KeySelector from "./KeySelector";
@@ -116,10 +116,10 @@ class Editor extends React.Component {
     copyFromOpen: false,
     importExportDialogOpen: false,
     isMultiSelected: false,
-    isColorButtonSelected: false
+    isColorButtonSelected: false,
+    currentLanguageLayout: ""
   };
   keymapDB = new KeymapDB();
-
   /**
    * Bottom menu never hide and automatically select a key at launch and have this shown in the bottom menu
    */
@@ -250,26 +250,29 @@ class Editor extends React.Component {
     }));
   };
 
-  scanKeyboard = async () => {
+  scanKeyboard = async lang => {
     let focus = new Focus();
-    const { isDemo } = this.props;
-
     try {
-      if (isDemo) {
-        await this.scanMockKeyboard();
-      } else {
-        let defLayer = await focus.command("settings.defaultLayer");
-        defLayer = parseInt(defLayer) || 0;
+      /**
+       * Create property language to the object 'options', to call KeymapDB in Keymap and modify languagu layout
+       */
+      if (lang) {
+        let deviceLeng = { ...focus.device, language: true };
+        focus.commands.keymap = new Keymap(deviceLeng);
+        this.keymapDB = focus.commands.keymap.db;
+      }
 
-        let keymap = await focus.command("keymap");
+      let defLayer = await focus.command("settings.defaultLayer");
+      defLayer = parseInt(defLayer) || 0;
 
-        let empty = true;
-        for (let layer of keymap.custom) {
-          for (let i of layer) {
-            if (i.keyCode != 65535) {
-              empty = false;
-              break;
-            }
+      let keymap = await focus.command("keymap");
+
+      let empty = true;
+      for (let layer of keymap.custom) {
+        for (let i of layer) {
+          if (i.keyCode != 65535) {
+            empty = false;
+            break;
           }
         }
 
@@ -515,6 +518,12 @@ class Editor extends React.Component {
       const data = await fetch("demoData/demoData.json");
       this.setState({ mockData: await data.json() });
     }
+    onChangeLanguageLayout = () => {
+      this.setState({
+        currentLanguageLayout: settings.get("keyboard.language") || "english"
+      });
+    };
+  
     this.scanKeyboard().then(() => {
       const { keymap } = this.state;
       const defLayer =
@@ -530,6 +539,7 @@ class Editor extends React.Component {
       this.setState({ currentLayer: initialLayer });
     });
     if (isDemo) this.saveDataInLS();
+    this.onChangeLanguageLayout();
   }
 
   UNSAFE_componentWillReceiveProps = nextProps => {
@@ -970,6 +980,9 @@ class Editor extends React.Component {
               disabled={isReadOnly}
               onKeySelect={this.onKeyChange}
               currentKeyCode={this.getCurrentKey()}
+              scanKeyboard={this.scanKeyboard}
+              currentLanguageLayout={this.state.currentLanguageLayout}
+              onChangeLanguageLayout={this.onChangeLanguageLayout}
             />
           )) ||
             (mode == "colormap" && (

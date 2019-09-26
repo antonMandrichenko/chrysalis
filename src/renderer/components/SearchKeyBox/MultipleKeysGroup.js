@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+import MouseGroup from "./MouseGroup";
 
 MultipleKeysGroup.propTypes = {
   classes: PropTypes.object.isRequired,
@@ -14,12 +14,6 @@ MultipleKeysGroup.propTypes = {
 const styles = () => ({
   container: {
     padding: "0 2px"
-  },
-  itemName: {
-    paddingLeft: 2
-  },
-  itemKeys: {
-    paddingRight: 2
   }
 });
 
@@ -37,25 +31,11 @@ function MultipleKeysGroup(props) {
       {groups.map(group => (
         <React.Fragment key={group.groupName}>
           {group.groupName.includes("Mouse") ? (
-            <React.Fragment>
-              <Grid item xs={3} sm={2} className={classes.itemName}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  disabled
-                  className={classButton}
-                >
-                  {group.groupName
-                    .slice(
-                      group.groupName.indexOf(" ") - group.groupName.length
-                    )
-                    .toUpperCase()}
-                </Button>
-              </Grid>
-              <Grid item xs={9} sm={10} className={classes.itemKeys}>
-                {renderKeyMap(group, 4, 3)}
-              </Grid>
-            </React.Fragment>
+            <MouseGroup
+              group={group}
+              renderKeyMap={renderKeyMap}
+              classButton={classButton}
+            />
           ) : (
             <Grid item xs={12}>
               {renderKeyMap(group, 3, 2, classes.container)}

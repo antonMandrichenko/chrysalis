@@ -23,11 +23,8 @@ import Fab from "@material-ui/core/Fab";
 import KeyboardIcon from "@material-ui/icons/Keyboard";
 import CloseIcon from "@material-ui/icons/Close";
 import Modal from "@material-ui/core/Modal";
-import Backdrop from "@material-ui/core/Backdrop";
-import Fade from "@material-ui/core/Fade";
 
-import { baseKeyCodeTable } from "@chrysalis-api/keymap";
-
+import { KeymapDB } from "@chrysalis-api/keymap";
 import GroupItem from "./GroupItem";
 
 const styles = theme => ({
@@ -47,6 +44,7 @@ const styles = theme => ({
     backgroundColor: "#f5f5f5",
     boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)",
     padding: "13px 8px 0",
+    overflowY: "auto",
     [theme.breakpoints.down("md")]: {
       overflowY: "scroll"
     }
@@ -57,7 +55,7 @@ const styles = theme => ({
     cursor: "pointer"
   },
   margin: {
-    margin: "15px 10px",
+    margin: 15,
     width: 170
   },
   extendedIcon: {
@@ -66,57 +64,106 @@ const styles = theme => ({
 });
 
 const orderArray = [
-  { group: "Letters", isUnite: false },
-  { group: "Digits & Spacing", isUnite: true },
-  { group: "Fx keys", isUnite: false },
-  { group: "Punctuation & special letters", isUnite: false },
-  { group: "Navigation & Miscellaneous", isUnite: true },
-  { group: "Number pud", isUnite: false },
-  { group: "Modifiers", isUnite: false },
-  { group: "Shift to layer", isUnite: false },
-  { group: "Lock layer", isUnite: false },
-  { group: "Media", isUnite: false },
-  { group: "One shot modifiers", isUnite: false },
-  { group: "Led effects", isUnite: false },
-  { group: "One shot layers", isUnite: false },
-  { group: "Leader", isUnite: false },
-  { group: "Space cadet", isUnite: false },
-  { group: "Mouse configuration options", isUnite: true },
-  { group: "Steno", isUnite: false }
+  { group: "Letters", isUnite: false, displayName: "Letters" },
+  { group: "Digits & Spacing", isUnite: true, displayName: "Digits & Spacing" },
+  { group: "Fx keys", isUnite: false, displayName: "Fx keys" },
+  {
+    group: "Punctuation",
+    isUnite: false,
+    displayName: "Punctuation & special letters"
+  },
+  {
+    group: "Navigation & Miscellaneous",
+    isUnite: true,
+    displayName: "Navigation & Miscellaneous"
+  },
+  { group: "Numpad", isUnite: false, displayName: "Number pad" },
+  { group: "Modifiers", isUnite: false, displayName: "Modifiers" },
+  { group: "Shift to layer", isUnite: false, displayName: "Shift to layer" },
+  { group: "Lock layer to", isUnite: false, displayName: "Lock layer" },
+  { group: "Media", isUnite: false, displayName: "Media" },
+  {
+    group: "OneShot modifiers",
+    isUnite: false,
+    displayName: "One shot modifiers"
+  },
+  { group: "LED Effect", isUnite: false, displayName: "Led effects" },
+  { group: "OneShot layers", isUnite: false, displayName: "One shot layers" },
+  { group: "Leader", isUnite: false, displayName: "Leader" },
+  { group: "SpaceCadet", isUnite: false, displayName: "Space cadet" },
+  {
+    group: "Mouse configuration options",
+    isUnite: true,
+    displayName: "Mouse configuration options"
+  },
+  { group: "Steno", isUnite: false, displayName: "Steno" }
 ];
-
-const orederArrayWithKeys = orderArray.map(item =>
-  !item.isUnite
-    ? baseKeyCodeTable.filter(group => item.group === group.groupName)[0]
-    : {
-        groupName: item.group,
-        innerGroup: baseKeyCodeTable.filter(group =>
-          item.group.includes(
-            group.groupName.slice(0, group.groupName.indexOf(" "))
-          )
-        )
-      }
-);
 
 /**
  * Reactjs component that creates menu for choise key from all keys list
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
  * @param {function} onKeySelect Callback function from Editor component that changes key's value on the keyboard layout and closes modal window
  * @param {number} currentKeyCode Property that shows current key's value
+ * @param {static method} KeymapDB.updateBaseKeyCode Callback function from KeymapDB to set valid state of baseKeyCodeTable
  */
 
 class SearchKeyBox extends Component {
   state = {
-    selectedKeyCode: this.props.currentKeyCode,
-    open: false
+    open: false,
+    orderArrayWithKeys: []
   };
+
+  //import on methods from KeymapDB to update to the valid state of baseKeyCodeTable
+  baseKeyCodeTable = KeymapDB.updateBaseKeyCode();
+
+  componentDidMount() {
+    this.setState({
+      orderArrayWithKeys: this.toOrderArrayWithKeys(this.baseKeyCodeTable)
+    });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.open !== this.state.open;
+  }
+
+  /**
+   * Creates array for render keys list
+   * The first argument is valid state of baseKeyCodeTable
+   */
+  toOrderArrayWithKeys = baseKeyCodeTable =>
+    orderArray.map(item =>
+      !item.isUnite
+        ? {
+            // Change baseKeyCodeTable from props to local variable
+            ...this.baseKeyCodeTable.filter(
+              group => item.group === group.groupName
+            )[0],
+            displayName: item.displayName
+          }
+        : {
+            groupName: item.group,
+            displayName: item.displayName,
+            //Change baseKeyCodeTable from props to local variable
+            innerGroup: baseKeyCodeTable.filter(
+              group =>
+                item.group.includes(
+                  group.groupName.slice(0, group.groupName.indexOf(" "))
+                ) ||
+                (item.group === "Navigation & Miscellaneous" &&
+                  group.groupName === "Blank")
+            )
+          }
+    );
 
   /**
    * Opens modal window with keys list
+   * Update state of current baseKeyCodeTable and pass it to the state orderArrayWithKeys
    */
   handleOpen = () => {
+    this.baseKeyCodeTable = KeymapDB.updateBaseKeyCode();
     this.setState({
-      open: true
+      open: true,
+      orderArrayWithKeys: this.toOrderArrayWithKeys(this.baseKeyCodeTable)
     });
   };
 
@@ -134,27 +181,23 @@ class SearchKeyBox extends Component {
    * @param {number} code Unique number from keymap database
    */
   keySelect = code => {
-    this.setState({
-      selectedKeyCode: code,
-      open: false
-    });
+    this.handleClose();
     this.props.onKeySelect(code);
   };
 
   render() {
-    const { classes } = this.props;
-    const { open, selectedKeyCode } = this.state;
-
-    const groupeList = orederArrayWithKeys.map((group, index) => (
+    const { classes, currentKeyCode } = this.props;
+    const { open, orderArrayWithKeys } = this.state;
+    const groupeList = orderArrayWithKeys.map((group, index) => (
       <GroupItem
         key={group.groupName}
         group={group}
         keySelect={this.keySelect}
         isUnited={Boolean(group.innerGroup)}
-        selectedKeyCode={selectedKeyCode}
-        numderContGrids={orederArrayWithKeys.length === index + 1 ? 8 : 4}
-        numderLgItemsGrids={orederArrayWithKeys.length === index + 1 ? 1 : 2}
-        numderMdItemsGrids={orederArrayWithKeys.length === index + 1 ? 2 : 3}
+        selectedKeyCode={currentKeyCode}
+        numderContGrids={orderArrayWithKeys.length === index + 1 ? 8 : 4}
+        numderLgItemsGrids={orderArrayWithKeys.length === index + 1 ? 1 : 2}
+        numderMdItemsGrids={orderArrayWithKeys.length === index + 1 ? 2 : 3}
       />
     ));
 
@@ -168,7 +211,7 @@ class SearchKeyBox extends Component {
           onClick={this.handleOpen}
         >
           <KeyboardIcon className={classes.extendedIcon} />
-          KEYCUP VALUE
+          Key config
         </Fab>
         <Modal
           aria-labelledby="transition-modal-title"
@@ -177,19 +220,13 @@ class SearchKeyBox extends Component {
           open={open}
           onClose={this.handleClose}
           closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500
-          }}
         >
-          <Fade in={open}>
-            <div className={classes.wrapper}>
-              <CloseIcon className={classes.close} onClick={this.handleClose} />
-              <Grid container className={classes.root} spacing={8}>
-                {groupeList}
-              </Grid>
-            </div>
-          </Fade>
+          <div className={classes.wrapper}>
+            <CloseIcon className={classes.close} onClick={this.handleClose} />
+            <Grid container className={classes.root} spacing={8}>
+              {groupeList}
+            </Grid>
+          </div>
         </Modal>
       </React.Fragment>
     );
@@ -197,6 +234,7 @@ class SearchKeyBox extends Component {
 }
 
 SearchKeyBox.propTypes = {
+  classes: PropTypes.objectOf(PropTypes.string.isRequired).isRequired,
   onKeySelect: PropTypes.func.isRequired,
   currentKeyCode: PropTypes.number.isRequired
 };

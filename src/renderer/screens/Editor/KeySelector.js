@@ -16,6 +16,8 @@
  */
 
 import React from "react";
+//Import of new component that selects new language layout
+import SelectLanguage from "../../components/SelectLanguage";
 
 import SearchKeyBox from "../../components/SearchKeyBox";
 
@@ -26,6 +28,7 @@ import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
 import Switch from "@material-ui/core/Switch";
 import TextField from "@material-ui/core/TextField";
+import List from "@material-ui/core/List";
 import { withStyles } from "@material-ui/core/styles";
 
 import i18n from "../../i18n";
@@ -567,10 +570,19 @@ class KeySelector extends React.Component {
     }
     return (
       <Paper className={classes.root}>
-        <SearchKeyBox
-          onKeySelect={this.onKeySelect}
-          currentKeyCode={actualKeycode}
-        />
+        <List className={classes.type}>
+          <SearchKeyBox
+            onKeySelect={this.onKeySelect}
+            currentKeyCode={actualKeycode}
+            baseKeyCodeTable={baseKeyCodeTable}
+          />
+          <SelectLanguage
+            scanKeyboard={this.props.scanKeyboard}
+            currentLanguageLayout={this.props.currentLanguageLayout}
+            onChangeLanguageLayout={this.props.onChangeLanguageLayout}
+            doCancelContext={this.props.doCancelContext}
+          />
+        </List>
         <div className={classes.keygroup}>
           <KeyGroup
             disabled={disabled}

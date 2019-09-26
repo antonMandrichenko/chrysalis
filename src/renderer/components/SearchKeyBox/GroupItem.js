@@ -27,8 +27,12 @@ import Button from "@material-ui/core/Button";
 import MultipleKeysGroup from "./MultipleKeysGroup";
 
 GroupItem.propTypes = {
-  classes: PropTypes.object.isRequired,
-  group: PropTypes.object.isRequired,
+  classes: PropTypes.objectOf(PropTypes.string.isRequired).isRequired,
+  group: PropTypes.shape({
+    displayName: PropTypes.string.isRequired,
+    groupName: PropTypes.string.isRequired,
+    keys: PropTypes.array
+  }).isRequired,
   keySelect: PropTypes.func.isRequired,
   selectedKeyCode: PropTypes.number.isRequired,
   numderContGrids: PropTypes.number.isRequired,
@@ -42,11 +46,10 @@ const styles = theme => ({
     marginBottom: 3
   },
   background: {
-    height: "95%",
+    height: "100%",
     margin: "0 5px",
     [theme.breakpoints.down("md")]: {
-      paddingBottom: 8,
-      height: "100%"
+      paddingBottom: 8
     }
   },
   root: {
@@ -72,6 +75,8 @@ const styles = theme => ({
     backgroundColor: "#c7c4c496"
   }
 });
+
+const isTransparent = key => key === "Transparent";
 
 /**
  * Reactjs functional component that create color button
@@ -107,11 +112,11 @@ function GroupItem(props) {
     group.keys.map(key => {
       const {
         code,
-        labels: { primary }
+        labels: { primary, verbose }
       } = key;
       return (
         <React.Fragment key={code}>
-          {primary ? (
+          {primary || isTransparent(verbose) ? (
             <Grid
               id={code}
               item
@@ -125,7 +130,7 @@ function GroupItem(props) {
                 color={code === selectedKeyCode ? "primary" : null}
                 className={classes.button}
               >
-                {primary}
+                {primary || (isTransparent(verbose) && "Transp.")}
               </Button>
             </Grid>
           ) : null}
@@ -150,7 +155,7 @@ function GroupItem(props) {
     <Grid item md={numderContGrids} sm={12} className={classes.wrapper}>
       <Paper className={classes.background}>
         <Paper className={classes.paper} xs={12}>
-          {group.groupName.toUpperCase()}
+          {group.displayName.toUpperCase()}
         </Paper>
         {isUnited ? (
           <MultipleKeysGroup
@@ -173,4 +178,4 @@ function GroupItem(props) {
   );
 }
 
-export default withStyles(styles)(GroupItem);
+export default React.memo(withStyles(styles)(GroupItem));

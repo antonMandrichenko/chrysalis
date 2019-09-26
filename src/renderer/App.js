@@ -195,7 +195,7 @@ class App extends React.Component {
 
     this.setState({
       connected: true,
-      device: null,
+      device: port,
       pages: pages,
       isDemo: false
     });

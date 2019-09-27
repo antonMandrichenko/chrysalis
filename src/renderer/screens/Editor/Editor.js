@@ -54,6 +54,7 @@ import i18n from "../../i18n";
 import settings from "electron-settings";
 import ImportExportDialog from "./ImportExportDialog";
 import { CopyFromDialog } from "./CopyFromDialog";
+import MacrosDialog from "../../components/macros";
 
 const styles = theme => ({
   tbg: {
@@ -813,6 +814,7 @@ class Editor extends React.Component {
                 </ToggleButton>
               )}
             </ToggleButtonGroup>
+            <MacrosDialog />
             <div className={classes.grow} />
             <FormControl className={classes.layerSelect}>
               <Select

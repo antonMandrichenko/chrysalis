@@ -245,6 +245,55 @@ class FirmwareUpdate extends React.Component {
       this.setState({ countdown: 3 });
     } catch (e) {
       console.error(e);
+      this.props.enqueueSnackbar(
+        this.state.device.device.info.product === "Raise"
+          ? e.message
+          : i18n.firmwareUpdate.flashing.error,
+        {
+          variant: "error",
+          action: (
+            <Button
+              variant="contained"
+              onClick={() => {
+                const shell = Electron.remote && Electron.remote.shell;
+                shell.openExternal(
+                  "https://github.com/keyboardio/Chrysalis/wiki/Troubleshooting"
+                );
+              }}
+            >
+              Troubleshooting
+            </Button>
+          )
+        }
+      );
+      this.props.toggleFlashing();
+      this.props.onDisconnect();
+      this.setState({ confirmationOpen: false });
+      return;
+    }
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.props.enqueueSnackbar(i18n.firmwareUpdate.flashing.success, {
+          variant: "success"
+        });
+
+        this.props.toggleFlashing();
+        this.props.onDisconnect();
+        this.setState({ confirmationOpen: false });
+        resolve();
+      }, 1000);
+    });
+  };
+
+  uploadRaise = async () => {
+    this.setState({ confirmationOpen: true, isBeginUpdate: true });
+    try {
+      this.fleshRaise = new FlashRaise(this.props.device);
+      await this.fleshRaise.backupSettings();
+      this.setState({ countdown: 3 });
+    } catch (e) {
+      console.error(e);
       this.props.enqueueSnackbar(e.message, {
         variant: "error",
         action: (

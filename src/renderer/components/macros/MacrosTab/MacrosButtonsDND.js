@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import ButtonDNDevents from "./ButtonDNDevents";
 
 const propTypes = {};
 
@@ -22,7 +23,10 @@ const stateInit = {
 const styles = {
   root: {
     maxHeight: 700,
-    overflow: "auto"
+    overflow: "auto",
+    paddingBottom: 25,
+    marginLeft: 15,
+    width: "100%"
   },
   ul: {
     margin: 0,
@@ -31,7 +35,7 @@ const styles = {
     width: "100%"
   },
   li: {
-    padding: 10,
+    padding: "25px 10px 0",
     position: "relative",
     display: "flex",
     alignItems: "flex-start",
@@ -39,7 +43,8 @@ const styles = {
     lineHeight: 1
   },
   drag: {
-    cursor: "move"
+    cursor: "move",
+    position: "relative"
   },
   button: {
     width: 200
@@ -49,10 +54,14 @@ const styles = {
 function MacrosButtonsDND(props) {
   const { classes } = props;
   const [state, setState] = useState(stateInit);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [draggedItem, setDraggedItem] = useState(null);
+  const [isOnDrag, setIsOnDrag] = useState(false);
 
   const onDragStart = (e, index) => {
+    setAnchorEl(null);
     setDraggedItem(state.items[index]);
+    setIsOnDrag(true);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", e.target.parentNode);
     e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
@@ -77,7 +86,21 @@ function MacrosButtonsDND(props) {
 
   const onDragEnd = () => {
     setDraggedItem(null);
+    setIsOnDrag(false);
   };
+
+  const handlePopoverOpen = item => {
+    setAnchorEl(item);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+  const handlePopoverToggle = item => {
+    setAnchorEl(anchorEl ? null : item);
+  };
+
+  const open = Boolean(anchorEl);
 
   return (
     <Paper className={classes.root}>
@@ -98,10 +121,25 @@ function MacrosButtonsDND(props) {
                 variant="contained"
                 color="primary"
                 className={classes.button}
-                fullWidth
+                aria-owns={open ? "mouse-over-popover" : undefined}
+                aria-haspopup="true"
+                onMouseEnter={() => {
+                  handlePopoverOpen(item);
+                }}
+                onMouseLeave={handlePopoverClose}
+                onClick={() => {
+                  handlePopoverToggle(item);
+                }}
+                disabled={isOnDrag && draggedItem !== state.items[idx]}
               >
                 {item}
               </Button>
+              <ButtonDNDevents
+                isDisplay={anchorEl === item}
+                handlePopoverOpen={handlePopoverOpen}
+                handlePopoverClose={handlePopoverClose}
+                item={item}
+              />
             </div>
           </li>
         ))}

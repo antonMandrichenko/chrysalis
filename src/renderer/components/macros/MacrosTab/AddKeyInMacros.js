@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import DeleteIcon from "@material-ui/icons/Delete";
+import AddIcon from "@material-ui/icons/Add";
 import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
@@ -10,17 +10,17 @@ const styles = theme => ({
   }
 });
 
-function DeleteMacrosButton(props) {
+function AddKeyInMacros(props) {
   const { classes } = props;
   return (
     <Fab color="secondary" aria-label="Add" className={classes.margin}>
-      <DeleteIcon />
+      <AddIcon />
     </Fab>
   );
 }
 
-DeleteMacrosButton.propTypes = {
+AddKeyInMacros.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(DeleteMacrosButton);
+export default withStyles(styles)(AddKeyInMacros);

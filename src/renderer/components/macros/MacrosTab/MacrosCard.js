@@ -13,6 +13,7 @@ import MacrosCardInput from "./MacrosCardInput";
 import MacrosCardDelay from "./MacrosCardDelay";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
+import AddKeyInMacros from "./AddKeyInMacros";
 
 const styles = {
   card: {
@@ -62,6 +63,7 @@ function MacrosCard(props) {
           <Grid item xs={4}>
             <MacrosCardInput />
             <MacrosCardDelay />
+            <AddKeyInMacros />
           </Grid>
           <Grid item xs={8} className={classes.item}>
             <MacrosButtonsDND />

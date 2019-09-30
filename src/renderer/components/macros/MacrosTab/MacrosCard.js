@@ -59,11 +59,11 @@ function MacrosCard(props) {
         </Grid>
         <Divider />
         <Grid container className={classes.container}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <MacrosCardInput />
             <MacrosCardDelay />
           </Grid>
-          <Grid item xs={6} className={classes.item}>
+          <Grid item xs={8} className={classes.item}>
             <MacrosButtonsDND />
           </Grid>
         </Grid>

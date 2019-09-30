@@ -7,6 +7,9 @@ const styles = theme => ({
   container: {
     display: "flex",
     flexWrap: "wrap"
+  },
+  textField: {
+    marginBottom: 10
   }
 });
 
@@ -26,7 +29,6 @@ function MacrosCardInput(props) {
         className={classes.textField}
         value={name}
         onChange={handleChange}
-        // margin="normal"
         variant="outlined"
         fullWidth
       />

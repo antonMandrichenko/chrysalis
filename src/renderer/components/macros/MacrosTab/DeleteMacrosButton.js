@@ -1,34 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
   margin: {
-    margin: theme.spacing.unit
-  },
-  root: {
-    position: "absolute",
-    top: 0,
-    right: 0
+    marginBottom: theme.spacing.unit * 1
   }
 });
 
 function ButtonSizes(props) {
   const { classes } = props;
   return (
-    <div className={classes.root}>
-      <IconButton aria-label="Delete" className={classes.margin}>
-        <DeleteIcon fontSize="small" />
-      </IconButton>
-      {/* <IconButton aria-label="Delete" className={classes.margin}>
-          <DeleteIcon />
-        </IconButton>
-        <IconButton aria-label="Delete" className={classes.margin}>
-          <DeleteIcon fontSize="large" />
-        </IconButton> */}
-    </div>
+    <Fab color="secondary" aria-label="Add" className={classes.margin}>
+      <DeleteIcon />
+    </Fab>
   );
 }
 

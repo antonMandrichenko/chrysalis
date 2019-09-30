@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import MacrosCard from "./MacrosCard";
+import MacrosProgress from "./MacrosProgress";
 
 const styles = () => ({
   root: {
@@ -10,24 +11,17 @@ const styles = () => ({
   }
 });
 
-class MacrosTab extends React.Component {
-  handleChange = key => (e, value) => {
-    this.setState({
-      [key]: value
-    });
-  };
+function MacrosTab(props) {
+  const { values } = props;
 
-  render() {
-    const { values } = this.props;
-
-    return (
-      <Grid container justify="center" alignItems="center">
-        <Grid item xs={10} md={8}>
-          <MacrosCard values={values} />
-        </Grid>
+  return (
+    <Grid container justify="center" alignItems="center">
+      <Grid item sm={10} md={8} lg={6}>
+        <MacrosCard values={values} />
+        <MacrosProgress />
       </Grid>
-    );
-  }
+    </Grid>
+  );
 }
 
 MacrosTab.propTypes = {

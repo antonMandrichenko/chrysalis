@@ -16,13 +16,17 @@ const stateInit = {
     "🍰 Cake1",
     "🍩 Donut1",
     "🍎 Apple1",
-    "🍕 Pizza1"
+    "🍕 Pizza1",
+    "🍰 Cake2",
+    "🍩 Donut2",
+    "🍎 Apple2",
+    "🍕 Pizza2"
   ]
 };
 
 const styles = {
   root: {
-    maxHeight: 700,
+    maxHeight: 500,
     overflow: "auto",
     paddingBottom: 25,
     marginLeft: 15,

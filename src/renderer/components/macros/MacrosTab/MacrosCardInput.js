@@ -6,14 +6,7 @@ import TextField from "@material-ui/core/TextField";
 const styles = theme => ({
   container: {
     display: "flex",
-    flexWrap: "wrap",
-    marginTop: theme.spacing.unit
-  },
-  dense: {
-    marginTop: 16
-  },
-  menu: {
-    width: 200
+    flexWrap: "wrap"
   }
 });
 
@@ -33,7 +26,7 @@ function MacrosCardInput(props) {
         className={classes.textField}
         value={name}
         onChange={handleChange}
-        margin="normal"
+        // margin="normal"
         variant="outlined"
         fullWidth
       />

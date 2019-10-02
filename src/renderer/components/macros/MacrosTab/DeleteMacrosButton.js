@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
+import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 
 const styles = theme => ({
@@ -13,9 +14,11 @@ const styles = theme => ({
 function DeleteMacrosButton(props) {
   const { classes } = props;
   return (
-    <IconButton aria-label="delete" className={classes.margin}>
-      <DeleteIcon color="secondary" />
-    </IconButton>
+    <Tooltip placement="top" title={props.children}>
+      <IconButton aria-label="delete" className={classes.margin}>
+        <DeleteIcon color="secondary" />
+      </IconButton>
+    </Tooltip>
   );
 }
 

@@ -47,7 +47,7 @@ class MacrosTabs extends React.Component {
 
   componentDidMount() {
     const string =
-      "2 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
+      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
     const macrosNames = ["MAcros 1", "Macros 2"];
     const newString = string.match(/[\d\s]+?\s0\s/g);
     const macroses = newString.map(macros =>
@@ -69,10 +69,10 @@ class MacrosTabs extends React.Component {
     const { value, macrosTab } = this.state;
     const renderTabContainer = value =>
       macrosTab.map(
-        (tab, i) =>
+        (macros, i) =>
           value === i && (
             <TabContainer key={uuid()} className={classes.container}>
-              <MacrosTab values={tab.macrosName} />
+              <MacrosTab values={macros.macrosName} macros={macros} />
             </TabContainer>
           )
       );

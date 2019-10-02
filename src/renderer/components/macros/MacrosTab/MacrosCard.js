@@ -41,7 +41,7 @@ const styles = {
 };
 
 function MacrosCard(props) {
-  const { classes, values } = props;
+  const { classes, values, macros } = props;
   return (
     <Card className={classes.card}>
       <CardContent className={classes.content}>
@@ -52,7 +52,7 @@ function MacrosCard(props) {
             className={classNames(classes.item, classes.flexStart)}
           >
             <Typography gutterBottom variant="h5" component="h2">
-              {values}
+              {macros.macrosName}
             </Typography>
           </Grid>
           <Grid item xs={2} className={classes.flex}>
@@ -69,7 +69,7 @@ function MacrosCard(props) {
             <AddKeyInMacros>{i18n.editor.macros.addKeyOrDelay}</AddKeyInMacros>
           </Grid>
           <Grid item xs={8} className={classes.item}>
-            <MacrosButtonsDND />
+            <MacrosButtonsDND macros={macros.macros} />
           </Grid>
         </Grid>
       </CardContent>

@@ -12,12 +12,12 @@ const styles = () => ({
 });
 
 function MacrosTab(props) {
-  const { values } = props;
+  const { values, macros } = props;
 
   return (
     <Grid container justify="center" alignItems="center">
       <Grid item sm={10} md={8} lg={6}>
-        <MacrosCard values={values} />
+        <MacrosCard values={values} macros={macros} />
         <MacrosProgress />
       </Grid>
     </Grid>

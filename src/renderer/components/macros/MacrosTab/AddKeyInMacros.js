@@ -5,6 +5,11 @@ import AddIcon from "@material-ui/icons/Add";
 import Fab from "@material-ui/core/Fab";
 
 const styles = theme => ({
+  root: {
+    width: "100%",
+    textAlign: "center",
+    marginTop: theme.spacing.unit * 2
+  },
   margin: {
     marginBottom: theme.spacing.unit * 1
   }
@@ -13,9 +18,11 @@ const styles = theme => ({
 function AddKeyInMacros(props) {
   const { classes } = props;
   return (
-    <Fab color="secondary" aria-label="Add" className={classes.margin}>
-      <AddIcon />
-    </Fab>
+    <div className={classes.root}>
+      <Fab color="primary" aria-label="Add" className={classes.margin}>
+        <AddIcon />
+      </Fab>
+    </div>
   );
 }
 

@@ -38,12 +38,31 @@ const styles = theme => ({
 class MacrosTabs extends React.Component {
   state = {
     value: 0,
-    macrosTab: ["One", "Two", "Three"]
+    macrosTab: []
   };
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
+
+  componentDidMount() {
+    const string =
+      "2 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
+    const macrosNames = ["MAcros 1", "Macros 2"];
+    const newString = string.match(/[\d\s]+?\s0\s/g);
+    const macroses = newString.map(macros =>
+      macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
+    );
+    const macrosesWithNames = macroses.map((macros, i) =>
+      macrosNames.reduce(
+        (newObj, macrosName, j) =>
+          i === j ? { ...newObj, macrosName, macros } : newObj,
+        {}
+      )
+    );
+    this.setState({ macrosTab: macrosesWithNames });
+    console.log(macrosesWithNames);
+  }
 
   render() {
     const { classes } = this.props;
@@ -53,7 +72,7 @@ class MacrosTabs extends React.Component {
         (tab, i) =>
           value === i && (
             <TabContainer key={uuid()} className={classes.container}>
-              <MacrosTab values={tab} />
+              <MacrosTab values={tab.macrosName} />
             </TabContainer>
           )
       );
@@ -63,7 +82,11 @@ class MacrosTabs extends React.Component {
         <AppBar position="static" color="default">
           <Tabs value={value} onChange={this.handleChange}>
             {macrosTab.map(tab => (
-              <Tab label={tab} className={classes.tab} key={tab} />
+              <Tab
+                label={tab.macrosName}
+                className={classes.tab}
+                key={uuid()}
+              />
             ))}
             <Tab icon={<AddIcon />} className={classes.tab} />
           </Tabs>

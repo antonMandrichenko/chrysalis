@@ -14,6 +14,7 @@ import MacrosCardDelay from "./MacrosCardDelay";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
 import AddKeyInMacros from "./AddKeyInMacros";
+import i18n from "../../../i18n";
 
 const styles = {
   card: {
@@ -55,7 +56,9 @@ function MacrosCard(props) {
             </Typography>
           </Grid>
           <Grid item xs={2} className={classes.flex}>
-            <DeleteMacrosButton />
+            <DeleteMacrosButton>
+              {i18n.editor.macros.deleteMacros}
+            </DeleteMacrosButton>
           </Grid>
         </Grid>
         <Divider />
@@ -63,7 +66,7 @@ function MacrosCard(props) {
           <Grid item xs={4}>
             <MacrosCardInput />
             <MacrosCardDelay />
-            <AddKeyInMacros />
+            <AddKeyInMacros>{i18n.editor.macros.addKeyOrDelay}</AddKeyInMacros>
           </Grid>
           <Grid item xs={8} className={classes.item}>
             <MacrosButtonsDND />

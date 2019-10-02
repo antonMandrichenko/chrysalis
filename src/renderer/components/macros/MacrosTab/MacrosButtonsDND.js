@@ -8,20 +8,7 @@ import ButtonDNDevents from "./ButtonDNDevents";
 const propTypes = {};
 
 const stateInit = {
-  items: [
-    "🍰 Cake",
-    "🍩 Donut",
-    "🍎 Apple",
-    "🍕 Pizza",
-    "🍰 Cake1",
-    "🍩 Donut1",
-    "🍎 Apple1",
-    "🍕 Pizza1",
-    "🍰 Cake2",
-    "🍩 Donut2",
-    "🍎 Apple2",
-    "🍕 Pizza2"
-  ]
+  items: ["c", "D", "A", "P", "C1", "D1", "A1", "P1", "C2", "D2", "A2", "P2"]
 };
 
 const styles = {
@@ -51,7 +38,8 @@ const styles = {
     position: "relative"
   },
   button: {
-    width: 200
+    width: 200,
+    textTransform: "none"
   }
 };
 
@@ -111,7 +99,7 @@ function MacrosButtonsDND(props) {
       <ul className={classes.ul}>
         {state.items.map((item, idx) => (
           <li
-            key={item}
+            key={`${item}${Math.random * idx}`}
             onDragOver={() => onDragOver(idx)}
             className={classes.li}
           >

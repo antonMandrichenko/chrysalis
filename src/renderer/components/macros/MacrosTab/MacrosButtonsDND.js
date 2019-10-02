@@ -3,13 +3,10 @@ import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
+import { KeymapDB } from "@chrysalis-api/keymap";
 import ButtonDNDevents from "./ButtonDNDevents";
 
 const propTypes = {};
-
-const stateInit = {
-  items: ["c", "D", "A", "P", "C1", "D1", "A1", "P1", "C2", "D2", "A2", "P2"]
-};
 
 const styles = {
   root: {
@@ -43,16 +40,18 @@ const styles = {
   }
 };
 
+const keymapDB = new KeymapDB();
+
 function MacrosButtonsDND(props) {
-  const { classes } = props;
-  const [state, setState] = useState(stateInit);
+  const { classes, macros } = props;
+  const [state, setState] = useState(macros.map((item, i) => `${item} ${i}`));
   const [anchorEl, setAnchorEl] = useState(null);
   const [draggedItem, setDraggedItem] = useState(null);
   const [isOnDrag, setIsOnDrag] = useState(false);
 
   const onDragStart = (e, index) => {
     setAnchorEl(null);
-    setDraggedItem(state.items[index]);
+    setDraggedItem(state[index]);
     setIsOnDrag(true);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", e.target.parentNode);
@@ -60,7 +59,7 @@ function MacrosButtonsDND(props) {
   };
 
   const onDragOver = index => {
-    const draggedOverItem = state.items[index];
+    const draggedOverItem = state[index];
 
     // if the item is dragged over itself, ignore
     if (draggedItem === draggedOverItem) {
@@ -68,12 +67,11 @@ function MacrosButtonsDND(props) {
     }
 
     // filter out the currently dragged item
-    let items = state.items.filter(item => item !== draggedItem);
+    let items = state.filter(item => item !== draggedItem);
 
     // add the dragged item after the dragged over item
     items.splice(index, 0, draggedItem);
-
-    setState({ items });
+    setState(items);
   };
 
   const onDragEnd = () => {
@@ -92,14 +90,31 @@ function MacrosButtonsDND(props) {
     setAnchorEl(anchorEl ? null : item);
   };
 
+  const getKey = str => {
+    const macroConfig = str[0];
+    const oneMacrosArr = str.split(" ");
+    switch (macroConfig) {
+      case "1": 
+        return oneMacrosArr[oneMacrosArr.length - 2];
+      case "5": 
+        return oneMacrosArr[oneMacrosArr.length - 2];
+      case "8": {
+        const keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
+        return keymapDB.keymapCodeTable
+          .filter((item, i) => i === keyNumber)[0]
+          .labels.primary.toLowerCase();
+      }
+    }
+  };
+
   const open = Boolean(anchorEl);
 
   return (
     <Paper className={classes.root}>
       <ul className={classes.ul}>
-        {state.items.map((item, idx) => (
+        {state.map((item, idx) => (
           <li
-            key={`${item}${Math.random * idx}`}
+            key={item}
             onDragOver={() => onDragOver(idx)}
             className={classes.li}
           >
@@ -122,9 +137,9 @@ function MacrosButtonsDND(props) {
                 onClick={() => {
                   handlePopoverToggle(item);
                 }}
-                disabled={isOnDrag && draggedItem !== state.items[idx]}
+                disabled={isOnDrag && draggedItem !== state[idx]}
               >
-                {item}
+                {getKey(item)}
               </Button>
               <ButtonDNDevents
                 isDisplay={anchorEl === item}

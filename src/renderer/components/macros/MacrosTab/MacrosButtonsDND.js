@@ -172,7 +172,7 @@ const MacrosButtonsDND = props => {
             >
               {getKey(item, open, classes, idx)}
               <ButtonDNDevents
-                isDisplay={anchorEl === item}
+                isDisplay={isRecord && anchorEl === item}
                 handlePopoverOpen={handlePopoverOpen}
                 handlePopoverClose={handlePopoverClose}
                 item={item}

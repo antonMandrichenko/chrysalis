@@ -34,7 +34,7 @@ GroupItem.propTypes = {
     keys: PropTypes.array
   }).isRequired,
   keySelect: PropTypes.func.isRequired,
-  selectedKeyCode: PropTypes.number.isRequired,
+  selectedKeyCode: PropTypes.any,
   numderContGrids: PropTypes.number.isRequired,
   numderLgItemsGrids: PropTypes.number.isRequired,
   numderMdItemsGrids: PropTypes.number.isRequired

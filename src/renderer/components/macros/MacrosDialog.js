@@ -10,6 +10,11 @@ import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import MacrosTabs from "./MacrosTabs";
 import MacrosProgress from "./MacrosProgress";
+import { baseKeyCodeTable } from "@chrysalis-api/keymap";
+import { orderArray } from "../SearchKeyBox/SearchKeyBox";
+import GroupItem from "../SearchKeyBox/GroupItem";
+import Grid from "@material-ui/core/Grid";
+import Modal from "@material-ui/core/Modal";
 
 const styles = theme => ({
   appBar: {
@@ -18,12 +23,63 @@ const styles = theme => ({
   title: {
     marginLeft: theme.spacing.unit * 2,
     flex: 1
+  },
+  modal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  wrapper: {
+    height: "90vh",
+    width: "90vw",
+    position: "relative"
+  },
+  root: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#f5f5f5",
+    boxShadow: "0 30px 50px rgba(0, 0, 0, 0.7)",
+    padding: "13px 8px 0",
+    overflowY: "auto",
+    [theme.breakpoints.down("md")]: {
+      overflowY: "scroll"
+    }
+  },
+  close: {
+    position: "absolute",
+    right: -20,
+    cursor: "pointer"
   }
 });
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+const toOrderArrayWithKeys = baseKeyCodeTable =>
+  orderArray.map(item =>
+    !item.isUnite
+      ? {
+          // Change baseKeyCodeTable from props to local variable
+          ...baseKeyCodeTable.filter(
+            group => item.group === group.groupName
+          )[0],
+          displayName: item.displayName
+        }
+      : {
+          groupName: item.group,
+          displayName: item.displayName,
+          //Change baseKeyCodeTable from props to local variable
+          innerGroup: baseKeyCodeTable.filter(
+            group =>
+              item.group.includes(
+                group.groupName.slice(0, group.groupName.indexOf(" "))
+              ) ||
+              (item.group === "Navigation & Miscellaneous" &&
+                group.groupName === "Blank")
+          )
+        }
+  );
 
 function MacrosDialog(props) {
   const { classes } = props;
@@ -32,6 +88,8 @@ function MacrosDialog(props) {
   const [macrosTab, setMacrosTab] = useState(null);
   const [macrosLength, setMacrosLength] = useState(0);
   const [activeMacrosIndex, setActiveMacrosIndex] = useState(null);
+  const [isOpenKeyConfig, setIsOpenKeyConfig] = useState(false);
+  const [orderArrayWithKeys, setOrderArrayWithKeys] = useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -65,6 +123,10 @@ function MacrosDialog(props) {
     getMacrosLength(macrosesWithNames);
     console.log(macrosesWithNames);
   }, [open]);
+
+  useEffect(() => {
+    setOrderArrayWithKeys(toOrderArrayWithKeys(baseKeyCodeTable));
+  }, []);
 
   const getMacrosLength = data => {
     let length = 0;
@@ -113,6 +175,43 @@ function MacrosDialog(props) {
     );
   };
 
+  const openKeyConfig = () => {
+    setIsOpenKeyConfig(true);
+  };
+
+  const handleCloseKeyConfig = () => {
+    setIsOpenKeyConfig(false);
+  };
+
+  const keySelect = code => {
+    const newArr = macrosTab.map((item, i) => {
+      if (i === activeMacrosIndex) {
+        return {
+          macrosName: item.macrosName,
+          data: item.data.concat([`8 ${code}`])
+        };
+      }
+      return item;
+    });
+    setMacrosTab(newArr);
+    handleCloseKeyConfig();
+  };
+
+  const groupeList =
+    orderArrayWithKeys &&
+    orderArrayWithKeys.map((group, index) => (
+      <GroupItem
+        key={group.groupName}
+        group={group}
+        keySelect={keySelect}
+        isUnited={Boolean(group.innerGroup)}
+        // selectedKeyCode={currentKeyCode}
+        numderContGrids={orderArrayWithKeys.length === index + 1 ? 8 : 4}
+        numderLgItemsGrids={orderArrayWithKeys.length === index + 1 ? 1 : 2}
+        numderMdItemsGrids={orderArrayWithKeys.length === index + 1 ? 2 : 3}
+      />
+    ));
+
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
@@ -155,9 +254,25 @@ function MacrosDialog(props) {
           toDeleteMacros={toDeleteMacros}
           addKeyToMacros={addKeyToMacros}
           setActiveMacrosIndex={setActiveMacrosIndex}
+          openKeyConfig={openKeyConfig}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>
+      <Modal
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        className={classes.modal}
+        open={isOpenKeyConfig}
+        onClose={handleCloseKeyConfig}
+        closeAfterTransition
+      >
+        <div className={classes.wrapper}>
+          <CloseIcon className={classes.close} onClick={handleCloseKeyConfig} />
+          <Grid container className={classes.root} spacing={8}>
+            {groupeList}
+          </Grid>
+        </div>
+      </Modal>
     </div>
   );
 }

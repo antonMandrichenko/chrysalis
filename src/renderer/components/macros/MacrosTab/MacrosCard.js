@@ -55,7 +55,8 @@ function MacrosCard(props) {
     toDeleteMacros,
     addKeyToMacros,
     toRecordMacros,
-    isRecord
+    isRecord,
+    openKeyConfig
   } = props;
 
   return (
@@ -87,7 +88,7 @@ function MacrosCard(props) {
           <Grid item xs={4}>
             <MacrosCardInput isRecord={isRecord} />
             <MacrosCardDelay isRecord={isRecord} />
-            <AddKeyInMacros isRecord={isRecord}>
+            <AddKeyInMacros isRecord={isRecord} openKeyConfig={openKeyConfig}>
               {i18n.editor.macros.addKeyOrDelay}
             </AddKeyInMacros>
           </Grid>

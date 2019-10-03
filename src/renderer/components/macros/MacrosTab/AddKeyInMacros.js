@@ -19,7 +19,7 @@ const styles = theme => ({
 });
 
 function AddKeyInMacros(props) {
-  const { classes, isRecord, openKeyConfig } = props;
+  const { classes, isRecord, openKeyConfig, openDelayConfig } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -30,6 +30,7 @@ function AddKeyInMacros(props) {
   const handleClose = e => {
     if (e.currentTarget.value) {
       console.log("added delay");
+      openDelayConfig();
     } else {
       console.log("added key");
       openKeyConfig();

@@ -35,7 +35,7 @@ function MacrosCardDelay(props) {
           Delay
         </Typography>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={8} className={classes.typograthy}>
         <Slider
           classes={{ container: classes.slider }}
           value={value}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,6 +11,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import MacrosTabs from "./MacrosTabs";
 import MacrosProgress from "./MacrosProgress";
+import MacrosCardDelay from "./MacrosCardDelay";
 import { baseKeyCodeTable } from "@chrysalis-api/keymap";
 import { orderArray } from "../SearchKeyBox/SearchKeyBox";
 import GroupItem from "../SearchKeyBox/GroupItem";
@@ -34,6 +36,10 @@ const styles = theme => ({
     width: "90vw",
     position: "relative"
   },
+  wrapperDelay: {
+    height: "10vh",
+    width: "40vw"
+  },
   root: {
     width: "100%",
     height: "100%",
@@ -44,6 +50,9 @@ const styles = theme => ({
     [theme.breakpoints.down("md")]: {
       overflowY: "scroll"
     }
+  },
+  rootDelay: {
+    overflow: "hidden"
   },
   close: {
     position: "absolute",
@@ -90,6 +99,7 @@ function MacrosDialog(props) {
   const [activeMacrosIndex, setActiveMacrosIndex] = useState(null);
   const [isOpenKeyConfig, setIsOpenKeyConfig] = useState(false);
   const [orderArrayWithKeys, setOrderArrayWithKeys] = useState(null);
+  const [isOpenDelayConfig, setIsOpenDelayConfig] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -183,6 +193,14 @@ function MacrosDialog(props) {
     setIsOpenKeyConfig(false);
   };
 
+  const openDelayConfig = () => {
+    setIsOpenDelayConfig(true);
+  };
+
+  const handleCloseDelayConfig = () => {
+    setIsOpenDelayConfig(false);
+  };
+
   const keySelect = code => {
     const newArr = macrosTab.map((item, i) => {
       if (i === activeMacrosIndex) {
@@ -274,6 +292,7 @@ function MacrosDialog(props) {
           setActiveMacrosIndex={setActiveMacrosIndex}
           openKeyConfig={openKeyConfig}
           deleteKeyFromMacros={deleteKeyFromMacros}
+          openDelayConfig={openDelayConfig}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>
@@ -281,14 +300,33 @@ function MacrosDialog(props) {
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
         className={classes.modal}
-        open={isOpenKeyConfig}
-        onClose={handleCloseKeyConfig}
+        open={isOpenKeyConfig || isOpenDelayConfig}
+        onClose={
+          isOpenDelayConfig ? handleCloseDelayConfig : handleCloseKeyConfig
+        }
         closeAfterTransition
       >
-        <div className={classes.wrapper}>
-          <CloseIcon className={classes.close} onClick={handleCloseKeyConfig} />
-          <Grid container className={classes.root} spacing={8}>
-            {groupeList}
+        <div
+          className={classNames(
+            isOpenKeyConfig && classes.wrapper,
+            isOpenDelayConfig && classes.wrapperDelay
+          )}
+        >
+          <CloseIcon
+            className={classes.close}
+            onClick={
+              isOpenDelayConfig ? handleCloseDelayConfig : handleCloseKeyConfig
+            }
+          />
+          <Grid
+            container
+            className={classNames(
+              classes.root,
+              isOpenDelayConfig && classes.rootDelay
+            )}
+            spacing={8}
+          >
+            {isOpenKeyConfig ? groupeList : <MacrosCardDelay isRecord={true} />}
           </Grid>
         </div>
       </Modal>

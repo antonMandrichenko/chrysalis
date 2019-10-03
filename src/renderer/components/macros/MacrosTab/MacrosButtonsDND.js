@@ -42,8 +42,15 @@ const styles = {
 
 const keymapDB = new KeymapDB();
 
-function MacrosButtonsDND(props) {
-  const { classes, macros, toMacrosChange, macrosIndex } = props;
+const MacrosButtonsDND = props => {
+  const {
+    classes,
+    macros,
+    toMacrosChange,
+    macrosIndex,
+    addKeyToMacros,
+    isRecord
+  } = props;
   const [state, setState] = useState(
     macros.data.map((item, i) => `${item} ${i}`)
   );
@@ -147,14 +154,14 @@ function MacrosButtonsDND(props) {
         {state.map((item, idx) => (
           <li
             key={item}
-            onDragOver={() => onDragOver(idx)}
+            onDragOver={isRecord ? () => onDragOver(idx) : null}
             className={classes.li}
           >
             <div
               className={classes.drag}
-              draggable
-              onDragStart={e => onDragStart(e, idx)}
-              onDragEnd={onDragEnd}
+              draggable={isRecord}
+              onDragStart={isRecord ? e => onDragStart(e, idx) : null}
+              onDragEnd={isRecord ? onDragEnd : null}
             >
               {getKey(item, open, classes, idx)}
               <ButtonDNDevents
@@ -169,7 +176,7 @@ function MacrosButtonsDND(props) {
       </ul>
     </Paper>
   );
-}
+};
 
 MacrosButtonsDND.propTypes = propTypes;
 

@@ -26,12 +26,14 @@ function MacrosCardDelay(props) {
     setValue(value);
   };
 
-  const { classes } = props;
+  const { classes, isRecord } = props;
 
   return (
     <Grid container>
       <Grid item xs={2} className={classes.typograthy}>
-        <Typography align="left">Delay</Typography>
+        <Typography align="left" disabled={!isRecord}>
+          Delay
+        </Typography>
       </Grid>
       <Grid item xs={8}>
         <Slider
@@ -41,6 +43,7 @@ function MacrosCardDelay(props) {
           max={250}
           step={10}
           onChange={handleChange}
+          disabled={!isRecord}
         />
       </Grid>
       <Grid
@@ -48,7 +51,7 @@ function MacrosCardDelay(props) {
         xs={2}
         className={classNames(classes.typograthy, classes.right)}
       >
-        <Typography>{`${value}ms`}</Typography>
+        <Typography disabled={!isRecord}>{`${value}ms`}</Typography>
       </Grid>
     </Grid>
   );

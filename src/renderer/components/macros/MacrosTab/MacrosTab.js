@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -11,7 +11,15 @@ const styles = () => ({
 });
 
 function MacrosTab(props) {
-  const { macros, toMacrosChange, macrosIndex, toDeleteMacros } = props;
+  const {
+    macros,
+    toMacrosChange,
+    macrosIndex,
+    toDeleteMacros,
+    addKeyToMacros,
+    isRecord,
+    toRecordMacros
+  } = props;
 
   return (
     <Grid container justify="center" alignItems="center">
@@ -21,6 +29,9 @@ function MacrosTab(props) {
           toMacrosChange={toMacrosChange}
           macrosIndex={macrosIndex}
           toDeleteMacros={toDeleteMacros}
+          addKeyToMacros={addKeyToMacros}
+          toRecordMacros={toRecordMacros}
+          isRecord={isRecord}
         />
       </Grid>
     </Grid>

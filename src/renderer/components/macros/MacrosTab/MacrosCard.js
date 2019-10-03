@@ -37,6 +37,12 @@ const styles = {
   },
   content: {
     padding: 10
+  },
+  button: {
+    color: "green"
+  },
+  cardInRecord: {
+    border: "2px solid green"
   }
 };
 
@@ -46,10 +52,16 @@ function MacrosCard(props) {
     macros,
     toMacrosChange,
     macrosIndex,
-    toDeleteMacros
+    toDeleteMacros,
+    addKeyToMacros,
+    toRecordMacros,
+    isRecord
   } = props;
+
   return (
-    <Card className={classes.card}>
+    <Card
+      className={classNames(classes.card, isRecord && classes.cardInRecord)}
+    >
       <CardContent className={classes.content}>
         <Grid container>
           <Grid
@@ -73,21 +85,30 @@ function MacrosCard(props) {
         <Divider />
         <Grid container className={classes.container}>
           <Grid item xs={4}>
-            <MacrosCardInput />
-            <MacrosCardDelay />
-            <AddKeyInMacros>{i18n.editor.macros.addKeyOrDelay}</AddKeyInMacros>
+            <MacrosCardInput isRecord={isRecord} />
+            <MacrosCardDelay isRecord={isRecord} />
+            <AddKeyInMacros isRecord={isRecord}>
+              {i18n.editor.macros.addKeyOrDelay}
+            </AddKeyInMacros>
           </Grid>
           <Grid item xs={8} className={classes.item}>
             <MacrosButtonsDND
               macros={macros}
               toMacrosChange={toMacrosChange}
               macrosIndex={macrosIndex}
+              addKeyToMacros={addKeyToMacros}
+              isRecord={isRecord}
             />
           </Grid>
         </Grid>
       </CardContent>
       <CardActions>
-        <Button size="small" color="secondary">
+        <Button
+          size="small"
+          color={!isRecord ? "secondary" : "inherit"}
+          onClick={toRecordMacros}
+          className={isRecord && classes.button}
+        >
           Record macros
         </Button>
       </CardActions>

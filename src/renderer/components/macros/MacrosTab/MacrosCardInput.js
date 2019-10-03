@@ -14,12 +14,12 @@ const styles = () => ({
 });
 
 function MacrosCardInput(props) {
+  const { classes, isRecord } = props;
+
   const [name, setName] = useState("macros 1");
   const handleChange = e => {
     setName(e.target.value);
   };
-
-  const { classes } = props;
 
   return (
     <form className={classes.container} noValidate autoComplete="off">
@@ -31,6 +31,7 @@ function MacrosCardInput(props) {
         onChange={handleChange}
         variant="outlined"
         fullWidth
+        disabled={!isRecord}
       />
     </form>
   );

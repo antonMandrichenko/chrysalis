@@ -38,43 +38,63 @@ const styles = theme => ({
 class MacrosTabs extends React.Component {
   state = {
     value: 0,
-    macrosTab: []
+    isRecord: false
   };
 
   handleChange = (event, value) => {
     this.setState({ value });
   };
 
+  toRecordMacros = () => {
+    this.setState({ isRecord: !this.state.isRecord });
+  };
+
   render() {
-    const { classes, macrosTab, toDeleteMacros } = this.props;
-    const { value } = this.state;
+    const {
+      classes,
+      macrosTab,
+      toDeleteMacros,
+      addKeyToMacros,
+      setActiveMacrosIndex
+    } = this.props;
+    const { value, isRecord } = this.state;
     const renderTabContainer = value =>
-      macrosTab.map(
-        (macros, i) =>
-          value === i && (
+      macrosTab.map((macros, i) => {
+        if (value === i) {
+          setActiveMacrosIndex(value);
+          return (
             <TabContainer key={uuid()} className={classes.container}>
               <MacrosTab
                 macros={macros}
                 toMacrosChange={this.props.toMacrosChange}
                 macrosIndex={i}
                 toDeleteMacros={toDeleteMacros}
+                addKeyToMacros={addKeyToMacros}
+                toRecordMacros={this.toRecordMacros}
+                isRecord={isRecord}
               />
             </TabContainer>
-          )
-      );
+          );
+        }
+      });
 
     return (
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs value={value} onChange={this.handleChange}>
-            {macrosTab.map(tab => (
+            {macrosTab.map((tab, i) => (
               <Tab
                 label={tab.macrosName}
                 className={classes.tab}
                 key={uuid()}
+                disabled={isRecord && value !== i}
               />
             ))}
-            <Tab icon={<AddIcon />} className={classes.tab} />
+            <Tab
+              icon={<AddIcon />}
+              className={classes.tab}
+              disabled={isRecord}
+            />
           </Tabs>
         </AppBar>
         {renderTabContainer(value)}

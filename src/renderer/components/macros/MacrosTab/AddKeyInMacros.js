@@ -17,13 +17,20 @@ const styles = theme => ({
 });
 
 function AddKeyInMacros(props) {
-  const { classes } = props;
+  const { classes, isRecord } = props;
   return (
     <div className={classes.root}>
       <Tooltip placement="bottom" title={props.children}>
-        <Fab color="primary" aria-label="Add" className={classes.margin}>
-          <AddIcon />
-        </Fab>
+        <div>
+          <Fab
+            color="primary"
+            aria-label="Add"
+            className={classes.margin}
+            disabled={!isRecord}
+          >
+            <AddIcon />
+          </Fab>
+        </div>
       </Tooltip>
     </div>
   );

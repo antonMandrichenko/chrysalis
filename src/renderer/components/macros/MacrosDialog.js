@@ -194,11 +194,25 @@ function MacrosDialog(props) {
       return item;
     });
     setMacrosTab(newArr);
+    getMacrosLength(newArr);
+    setStartContext(true);
     handleCloseKeyConfig();
   };
 
   const deleteKeyFromMacros = keyIndex => {
     console.log("keyInd", keyIndex);
+    const newArr = macrosTab.map((item, i) => {
+      if (i === activeMacrosIndex) {
+        return {
+          macrosName: item.macrosName,
+          data: item.data.filter((_, i) => i !== keyIndex)
+        };
+      }
+      return item;
+    });
+    setMacrosTab(newArr);
+    getMacrosLength(newArr);
+    setStartContext(true);
   };
 
   const groupeList =

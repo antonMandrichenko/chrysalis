@@ -94,7 +94,7 @@ function MacrosDialog(props) {
     const newState = macrosTab.filter((_, i) => i !== macrosIndex);
     setMacrosTab(newState);
     getMacrosLength(newState);
-    setStartContext(truncate);
+    setStartContext(true);
   };
 
   const toSaveChanges = () => {

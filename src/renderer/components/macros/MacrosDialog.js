@@ -67,13 +67,15 @@ function MacrosDialog(props) {
 
   const getMacrosLength = data => {
     let length = 0;
-    data.forEach(item => {
-      item.data.forEach(string => {
-        length += string.split(" ").length;
+    if (data.length) {
+      data.forEach(item => {
+        item.data.forEach(string => {
+          length += string.split(" ").length;
+        });
+        length += 1;
       });
       length += 1;
-    });
-    length += 1;
+    }
     setMacrosLength(length);
   };
 
@@ -88,7 +90,9 @@ function MacrosDialog(props) {
   };
 
   const toDeleteMacros = macrosIndex => {
-    setMacrosTab(macrosTab.filter((_, i) => i !== macrosIndex));
+    const newState = macrosTab.filter((_, i) => i !== macrosIndex);
+    setMacrosTab(newState);
+    getMacrosLength(newState);
   };
 
   const toSaveChanges = () => {

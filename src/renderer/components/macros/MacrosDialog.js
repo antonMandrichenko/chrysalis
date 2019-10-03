@@ -9,6 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import MacrosTabs from "./MacrosTabs";
+import MacrosProgress from "./MacrosProgress";
 
 const styles = theme => ({
   appBar: {
@@ -46,7 +47,7 @@ function MacrosDialog(props) {
 
   useEffect(() => {
     const string =
-      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
+      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
     const macrosNames = ["MAcros 1", "Macros 2"];
     const newString = string.match(/[\d\s]+?\s0\s/g);
     const macroses = newString.map(macros =>
@@ -137,6 +138,7 @@ function MacrosDialog(props) {
           toDeleteMacros={toDeleteMacros}
           macrosLength={macrosLength}
         />
+        <MacrosProgress macrosLength={macrosLength} />
       </Dialog>
     </div>
   );

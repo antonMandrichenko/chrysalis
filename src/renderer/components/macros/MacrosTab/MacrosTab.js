@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import MacrosCard from "./MacrosCard";
-import MacrosProgress from "./MacrosProgress";
 
 const styles = () => ({
   root: {
@@ -12,13 +11,7 @@ const styles = () => ({
 });
 
 function MacrosTab(props) {
-  const {
-    macros,
-    toMacrosChange,
-    macrosIndex,
-    toDeleteMacros,
-    macrosLength
-  } = props;
+  const { macros, toMacrosChange, macrosIndex, toDeleteMacros } = props;
 
   return (
     <Grid container justify="center" alignItems="center">
@@ -29,7 +22,6 @@ function MacrosTab(props) {
           macrosIndex={macrosIndex}
           toDeleteMacros={toDeleteMacros}
         />
-        <MacrosProgress macrosLength={macrosLength} />
       </Grid>
     </Grid>
   );

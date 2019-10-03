@@ -46,7 +46,7 @@ class MacrosTabs extends React.Component {
   };
 
   render() {
-    const { classes, macrosTab, toDeleteMacros, macrosLength } = this.props;
+    const { classes, macrosTab, toDeleteMacros } = this.props;
     const { value } = this.state;
     const renderTabContainer = value =>
       macrosTab.map(
@@ -58,7 +58,6 @@ class MacrosTabs extends React.Component {
                 toMacrosChange={this.props.toMacrosChange}
                 macrosIndex={i}
                 toDeleteMacros={toDeleteMacros}
-                macrosLength={macrosLength}
               />
             </TabContainer>
           )

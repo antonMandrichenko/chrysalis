@@ -8,7 +8,11 @@ const styles = () => ({
   root: {
     flexGrow: 1,
     padding: 10,
-    marginTop: "1rem"
+    marginTop: "1rem",
+    position: "fixed",
+    bottom: "2rem",
+    left: "2rem",
+    right: "2rem"
   },
   div: {
     position: "relative"

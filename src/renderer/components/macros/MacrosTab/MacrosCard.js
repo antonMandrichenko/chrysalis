@@ -56,7 +56,8 @@ function MacrosCard(props) {
     addKeyToMacros,
     toRecordMacros,
     isRecord,
-    openKeyConfig
+    openKeyConfig,
+    deleteKeyFromMacros
   } = props;
 
   return (
@@ -99,6 +100,7 @@ function MacrosCard(props) {
               macrosIndex={macrosIndex}
               addKeyToMacros={addKeyToMacros}
               isRecord={isRecord}
+              deleteKeyFromMacros={deleteKeyFromMacros}
             />
           </Grid>
         </Grid>

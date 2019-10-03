@@ -49,7 +49,8 @@ const MacrosButtonsDND = props => {
     toMacrosChange,
     macrosIndex,
     addKeyToMacros,
-    isRecord
+    isRecord,
+    deleteKeyFromMacros
   } = props;
   const [state, setState] = useState(
     macros.data.map((item, i) => `${item} ${i}`)
@@ -119,9 +120,15 @@ const MacrosButtonsDND = props => {
       }
       case "8": {
         const keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
-        item = keymapDB.keymapCodeTable
-          .filter((item, i) => i === keyNumber)[0]
-          .labels.primary.toLowerCase();
+        item = keymapDB.keymapCodeTable.filter((item, i) => i === keyNumber)[0];
+        if (item.labels.top) {
+          item = `${item.labels.top} ${item.labels.primary}`;
+        } else {
+          item =
+            item.labels.primary.length > 1
+              ? item.labels.primary.toUpperCase()
+              : item.labels.primary.toLowerCase();
+        }
         break;
       }
     }
@@ -169,6 +176,8 @@ const MacrosButtonsDND = props => {
                 handlePopoverOpen={handlePopoverOpen}
                 handlePopoverClose={handlePopoverClose}
                 item={item}
+                keyIndex={idx}
+                deleteKeyFromMacros={deleteKeyFromMacros}
               />
             </div>
           </li>

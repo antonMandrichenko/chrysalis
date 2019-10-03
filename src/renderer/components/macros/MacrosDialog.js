@@ -197,6 +197,10 @@ function MacrosDialog(props) {
     handleCloseKeyConfig();
   };
 
+  const deleteKeyFromMacros = keyIndex => {
+    console.log("keyInd", keyIndex);
+  };
+
   const groupeList =
     orderArrayWithKeys &&
     orderArrayWithKeys.map((group, index) => (
@@ -255,6 +259,7 @@ function MacrosDialog(props) {
           addKeyToMacros={addKeyToMacros}
           setActiveMacrosIndex={setActiveMacrosIndex}
           openKeyConfig={openKeyConfig}
+          deleteKeyFromMacros={deleteKeyFromMacros}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>

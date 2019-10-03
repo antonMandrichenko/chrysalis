@@ -29,7 +29,9 @@ function ButtonDNDevents(props) {
     isDisplay,
     handlePopoverOpen,
     handlePopoverClose,
-    item
+    item,
+    keyIndex,
+    deleteKeyFromMacros
   } = props;
   return (
     <div
@@ -52,6 +54,9 @@ function ButtonDNDevents(props) {
         aria-label="Delete letter"
         fontSize="small"
         className={classes.margin}
+        onClick={() => {
+          deleteKeyFromMacros(keyIndex);
+        }}
       >
         <DeleteIcon />
       </IconButton>

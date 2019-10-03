@@ -19,7 +19,8 @@ function MacrosTab(props) {
     addKeyToMacros,
     isRecord,
     toRecordMacros,
-    openKeyConfig
+    openKeyConfig,
+    deleteKeyFromMacros
   } = props;
 
   return (
@@ -34,6 +35,7 @@ function MacrosTab(props) {
           toRecordMacros={toRecordMacros}
           isRecord={isRecord}
           openKeyConfig={openKeyConfig}
+          deleteKeyFromMacros={deleteKeyFromMacros}
         />
       </Grid>
     </Grid>

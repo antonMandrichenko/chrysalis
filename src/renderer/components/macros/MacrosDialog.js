@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -27,6 +27,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function MacrosDialog(props) {
   const { classes } = props;
   const [open, setOpen] = useState(false);
+  const [startContext, setStartContext] = useState(false);
+  const [macrosTab, setMacrosTab] = useState(null);
+  // const [macrosForSave, setMacrosForSave] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -34,6 +37,39 @@ function MacrosDialog(props) {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const toStartContext = () => {
+    setStartContext(true);
+  };
+
+  useEffect(() => {
+    const string =
+      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
+    const macrosNames = ["MAcros 1", "Macros 2"];
+    const newString = string.match(/[\d\s]+?\s0\s/g);
+    const macroses = newString.map(macros =>
+      macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
+    );
+    const macrosesWithNames = macroses.map((data, i) =>
+      macrosNames.reduce(
+        (newObj, macrosName, j) =>
+          i === j ? { ...newObj, macrosName, data } : newObj,
+        {}
+      )
+    );
+    setMacrosTab(macrosesWithNames);
+    console.log(macrosesWithNames);
+  }, []);
+
+  const toMacrosChange = (newMacros, macrosIndex, macrosName) => {
+    let data = newMacros.map(item => item.replace(/\s(\d+)$/, ""));
+    setMacrosTab(
+      macrosTab.map((item, i) =>
+        i === macrosIndex ? { macrosName, data } : item
+      )
+    );
+    toStartContext();
   };
 
   return (
@@ -47,7 +83,10 @@ function MacrosDialog(props) {
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <AppBar className={classes.appBar}>
+        <AppBar
+          className={classes.appBar}
+          color={startContext ? "secondary" : "primary"}
+        >
           <Toolbar>
             <IconButton
               edge="start"
@@ -65,7 +104,7 @@ function MacrosDialog(props) {
             </Button>
           </Toolbar>
         </AppBar>
-        <MacrosTabs />
+        <MacrosTabs macrosTab={macrosTab} toMacrosChange={toMacrosChange} />
       </Dialog>
     </div>
   );

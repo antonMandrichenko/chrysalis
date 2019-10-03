@@ -45,34 +45,19 @@ class MacrosTabs extends React.Component {
     this.setState({ value });
   };
 
-  componentDidMount() {
-    const string =
-      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
-    const macrosNames = ["MAcros 1", "Macros 2"];
-    const newString = string.match(/[\d\s]+?\s0\s/g);
-    const macroses = newString.map(macros =>
-      macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
-    );
-    const macrosesWithNames = macroses.map((macros, i) =>
-      macrosNames.reduce(
-        (newObj, macrosName, j) =>
-          i === j ? { ...newObj, macrosName, macros } : newObj,
-        {}
-      )
-    );
-    this.setState({ macrosTab: macrosesWithNames });
-    console.log(macrosesWithNames);
-  }
-
   render() {
-    const { classes } = this.props;
-    const { value, macrosTab } = this.state;
+    const { classes, macrosTab } = this.props;
+    const { value } = this.state;
     const renderTabContainer = value =>
       macrosTab.map(
         (macros, i) =>
           value === i && (
             <TabContainer key={uuid()} className={classes.container}>
-              <MacrosTab values={macros.macrosName} macros={macros} />
+              <MacrosTab
+                macros={macros}
+                toMacrosChange={this.props.toMacrosChange}
+                macrosIndex={i}
+              />
             </TabContainer>
           )
       );

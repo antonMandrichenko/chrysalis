@@ -29,6 +29,7 @@ function MacrosDialog(props) {
   const [open, setOpen] = useState(false);
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
+  const [macrosLength, setMacrosLength] = useState(0);
   // const [macrosForSave, setMacrosForSave] = useState(false);
 
   const handleClickOpen = () => {
@@ -48,6 +49,7 @@ function MacrosDialog(props) {
       "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
     const macrosNames = ["MAcros 1", "Macros 2"];
     const newString = string.match(/[\d\s]+?\s0\s/g);
+    console.log("new", newString);
     const macroses = newString.map(macros =>
       macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
     );
@@ -76,6 +78,11 @@ function MacrosDialog(props) {
     setMacrosTab(macrosTab.filter((_, i) => i !== macrosIndex));
   };
 
+  const toSaveChanges = () => {
+    console.log("changes saves");
+    setStartContext(false);
+  };
+
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
@@ -100,10 +107,14 @@ function MacrosDialog(props) {
             >
               <CloseIcon />
             </IconButton>
-            <Typography variant="h6" className={classes.title}>
+            <Typography variant="h6" className={classes.title} color="inherit">
               Macros config
             </Typography>
-            <Button color="inherit" onClick={handleClose}>
+            <Button
+              color="inherit"
+              onClick={toSaveChanges}
+              disabled={!startContext}
+            >
               save
             </Button>
           </Toolbar>

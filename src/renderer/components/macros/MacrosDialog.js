@@ -31,7 +31,7 @@ function MacrosDialog(props) {
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
   const [macrosLength, setMacrosLength] = useState(0);
-  // const [macrosForSave, setMacrosForSave] = useState(false);
+  const [activeMacrosIndex, setActiveMacrosIndex] = useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -39,6 +39,7 @@ function MacrosDialog(props) {
 
   const handleClose = () => {
     setOpen(false);
+    setStartContext(false);
   };
 
   const toStartContext = () => {
@@ -47,7 +48,7 @@ function MacrosDialog(props) {
 
   useEffect(() => {
     const string =
-      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
+      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
     const macrosNames = ["MAcros 1", "Macros 2"];
     const newString = string.match(/[\d\s]+?\s0\s/g);
     const macroses = newString.map(macros =>
@@ -63,7 +64,7 @@ function MacrosDialog(props) {
     setMacrosTab(macrosesWithNames);
     getMacrosLength(macrosesWithNames);
     console.log(macrosesWithNames);
-  }, []);
+  }, [open]);
 
   const getMacrosLength = data => {
     let length = 0;
@@ -93,11 +94,23 @@ function MacrosDialog(props) {
     const newState = macrosTab.filter((_, i) => i !== macrosIndex);
     setMacrosTab(newState);
     getMacrosLength(newState);
+    setStartContext(truncate);
   };
 
   const toSaveChanges = () => {
     console.log("changes saves");
     setStartContext(false);
+  };
+
+  const addKeyToMacros = e => {
+    console.log(
+      "add",
+      e.keyCode,
+      e.shiftKey,
+      e.key,
+      e.location,
+      activeMacrosIndex
+    );
   };
 
   return (
@@ -140,7 +153,8 @@ function MacrosDialog(props) {
           macrosTab={macrosTab}
           toMacrosChange={toMacrosChangeFromDND}
           toDeleteMacros={toDeleteMacros}
-          macrosLength={macrosLength}
+          addKeyToMacros={addKeyToMacros}
+          setActiveMacrosIndex={setActiveMacrosIndex}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>

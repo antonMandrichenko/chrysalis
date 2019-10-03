@@ -12,7 +12,7 @@ const styles = () => ({
 });
 
 function MacrosTab(props) {
-  const { macros, toMacrosChange, macrosIndex } = props;
+  const { macros, toMacrosChange, macrosIndex, toDeleteMacros } = props;
 
   return (
     <Grid container justify="center" alignItems="center">
@@ -21,6 +21,7 @@ function MacrosTab(props) {
           macros={macros}
           toMacrosChange={toMacrosChange}
           macrosIndex={macrosIndex}
+          toDeleteMacros={toDeleteMacros}
         />
         <MacrosProgress />
       </Grid>

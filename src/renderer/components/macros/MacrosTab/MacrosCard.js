@@ -41,7 +41,13 @@ const styles = {
 };
 
 function MacrosCard(props) {
-  const { classes, macros, toMacrosChange, macrosIndex } = props;
+  const {
+    classes,
+    macros,
+    toMacrosChange,
+    macrosIndex,
+    toDeleteMacros
+  } = props;
   return (
     <Card className={classes.card}>
       <CardContent className={classes.content}>
@@ -56,7 +62,10 @@ function MacrosCard(props) {
             </Typography>
           </Grid>
           <Grid item xs={2} className={classes.flex}>
-            <DeleteMacrosButton>
+            <DeleteMacrosButton
+              toDeleteMacros={toDeleteMacros}
+              macrosIndex={macrosIndex}
+            >
               {i18n.editor.macros.deleteMacros}
             </DeleteMacrosButton>
           </Grid>

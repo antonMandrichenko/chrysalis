@@ -72,6 +72,10 @@ function MacrosDialog(props) {
     toStartContext();
   };
 
+  const toDeleteMacros = macrosIndex => {
+    setMacrosTab(macrosTab.filter((_, i) => i !== macrosIndex));
+  };
+
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
@@ -104,7 +108,11 @@ function MacrosDialog(props) {
             </Button>
           </Toolbar>
         </AppBar>
-        <MacrosTabs macrosTab={macrosTab} toMacrosChange={toMacrosChange} />
+        <MacrosTabs
+          macrosTab={macrosTab}
+          toMacrosChange={toMacrosChange}
+          toDeleteMacros={toDeleteMacros}
+        />
       </Dialog>
     </div>
   );

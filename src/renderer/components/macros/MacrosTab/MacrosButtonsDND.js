@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Paper from "@material-ui/core/Paper";
-import { KeymapDB } from "@chrysalis-api/keymap";
+import { KeymapDB, keyCodeTable } from "@chrysalis-api/keymap";
 import ButtonDNDevents from "./ButtonDNDevents";
 
 const propTypes = {};
@@ -43,8 +43,10 @@ const styles = {
 const keymapDB = new KeymapDB();
 
 function MacrosButtonsDND(props) {
-  const { classes, macros } = props;
-  const [state, setState] = useState(macros.map((item, i) => `${item} ${i}`));
+  const { classes, macros, toMacrosChange, macrosIndex } = props;
+  const [state, setState] = useState(
+    macros.data.map((item, i) => `${item} ${i}`)
+  );
   const [anchorEl, setAnchorEl] = useState(null);
   const [draggedItem, setDraggedItem] = useState(null);
   const [isOnDrag, setIsOnDrag] = useState(false);
@@ -56,6 +58,8 @@ function MacrosButtonsDND(props) {
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/html", e.target.parentNode);
     e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
+    console.log(keyCodeTable);
+    console.log(keymapDB.keymapCodeTable);
   };
 
   const onDragOver = index => {
@@ -77,6 +81,7 @@ function MacrosButtonsDND(props) {
   const onDragEnd = () => {
     setDraggedItem(null);
     setIsOnDrag(false);
+    toMacrosChange(state, macrosIndex, macros.macrosName);
   };
 
   const handlePopoverOpen = item => {
@@ -90,21 +95,48 @@ function MacrosButtonsDND(props) {
     setAnchorEl(anchorEl ? null : item);
   };
 
-  const getKey = str => {
+  const getKey = (str, open, classes, idx) => {
     const macroConfig = str[0];
     const oneMacrosArr = str.split(" ");
+    let item,
+      isSecondary = false;
     switch (macroConfig) {
-      case "1": 
-        return oneMacrosArr[oneMacrosArr.length - 2];
-      case "5": 
-        return oneMacrosArr[oneMacrosArr.length - 2];
+      case "1": {
+        item = `delay ${oneMacrosArr[oneMacrosArr.length - 2]} ms`;
+        isSecondary = true;
+        break;
+      }
+      case "5": {
+        item = oneMacrosArr[oneMacrosArr.length - 2];
+        break;
+      }
       case "8": {
         const keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
-        return keymapDB.keymapCodeTable
+        item = keymapDB.keymapCodeTable
           .filter((item, i) => i === keyNumber)[0]
           .labels.primary.toLowerCase();
+        break;
       }
     }
+    return (
+      <Button
+        variant="contained"
+        color={isSecondary ? "secondary" : "primary"}
+        className={classes.button}
+        aria-owns={open ? "mouse-over-popover" : undefined}
+        aria-haspopup="true"
+        onMouseEnter={() => {
+          handlePopoverOpen(str);
+        }}
+        onMouseLeave={handlePopoverClose}
+        onClick={() => {
+          handlePopoverToggle(str);
+        }}
+        disabled={isOnDrag && draggedItem !== state[idx]}
+      >
+        {item}
+      </Button>
+    );
   };
 
   const open = Boolean(anchorEl);
@@ -124,23 +156,7 @@ function MacrosButtonsDND(props) {
               onDragStart={e => onDragStart(e, idx)}
               onDragEnd={onDragEnd}
             >
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                aria-owns={open ? "mouse-over-popover" : undefined}
-                aria-haspopup="true"
-                onMouseEnter={() => {
-                  handlePopoverOpen(item);
-                }}
-                onMouseLeave={handlePopoverClose}
-                onClick={() => {
-                  handlePopoverToggle(item);
-                }}
-                disabled={isOnDrag && draggedItem !== state[idx]}
-              >
-                {getKey(item)}
-              </Button>
+              {getKey(item, open, classes, idx)}
               <ButtonDNDevents
                 isDisplay={anchorEl === item}
                 handlePopoverOpen={handlePopoverOpen}

@@ -41,7 +41,7 @@ const styles = {
 };
 
 function MacrosCard(props) {
-  const { classes, values, macros } = props;
+  const { classes, macros, toMacrosChange, macrosIndex } = props;
   return (
     <Card className={classes.card}>
       <CardContent className={classes.content}>
@@ -69,7 +69,11 @@ function MacrosCard(props) {
             <AddKeyInMacros>{i18n.editor.macros.addKeyOrDelay}</AddKeyInMacros>
           </Grid>
           <Grid item xs={8} className={classes.item}>
-            <MacrosButtonsDND macros={macros.macros} />
+            <MacrosButtonsDND
+              macros={macros}
+              toMacrosChange={toMacrosChange}
+              macrosIndex={macrosIndex}
+            />
           </Grid>
         </Grid>
       </CardContent>

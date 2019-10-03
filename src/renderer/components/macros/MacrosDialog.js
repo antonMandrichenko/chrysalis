@@ -49,7 +49,6 @@ function MacrosDialog(props) {
       "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 ";
     const macrosNames = ["MAcros 1", "Macros 2"];
     const newString = string.match(/[\d\s]+?\s0\s/g);
-    console.log("new", newString);
     const macroses = newString.map(macros =>
       macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
     );
@@ -61,16 +60,29 @@ function MacrosDialog(props) {
       )
     );
     setMacrosTab(macrosesWithNames);
+    getMacrosLength(macrosesWithNames);
     console.log(macrosesWithNames);
   }, []);
 
-  const toMacrosChange = (newMacros, macrosIndex, macrosName) => {
+  const getMacrosLength = data => {
+    let length = 0;
+    data.forEach(item => {
+      item.data.forEach(string => {
+        length += string.split(" ").length;
+      });
+      length += 1;
+    });
+    length += 1;
+    setMacrosLength(length);
+  };
+
+  const toMacrosChangeFromDND = (newMacros, macrosIndex, macrosName) => {
     let data = newMacros.map(item => item.replace(/\s(\d+)$/, ""));
-    setMacrosTab(
-      macrosTab.map((item, i) =>
-        i === macrosIndex ? { macrosName, data } : item
-      )
+    const changedData = macrosTab.map((item, i) =>
+      i === macrosIndex ? { macrosName, data } : item
     );
+    setMacrosTab(changedData);
+    getMacrosLength(changedData);
     toStartContext();
   };
 
@@ -121,8 +133,9 @@ function MacrosDialog(props) {
         </AppBar>
         <MacrosTabs
           macrosTab={macrosTab}
-          toMacrosChange={toMacrosChange}
+          toMacrosChange={toMacrosChangeFromDND}
           toDeleteMacros={toDeleteMacros}
+          macrosLength={macrosLength}
         />
       </Dialog>
     </div>

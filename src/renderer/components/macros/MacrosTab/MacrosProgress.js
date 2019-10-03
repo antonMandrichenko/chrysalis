@@ -25,25 +25,12 @@ const styles = () => ({
 });
 
 function MacrosProgress(props) {
-  const { classes } = props;
+  const { classes, macrosLength } = props;
   const [completed, setCompleted] = useState(0);
 
   useEffect(() => {
-    function progress() {
-      setCompleted(oldCompleted => {
-        if (oldCompleted === 100) {
-          return 0;
-        }
-        const diff = Math.random() * 10;
-        return Math.min(oldCompleted + diff, 100);
-      });
-    }
-
-    const timer = setInterval(progress, 500);
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+    setCompleted((macrosLength / 255) * 100);
+  }, [macrosLength]);
 
   return (
     <Paper className={classes.root}>

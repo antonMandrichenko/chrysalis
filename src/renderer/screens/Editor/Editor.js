@@ -164,93 +164,7 @@ class Editor extends React.Component {
     return R;
   }
 
-  /**
-   * Scans mock data for demo mode
-   */
-  scanMockKeyboard = async () => {
-    const { mockData } = this.state;
-    const { device } = this.props;
-
-    let defLayer = mockData.defaultLayer;
-    defLayer = parseInt(defLayer) || 0;
-
-    let keymap = mockData.keymap;
-
-    let defaultKeymap = keymap.default
-      .split(" ")
-      .filter(v => v.length > 0)
-      .map(k => this.keymapDB.parse(parseInt(k)));
-    let customKeymap = keymap.custom
-      .split(" ")
-      .filter(v => v.length > 0)
-      .map(k => this.keymapDB.parse(parseInt(k)));
-    defaultKeymap = this._chunk(defaultKeymap, 80);
-    customKeymap = this._chunk(customKeymap, 80);
-    let colorMapData = mockData.colormap;
-    let paletteData = mockData.palette;
-    let palette = this._chunk(
-      paletteData
-        .split(" ")
-        .filter(v => v.length > 0)
-        .map(k => parseInt(k)),
-      3
-    ).map(color => {
-      return {
-        r: color[0],
-        g: color[1],
-        b: color[2],
-        rgb: `rgb(${color[0]}, ${color[1]}, ${color[2]})`
-      };
-    });
-
-    let colorMap = this._chunk(
-      colorMapData
-        .split(" ")
-        .filter(v => v.length > 0)
-        .map(k => parseInt(k)),
-      80
-    );
-
-    const keymapFromLS = JSON.parse(
-      localStorage.getItem(
-        `keymap_${device.comName}_${device.device.info.product}`
-      )
-    );
-    const colormapFromLS = JSON.parse(
-      localStorage.getItem(
-        `colormap_${device.comName}_${device.device.info.product}`
-      )
-    );
-    const paletteFromLS = JSON.parse(
-      localStorage.getItem(
-        `palette_${device.comName}_${device.device.info.product}`
-      )
-    );
-    const defaultLayerFromLS = JSON.parse(
-      localStorage.getItem(
-        `defaultLayer_${device.comName}_${device.device.info.product}`
-      )
-    );
-
-    this.setState({
-      defaultLayer: defaultLayerFromLS || defLayer,
-      keymap: {
-        custom: (keymapFromLS && keymapFromLS.custom) || customKeymap,
-        default: (keymapFromLS && keymapFromLS.default) || defaultKeymap,
-        onlyCustom: keymapFromLS ? keymapFromLS.onlyCustom : keymap.onlyCustom
-      },
-      showDefaults: !keymap.onlyCustom,
-      palette: paletteFromLS || palette,
-      colorMap: colormapFromLS || colorMap
-    });
-  };
-  bottomMenuNeverHideFromUnderglow = () => {
-    this.setState(state => ({
-      currentKeyIndex: state.currentKeyIndex !== -1 ? state.currentKeyIndex : 0,
-      currentLedIndex: state.currentLedIndex !== -1 ? state.currentLedIndex : 0
-    }));
-  };
-
+  
   scanKeyboard = async lang => {
     let focus = new Focus();
     try {
@@ -638,27 +552,7 @@ class Editor extends React.Component {
 
   setMode = (mode, isUnderglow) => {
     this.setState({ mode: mode });
-    !isUnderglow
-      ? this.bottomMenuNeverHide()
-      : this.bottomMenuNeverHideFromUnderglow();
-  };
-
-  onColorButtonSelect = (action, colorIndex) => {
-    const { isColorButtonSelected } = this.state;
-    if (action === "one_button_click") {
-      this.setState({
-        isMultiSelected: false,
-        isColorButtonSelected: !isColorButtonSelected
-      });
-      return;
-    }
-    if (action === "another_button_click") {
-      this.setState({
-        selectedPaletteColor: colorIndex,
-        isColorButtonSelected: true
-      });
-      return;
-    }
+    this.bottomMenuNeverHide();
   };
 
   onColorSelect = colorIndex => {

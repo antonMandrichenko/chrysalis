@@ -63,7 +63,7 @@ const styles = theme => ({
   }
 });
 
-const orderArray = [
+export const orderArray = [
   { group: "Letters", isUnite: false, displayName: "Letters" },
   { group: "Digits & Spacing", isUnite: true, displayName: "Digits & Spacing" },
   { group: "Fx keys", isUnite: false, displayName: "Fx keys" },

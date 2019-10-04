@@ -108,7 +108,11 @@ const English = {
     copyToClipboard: "Copy to clipboard",
     copySuccess: "Copied!",
     pasteFromClipboard: "Paste from clipboard",
-    pasteSuccess: "Pasted!"
+    pasteSuccess: "Pasted!",
+    macros: {
+      deleteMacros: "Delete macros",
+      addKeyOrDelay: "Add key or delay"
+    }
   },
   preferences: {
     devtools: "Developer tools",

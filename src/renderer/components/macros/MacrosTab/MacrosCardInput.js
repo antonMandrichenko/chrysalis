@@ -19,6 +19,7 @@ function MacrosCardInput(props) {
   const [name, setName] = useState(macrosName);
   const handleChange = e => {
     setName(e.target.value);
+    // toChangeMacrosName(e.target.value);
   };
 
   return (
@@ -29,7 +30,7 @@ function MacrosCardInput(props) {
         className={classes.textField}
         value={name}
         onChange={handleChange}
-        onMouseLeave={() => {
+        onBlur={() => {
           toChangeMacrosName(name);
         }}
         variant="outlined"

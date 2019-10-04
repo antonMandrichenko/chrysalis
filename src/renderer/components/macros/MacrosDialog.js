@@ -65,6 +65,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+let keyCode;
+
 const toOrderArrayWithKeys = baseKeyCodeTable =>
   orderArray.map(item =>
     !item.isUnite
@@ -100,6 +102,8 @@ function MacrosDialog(props) {
   const [isOpenKeyConfig, setIsOpenKeyConfig] = useState(false);
   const [orderArrayWithKeys, setOrderArrayWithKeys] = useState(null);
   const [isOpenDelayConfig, setIsOpenDelayConfig] = useState(false);
+  const [delayKeyEdit, setDelayKeyEdit] = useState(null);
+  const [keyEdit, setKeyEdit] = useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -185,32 +189,58 @@ function MacrosDialog(props) {
     );
   };
 
-  const openKeyConfig = () => {
+  const openKeyConfig = (keyIndex, keyNumber) => {
     setIsOpenKeyConfig(true);
+    if (keyIndex !== undefined) {
+      setKeyEdit(keyIndex);
+      keyCode = keyNumber;
+    }
   };
 
   const handleCloseKeyConfig = () => {
     setIsOpenKeyConfig(false);
+    setKeyEdit(null);
+    keyCode = null;
   };
 
-  const openDelayConfig = () => {
+  const openDelayConfig = keyIndex => {
     setIsOpenDelayConfig(true);
+    if (keyIndex !== undefined) setDelayKeyEdit(keyIndex);
   };
 
   const handleCloseDelayConfig = () => {
     setIsOpenDelayConfig(false);
+    setDelayKeyEdit(null);
   };
 
   const keySelect = code => {
-    const newArr = macrosTab.map((item, i) => {
-      if (i === activeMacrosIndex) {
-        return {
-          macrosName: item.macrosName,
-          data: item.data.concat([`8 ${code}`])
-        };
-      }
-      return item;
-    });
+    let newArr;
+    if (keyEdit === null) {
+      newArr = macrosTab.map((item, i) => {
+        if (i === activeMacrosIndex) {
+          return {
+            macrosName: item.macrosName,
+            data: item.data.concat([`8 ${code}`])
+          };
+        }
+        return item;
+      });
+    } else {
+      newArr = macrosTab.map((item, i) => {
+        if (i === activeMacrosIndex) {
+          return {
+            macrosName: item.macrosName,
+            data: item.data.map((keyMacros, i) => {
+              if (i === keyEdit) {
+                return `8 ${code}`;
+              }
+              return keyMacros;
+            })
+          };
+        }
+        return item;
+      });
+    }
     setMacrosTab(newArr);
     getMacrosLength(newArr);
     setStartContext(true);
@@ -218,7 +248,6 @@ function MacrosDialog(props) {
   };
 
   const deleteKeyFromMacros = keyIndex => {
-    console.log("keyInd", keyIndex);
     const newArr = macrosTab.map((item, i) => {
       if (i === activeMacrosIndex) {
         return {
@@ -241,7 +270,7 @@ function MacrosDialog(props) {
         group={group}
         keySelect={keySelect}
         isUnited={Boolean(group.innerGroup)}
-        // selectedKeyCode={currentKeyCode}
+        selectedKeyCode={keyEdit !== null ? keyCode : null}
         numderContGrids={orderArrayWithKeys.length === index + 1 ? 8 : 4}
         numderLgItemsGrids={orderArrayWithKeys.length === index + 1 ? 1 : 2}
         numderMdItemsGrids={orderArrayWithKeys.length === index + 1 ? 2 : 3}

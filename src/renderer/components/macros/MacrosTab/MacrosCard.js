@@ -107,6 +107,8 @@ function MacrosCard(props) {
               addKeyToMacros={addKeyToMacros}
               isRecord={isRecord}
               deleteKeyFromMacros={deleteKeyFromMacros}
+              openKeyConfig={openKeyConfig}
+              openDelayConfig={openDelayConfig}
             />
           </Grid>
         </Grid>

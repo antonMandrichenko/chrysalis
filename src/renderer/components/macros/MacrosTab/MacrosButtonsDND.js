@@ -48,9 +48,11 @@ const MacrosButtonsDND = props => {
     macros,
     toMacrosChange,
     macrosIndex,
-    addKeyToMacros,
+    // addKeyToMacros,
     isRecord,
-    deleteKeyFromMacros
+    deleteKeyFromMacros,
+    openKeyConfig,
+    openDelayConfig
   } = props;
   const [state, setState] = useState(
     macros.data.map((item, i) => `${item} ${i}`)
@@ -107,11 +109,12 @@ const MacrosButtonsDND = props => {
     const macroConfig = str[0];
     const oneMacrosArr = str.split(" ");
     let item,
-      isSecondary = false;
+      isDelay = false,
+      keyNumber;
     switch (macroConfig) {
       case "1": {
         item = `delay ${oneMacrosArr[oneMacrosArr.length - 2]} ms`;
-        isSecondary = true;
+        isDelay = true;
         break;
       }
       case "5": {
@@ -119,7 +122,7 @@ const MacrosButtonsDND = props => {
         break;
       }
       case "8": {
-        const keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
+        keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
         item = keymapDB.keymapCodeTable.filter((item, i) => i === keyNumber)[0];
         if (item.labels.top) {
           item = `${item.labels.top} ${item.labels.primary}`;
@@ -133,23 +136,37 @@ const MacrosButtonsDND = props => {
       }
     }
     return (
-      <Button
-        variant="contained"
-        color={isSecondary ? "secondary" : "primary"}
-        className={classes.button}
-        aria-owns={open ? "mouse-over-popover" : undefined}
-        aria-haspopup="true"
-        onMouseEnter={() => {
-          handlePopoverOpen(str);
-        }}
-        onMouseLeave={handlePopoverClose}
-        onClick={() => {
-          handlePopoverToggle(str);
-        }}
-        disabled={isOnDrag && draggedItem !== state[idx]}
-      >
-        {item}
-      </Button>
+      <React.Fragment>
+        <Button
+          variant="contained"
+          color={isDelay ? "secondary" : "primary"}
+          className={classes.button}
+          aria-owns={open ? "mouse-over-popover" : undefined}
+          aria-haspopup="true"
+          onMouseEnter={() => {
+            handlePopoverOpen(str);
+          }}
+          onMouseLeave={handlePopoverClose}
+          onClick={() => {
+            handlePopoverToggle(str);
+          }}
+          disabled={isOnDrag && draggedItem !== state[idx]}
+        >
+          {item}
+        </Button>
+        <ButtonDNDevents
+          isDisplay={isRecord && anchorEl === str}
+          handlePopoverOpen={handlePopoverOpen}
+          handlePopoverClose={handlePopoverClose}
+          item={str}
+          keyIndex={idx}
+          deleteKeyFromMacros={deleteKeyFromMacros}
+          isDelay={isDelay}
+          openKeyConfig={openKeyConfig}
+          openDelayConfig={openDelayConfig}
+          keyNumber={keyNumber}
+        />
+      </React.Fragment>
     );
   };
 
@@ -171,14 +188,6 @@ const MacrosButtonsDND = props => {
               onDragEnd={isRecord ? onDragEnd : null}
             >
               {getKey(item, open, classes, idx)}
-              <ButtonDNDevents
-                isDisplay={isRecord && anchorEl === item}
-                handlePopoverOpen={handlePopoverOpen}
-                handlePopoverClose={handlePopoverClose}
-                item={item}
-                keyIndex={idx}
-                deleteKeyFromMacros={deleteKeyFromMacros}
-              />
             </div>
           </li>
         ))}

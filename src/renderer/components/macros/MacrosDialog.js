@@ -96,7 +96,7 @@ const toOrderArrayWithKeys = baseKeyCodeTable =>
 
 const focus = new Focus();
 
-const initMacros = { macrosName: "Macros 1", data: [] };
+const initMacros = { macrosName: "New macros", data: [] };
 
 function MacrosDialog(props) {
   const { classes } = props;
@@ -128,7 +128,7 @@ function MacrosDialog(props) {
   useEffect(() => {
     let macrosMap;
     // const string =
-    // "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
+    //   "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
     const getMacrosMap = async () => {
       // await focus.command("macros.map", string);
       macrosMap = await focus.command("macros.map");
@@ -143,8 +143,6 @@ function MacrosDialog(props) {
             macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
           )
         : [];
-      if (macrosNames.length && macroses.length)
-        macrosNames.length = macroses.length;
 
       const macrosesWithNames = macroses.length
         ? macroses.map((data, i) =>
@@ -156,7 +154,9 @@ function MacrosDialog(props) {
                       macrosName: macrosName ? macrosName : `Macros ${i + 1}`,
                       data
                     }
-                  : data && newObj,
+                  : data && Object.keys(newObj).length
+                  ? newObj
+                  : { data, macrosName: `Macros ${i + 1}` },
               {}
             )
           )
@@ -229,10 +229,7 @@ function MacrosDialog(props) {
     newMacrosMap.macrosData = newMacrosMap.macrosData
       .concat(" ", addToAllLength)
       .trim();
-    console.log(
-      newMacrosMap,
-      typeof newMacrosMap
-    );
+    console.log(newMacrosMap, typeof newMacrosMap);
 
     await focus.command("macros.map", newMacrosMap.macrosData);
     settings.set("macrosNames", newMacrosMap.macrosNames);
@@ -333,6 +330,10 @@ function MacrosDialog(props) {
     handleCloseDelayConfig();
   };
 
+  const toAddNewMacros = () => {
+    setMacrosTab(macrosTab.concat([initMacros]));
+  };
+
   const groupeList =
     orderArrayWithKeys &&
     orderArrayWithKeys.map((group, index) => (
@@ -394,6 +395,8 @@ function MacrosDialog(props) {
           deleteKeyFromMacros={deleteKeyFromMacros}
           openDelayConfig={openDelayConfig}
           toChangeMacrosName={toChangeMacrosName}
+          toAddNewMacros={toAddNewMacros}
+          startContext={startContext}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>

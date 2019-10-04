@@ -135,9 +135,8 @@ function MacrosDialog(props) {
 
       console.log(macrosMap);
       const macrosNames = settings.get("macrosNames")
-        ? settings.get("macrosNames").split(" ")
+        ? settings.get("macrosNames").split("__")
         : ["Macros 1"];
-      // const macrosNames = ["MAcros 1", "Macros 2"];
       const newString = macrosMap.match(/[\d\s]+?\s0\s/g);
       const macroses = newString
         ? newString.map(macros =>
@@ -213,23 +212,30 @@ function MacrosDialog(props) {
     setStartContext(false);
     console.log(macrosTab);
     const addToAllLength =
-      oldMacrosLength > macrosLength &&
-      Array(oldMacrosLength - macrosLength + 1)
-        .fill("255")
-        .join(" ");
-    const newMacrosMap = macrosTab
-      .reduce(
-        (newMacros, item) =>
-          newMacros.concat(" ", item.data.join(" ")).concat(" ", 0),
-        ""
-      )
-      .concat(" ", addToAllLength);
+      oldMacrosLength > macrosLength
+        ? Array(oldMacrosLength - macrosLength + 1)
+            .fill("255")
+            .join(" ")
+        : "";
+    const newMacrosMap = macrosTab.reduce((newMacros, item) => {
+      newMacros.macrosData = newMacros.macrosData
+        ? newMacros.macrosData.concat(" ", item.data.join(" ")).concat(" ", 0)
+        : "".concat("", item.data.join(" ")).concat(" ", 0);
+      newMacros.macrosNames = newMacros.macrosNames
+        ? newMacros.macrosNames.concat("__", item.macrosName)
+        : "".concat("", item.macrosName);
+      return newMacros;
+    }, {});
+    newMacrosMap.macrosData = newMacrosMap.macrosData
+      .concat(" ", addToAllLength)
+      .trim();
     console.log(
       newMacrosMap,
-      newMacrosMap.split(" ").length,
       typeof newMacrosMap
     );
-    await focus.command("macros.map", newMacrosMap);
+
+    await focus.command("macros.map", newMacrosMap.macrosData);
+    settings.set("macrosNames", newMacrosMap.macrosNames);
   };
 
   const addKeyToMacros = e => {

@@ -10,7 +10,6 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import MacrosCardInput from "./MacrosCardInput";
-import MacrosCardDelay from "../MacrosCardDelay";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
 import AddKeyInMacros from "./AddKeyInMacros";
@@ -95,7 +94,6 @@ function MacrosCard(props) {
               toChangeMacrosName={toChangeMacrosName}
               macrosName={macros.macrosName}
             />
-            <MacrosCardDelay isRecord={isRecord} />
             <AddKeyInMacros
               isRecord={isRecord}
               openKeyConfig={openKeyConfig}

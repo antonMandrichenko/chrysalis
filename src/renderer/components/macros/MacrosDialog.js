@@ -276,6 +276,41 @@ function MacrosDialog(props) {
     setStartContext(true);
   };
 
+  const toAddDelayToMacros = delay => {
+    let newArr;
+    if (delayKeyEdit === null) {
+      newArr = macrosTab.map((item, i) => {
+        if (i === activeMacrosIndex) {
+          return {
+            macrosName: item.macrosName,
+            data: [`1 ${delay}`].concat(item.data)
+          };
+        }
+        return item;
+      });
+    } else {
+      newArr = macrosTab.map((item, i) => {
+        if (i === activeMacrosIndex) {
+          return {
+            macrosName: item.macrosName,
+            data: item.data.map((delayMacros, i) => {
+              if (i === delayKeyEdit) {
+                return `1 ${delay}`;
+              }
+              return delayMacros;
+            })
+          };
+        }
+        return item;
+      });
+    }
+
+    setMacrosTab(newArr);
+    getMacrosLength(newArr);
+    setStartContext(true);
+    handleCloseDelayConfig();
+  };
+
   const groupeList =
     orderArrayWithKeys &&
     orderArrayWithKeys.map((group, index) => (
@@ -370,7 +405,14 @@ function MacrosDialog(props) {
             )}
             spacing={8}
           >
-            {isOpenKeyConfig ? groupeList : <MacrosCardDelay isRecord={true} />}
+            {isOpenKeyConfig ? (
+              groupeList
+            ) : (
+              <MacrosCardDelay
+                isRecord={true}
+                toAddDelayToMacros={toAddDelayToMacros}
+              />
+            )}
           </Grid>
         </div>
       </Modal>

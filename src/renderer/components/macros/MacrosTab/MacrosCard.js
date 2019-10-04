@@ -81,6 +81,7 @@ function MacrosCard(props) {
               toDeleteMacros={toDeleteMacros}
               macrosIndex={macrosIndex}
               isRecord={isRecord}
+              isMacrosInMemory={Boolean(macros.data.length)}
             >
               {i18n.editor.macros.deleteMacros}
             </DeleteMacrosButton>

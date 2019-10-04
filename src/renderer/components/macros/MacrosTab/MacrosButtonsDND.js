@@ -14,7 +14,8 @@ const styles = {
     overflow: "auto",
     paddingBottom: 25,
     marginLeft: 15,
-    width: "100%"
+    width: "100%",
+    minHeight: 200
   },
   ul: {
     margin: 0,
@@ -175,22 +176,23 @@ const MacrosButtonsDND = props => {
   return (
     <Paper className={classes.root}>
       <ul className={classes.ul}>
-        {state.map((item, idx) => (
-          <li
-            key={item}
-            onDragOver={isRecord ? () => onDragOver(idx) : null}
-            className={classes.li}
-          >
-            <div
-              className={classes.drag}
-              draggable={isRecord}
-              onDragStart={isRecord ? e => onDragStart(e, idx) : null}
-              onDragEnd={isRecord ? onDragEnd : null}
+        {state.length > 0 &&
+          state.map((item, idx) => (
+            <li
+              key={item}
+              onDragOver={isRecord ? () => onDragOver(idx) : null}
+              className={classes.li}
             >
-              {getKey(item, open, classes, idx)}
-            </div>
-          </li>
-        ))}
+              <div
+                className={classes.drag}
+                draggable={isRecord}
+                onDragStart={isRecord ? e => onDragStart(e, idx) : null}
+                onDragEnd={isRecord ? onDragEnd : null}
+              >
+                {getKey(item, open, classes, idx)}
+              </div>
+            </li>
+          ))}
       </ul>
     </Paper>
   );

@@ -199,7 +199,10 @@ function MacrosDialog(props) {
   };
 
   const toDeleteMacros = macrosIndex => {
-    const newState = macrosTab.filter((_, i) => i !== macrosIndex);
+    let newState = macrosTab.filter((_, i) => i !== macrosIndex);
+    if (!newState.length) {
+      newState = [initMacros];
+    }
     setMacrosTab(newState);
     getMacrosLength(newState);
     setStartContext(true);

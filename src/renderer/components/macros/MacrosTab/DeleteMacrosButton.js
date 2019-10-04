@@ -12,7 +12,13 @@ const styles = theme => ({
 });
 
 function DeleteMacrosButton(props) {
-  const { classes, toDeleteMacros, macrosIndex, isRecord } = props;
+  const {
+    classes,
+    toDeleteMacros,
+    macrosIndex,
+    isRecord,
+    isMacrosInMemory
+  } = props;
   return (
     <Tooltip placement="top" title={props.children}>
       <div>
@@ -22,9 +28,11 @@ function DeleteMacrosButton(props) {
           onClick={() => {
             toDeleteMacros(macrosIndex);
           }}
-          disabled={isRecord}
+          disabled={isRecord || !isMacrosInMemory}
         >
-          <DeleteIcon color={isRecord ? "inherit" : "secondary"} />
+          <DeleteIcon
+            color={isRecord || !isMacrosInMemory ? "inherit" : "secondary"}
+          />
         </IconButton>
       </div>
     </Tooltip>

@@ -19,7 +19,6 @@ function MacrosCardInput(props) {
   const [name, setName] = useState(macrosName);
   const handleChange = e => {
     setName(e.target.value);
-    // toChangeMacrosName(e.target.value);
   };
 
   return (

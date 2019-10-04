@@ -262,6 +262,20 @@ function MacrosDialog(props) {
     setStartContext(true);
   };
 
+  const toChangeMacrosName = newName => {
+    const newArr = macrosTab.map((item, i) => {
+      if (i === activeMacrosIndex) {
+        return {
+          macrosName: newName,
+          data: item.data
+        };
+      }
+      return item;
+    });
+    setMacrosTab(newArr);
+    setStartContext(true);
+  };
+
   const groupeList =
     orderArrayWithKeys &&
     orderArrayWithKeys.map((group, index) => (
@@ -322,6 +336,7 @@ function MacrosDialog(props) {
           openKeyConfig={openKeyConfig}
           deleteKeyFromMacros={deleteKeyFromMacros}
           openDelayConfig={openDelayConfig}
+          toChangeMacrosName={toChangeMacrosName}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>

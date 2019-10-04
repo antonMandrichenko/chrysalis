@@ -58,7 +58,8 @@ function MacrosCard(props) {
     isRecord,
     openKeyConfig,
     deleteKeyFromMacros,
-    openDelayConfig
+    openDelayConfig,
+    toChangeMacrosName
   } = props;
 
   return (
@@ -89,7 +90,11 @@ function MacrosCard(props) {
         <Divider />
         <Grid container className={classes.container}>
           <Grid item xs={4}>
-            <MacrosCardInput isRecord={isRecord} />
+            <MacrosCardInput
+              isRecord={isRecord}
+              toChangeMacrosName={toChangeMacrosName}
+              macrosName={macros.macrosName}
+            />
             <MacrosCardDelay isRecord={isRecord} />
             <AddKeyInMacros
               isRecord={isRecord}

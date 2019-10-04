@@ -14,9 +14,9 @@ const styles = () => ({
 });
 
 function MacrosCardInput(props) {
-  const { classes, isRecord } = props;
+  const { classes, isRecord, toChangeMacrosName, macrosName } = props;
 
-  const [name, setName] = useState("macros 1");
+  const [name, setName] = useState(macrosName);
   const handleChange = e => {
     setName(e.target.value);
   };
@@ -29,6 +29,9 @@ function MacrosCardInput(props) {
         className={classes.textField}
         value={name}
         onChange={handleChange}
+        onMouseLeave={() => {
+          toChangeMacrosName(name);
+        }}
         variant="outlined"
         fullWidth
         disabled={!isRecord}

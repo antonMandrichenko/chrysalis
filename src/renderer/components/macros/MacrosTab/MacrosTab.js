@@ -21,7 +21,8 @@ function MacrosTab(props) {
     toRecordMacros,
     openKeyConfig,
     deleteKeyFromMacros,
-    openDelayConfig
+    openDelayConfig,
+    toChangeMacrosName
   } = props;
 
   return (
@@ -38,6 +39,7 @@ function MacrosTab(props) {
           openKeyConfig={openKeyConfig}
           deleteKeyFromMacros={deleteKeyFromMacros}
           openDelayConfig={openDelayConfig}
+          toChangeMacrosName={toChangeMacrosName}
         />
       </Grid>
     </Grid>

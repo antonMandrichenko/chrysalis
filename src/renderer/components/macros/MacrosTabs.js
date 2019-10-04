@@ -58,7 +58,8 @@ class MacrosTabs extends React.Component {
       setActiveMacrosIndex,
       openKeyConfig,
       deleteKeyFromMacros,
-      openDelayConfig
+      openDelayConfig,
+      toChangeMacrosName
     } = this.props;
     const { value, isRecord } = this.state;
     const renderTabContainer = value =>
@@ -78,6 +79,7 @@ class MacrosTabs extends React.Component {
                 openKeyConfig={openKeyConfig}
                 deleteKeyFromMacros={deleteKeyFromMacros}
                 openDelayConfig={openDelayConfig}
+                toChangeMacrosName={toChangeMacrosName}
               />
             </TabContainer>
           );

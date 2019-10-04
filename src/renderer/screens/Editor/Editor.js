@@ -691,6 +691,14 @@ class Editor extends React.Component {
       };
     });
     this.props.startContext();
+    this.toCloseImportExportDialog();
+  };
+
+  /**
+   * Close ImportExportDialog component
+   */
+  toCloseImportExportDialog = () => {
+    this.setState({ importExportDialogOpen: false });
   };
 
   render() {

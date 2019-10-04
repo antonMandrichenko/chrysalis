@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
+import settings from "electron-settings";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
@@ -17,6 +18,7 @@ import { orderArray } from "../SearchKeyBox/SearchKeyBox";
 import GroupItem from "../SearchKeyBox/GroupItem";
 import Grid from "@material-ui/core/Grid";
 import Modal from "@material-ui/core/Modal";
+import Focus from "@chrysalis-api/focus";
 
 const styles = theme => ({
   appBar: {
@@ -92,12 +94,17 @@ const toOrderArrayWithKeys = baseKeyCodeTable =>
         }
   );
 
+const focus = new Focus();
+
+const initMacros = { macrosName: "Macros 1", data: [] };
+
 function MacrosDialog(props) {
   const { classes } = props;
   const [open, setOpen] = useState(false);
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
   const [macrosLength, setMacrosLength] = useState(0);
+  const [oldMacrosLength, setOldMacrosLength] = useState(0);
   const [activeMacrosIndex, setActiveMacrosIndex] = useState(null);
   const [isOpenKeyConfig, setIsOpenKeyConfig] = useState(false);
   const [orderArrayWithKeys, setOrderArrayWithKeys] = useState(null);
@@ -119,23 +126,47 @@ function MacrosDialog(props) {
   };
 
   useEffect(() => {
-    const string =
-      "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
-    const macrosNames = ["MAcros 1", "Macros 2"];
-    const newString = string.match(/[\d\s]+?\s0\s/g);
-    const macroses = newString.map(macros =>
-      macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
-    );
-    const macrosesWithNames = macroses.map((data, i) =>
-      macrosNames.reduce(
-        (newObj, macrosName, j) =>
-          i === j ? { ...newObj, macrosName, data } : newObj,
-        {}
-      )
-    );
-    setMacrosTab(macrosesWithNames);
-    getMacrosLength(macrosesWithNames);
-    console.log(macrosesWithNames);
+    let macrosMap;
+    // const string =
+    // "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
+    const getMacrosMap = async () => {
+      // await focus.command("macros.map", string);
+      macrosMap = await focus.command("macros.map");
+
+      console.log(macrosMap);
+      const macrosNames = settings.get("macrosNames")
+        ? settings.get("macrosNames").split(" ")
+        : ["Macros 1"];
+      // const macrosNames = ["MAcros 1", "Macros 2"];
+      const newString = macrosMap.match(/[\d\s]+?\s0\s/g);
+      const macroses = newString
+        ? newString.map(macros =>
+            macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
+          )
+        : [];
+      if (macrosNames.length && macroses.length)
+        macrosNames.length = macroses.length;
+
+      const macrosesWithNames = macroses.length
+        ? macroses.map((data, i) =>
+            macrosNames.reduce(
+              (newObj, macrosName, j) =>
+                i === j && data
+                  ? {
+                      ...newObj,
+                      macrosName: macrosName ? macrosName : `Macros ${i + 1}`,
+                      data
+                    }
+                  : data && newObj,
+              {}
+            )
+          )
+        : [initMacros];
+      setMacrosTab(macrosesWithNames);
+      getMacrosLength(macrosesWithNames);
+      console.log(macrosesWithNames);
+    };
+    getMacrosMap();
   }, [open]);
 
   useEffect(() => {
@@ -144,7 +175,7 @@ function MacrosDialog(props) {
 
   const getMacrosLength = data => {
     let length = 0;
-    if (data.length) {
+    if (data.length && data[0].data.length) {
       data.forEach(item => {
         item.data.forEach(string => {
           length += string.split(" ").length;
@@ -154,6 +185,7 @@ function MacrosDialog(props) {
       length += 1;
     }
     setMacrosLength(length);
+    if (!oldMacrosLength) setOldMacrosLength(length);
   };
 
   const toMacrosChangeFromDND = (newMacros, macrosIndex, macrosName) => {
@@ -173,9 +205,28 @@ function MacrosDialog(props) {
     setStartContext(true);
   };
 
-  const toSaveChanges = () => {
+  const toSaveChanges = async () => {
     console.log("changes saves");
     setStartContext(false);
+    console.log(macrosTab);
+    const addToAllLength =
+      oldMacrosLength > macrosLength &&
+      Array(oldMacrosLength - macrosLength + 1)
+        .fill("255")
+        .join(" ");
+    const newMacrosMap = macrosTab
+      .reduce(
+        (newMacros, item) =>
+          newMacros.concat(" ", item.data.join(" ")).concat(" ", 0),
+        ""
+      )
+      .concat(" ", addToAllLength);
+    console.log(
+      newMacrosMap,
+      newMacrosMap.split(" ").length,
+      typeof newMacrosMap
+    );
+    await focus.command("macros.map", newMacrosMap);
   };
 
   const addKeyToMacros = e => {

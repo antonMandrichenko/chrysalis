@@ -96,7 +96,7 @@ const toOrderArrayWithKeys = baseKeyCodeTable =>
 
 const focus = new Focus();
 
-const initMacros = { macrosName: "New macros", data: [] };
+const initMacros = [{ macrosName: "New macros", data: [] }];
 
 function MacrosDialog(props) {
   const { classes } = props;
@@ -121,10 +121,6 @@ function MacrosDialog(props) {
     setStartContext(false);
   };
 
-  const toStartContext = () => {
-    setStartContext(true);
-  };
-
   useEffect(() => {
     let macrosMap;
     // const string =
@@ -137,9 +133,9 @@ function MacrosDialog(props) {
       const macrosNames = settings.get("macrosNames")
         ? settings.get("macrosNames").split("__")
         : ["Macros 1"];
-      const newString = macrosMap.match(/[\d\s]+?\s0\s/g);
-      const macroses = newString
-        ? newString.map(macros =>
+      const macrosMapArray = macrosMap.match(/[\d\s]+?\s0\s/g);
+      const macroses = macrosMapArray
+        ? macrosMapArray.map(macros =>
             macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
           )
         : [];
@@ -160,7 +156,7 @@ function MacrosDialog(props) {
               {}
             )
           )
-        : [initMacros];
+        : initMacros;
       setMacrosTab(macrosesWithNames);
       getMacrosLength(macrosesWithNames);
       console.log(macrosesWithNames);
@@ -184,7 +180,9 @@ function MacrosDialog(props) {
       length += 1;
     }
     setMacrosLength(length);
-    if (!oldMacrosLength) setOldMacrosLength(length);
+    if (!oldMacrosLength) {
+      setOldMacrosLength(length);
+    }
   };
 
   const toMacrosChangeFromDND = (newMacros, macrosIndex, macrosName) => {
@@ -193,18 +191,15 @@ function MacrosDialog(props) {
       i === macrosIndex ? { macrosName, data } : item
     );
     setMacrosTab(changedData);
-    getMacrosLength(changedData);
-    toStartContext();
+    setStartContext(true);
   };
 
   const toDeleteMacros = macrosIndex => {
     let newState = macrosTab.filter((_, i) => i !== macrosIndex);
     if (!newState.length) {
-      newState = [initMacros];
+      newState = initMacros;
     }
-    setMacrosTab(newState);
-    getMacrosLength(newState);
-    setStartContext(true);
+    changeState(newState);
   };
 
   const toSaveChanges = async () => {
@@ -217,15 +212,17 @@ function MacrosDialog(props) {
             .fill("255")
             .join(" ")
         : "";
-    const newMacrosMap = macrosTab.reduce((newMacros, item) => {
-      newMacros.macrosData = newMacros.macrosData
-        ? newMacros.macrosData.concat(" ", item.data.join(" ")).concat(" ", 0)
-        : "".concat("", item.data.join(" ")).concat(" ", 0);
-      newMacros.macrosNames = newMacros.macrosNames
-        ? newMacros.macrosNames.concat("__", item.macrosName)
-        : "".concat("", item.macrosName);
-      return newMacros;
-    }, {});
+    const newMacrosMap = macrosTab.reduce(
+      (newMacros, item) => ({
+        macrosData: newMacros.macrosData
+          ? newMacros.macrosData.concat(" ", item.data.join(" ")).concat(" ", 0)
+          : "".concat("", item.data.join(" ")).concat(" ", 0),
+        macrosNames: newMacros.macrosNames
+          ? newMacros.macrosNames.concat("__", item.macrosName)
+          : "".concat("__", item.macrosName)
+      }),
+      {}
+    );
     newMacrosMap.macrosData = newMacrosMap.macrosData
       .concat(" ", addToAllLength)
       .trim();
@@ -246,6 +243,12 @@ function MacrosDialog(props) {
     );
   };
 
+  const changeState = newState => {
+    setMacrosTab(newState);
+    getMacrosLength(newState);
+    setStartContext(true);
+  };
+
   const openKeyConfig = (keyIndex, keyNumber) => {
     setIsOpenKeyConfig(true);
     if (keyIndex !== undefined) {
@@ -262,7 +265,9 @@ function MacrosDialog(props) {
 
   const openDelayConfig = keyIndex => {
     setIsOpenDelayConfig(true);
-    if (keyIndex !== undefined) setDelayKeyEdit(keyIndex);
+    if (keyIndex !== undefined) {
+      setDelayKeyEdit(keyIndex);
+    }
   };
 
   const handleCloseDelayConfig = () => {
@@ -292,18 +297,14 @@ function MacrosDialog(props) {
         );
       newArr = changeMacrosTabState(null, changeData);
     }
-    setMacrosTab(newArr);
-    getMacrosLength(newArr);
-    setStartContext(true);
+    changeState(newArr);
     handleCloseKeyConfig();
   };
 
   const deleteKeyFromMacros = keyIndex => {
     const changeData = item => item.data.filter((_, i) => i !== keyIndex);
     const newArr = changeMacrosTabState(null, changeData);
-    setMacrosTab(newArr);
-    getMacrosLength(newArr);
-    setStartContext(true);
+    changeState(newArr);
   };
 
   const toChangeMacrosName = newName => {
@@ -324,14 +325,12 @@ function MacrosDialog(props) {
         );
       newArr = changeMacrosTabState(null, changeData);
     }
-    setMacrosTab(newArr);
-    getMacrosLength(newArr);
-    setStartContext(true);
+    changeState(newArr);
     handleCloseDelayConfig();
   };
 
   const toAddNewMacros = () => {
-    setMacrosTab(macrosTab.concat([initMacros]));
+    setMacrosTab(macrosTab.concat(initMacros));
   };
 
   const groupeList =

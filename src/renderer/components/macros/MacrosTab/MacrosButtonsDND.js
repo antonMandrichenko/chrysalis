@@ -49,7 +49,7 @@ const MacrosButtonsDND = props => {
     macros,
     toMacrosChange,
     macrosIndex,
-    // addKeyToMacros,
+    addKeyToMacros,
     isRecord,
     deleteKeyFromMacros,
     openKeyConfig,
@@ -174,7 +174,13 @@ const MacrosButtonsDND = props => {
   const open = Boolean(anchorEl);
 
   return (
-    <Paper className={classes.root}>
+    <Paper
+      className={classes.root}
+      onKeyUp={e => {
+        addKeyToMacros(e);
+      }}
+      tabIndex="0"
+    >
       <ul className={classes.ul}>
         {state.length > 0 &&
           state.map((item, idx) => (

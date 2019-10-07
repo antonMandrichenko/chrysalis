@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import RootRef from "@material-ui/core/RootRef";
 import MacrosCardInput from "./MacrosCardInput";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
@@ -61,6 +62,14 @@ function MacrosCard(props) {
     toChangeMacrosName
   } = props;
 
+  const domRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isRecord) {
+      domRef.current.focus();
+    }
+  }, [isRecord]);
+
   return (
     <Card
       className={classNames(classes.card, isRecord && classes.cardInRecord)}
@@ -104,16 +113,18 @@ function MacrosCard(props) {
             </AddKeyInMacros>
           </Grid>
           <Grid item xs={8} className={classes.item}>
-            <MacrosButtonsDND
-              macros={macros}
-              toMacrosChange={toMacrosChange}
-              macrosIndex={macrosIndex}
-              addKeyToMacros={addKeyToMacros}
-              isRecord={isRecord}
-              deleteKeyFromMacros={deleteKeyFromMacros}
-              openKeyConfig={openKeyConfig}
-              openDelayConfig={openDelayConfig}
-            />
+            <RootRef rootRef={domRef}>
+              <MacrosButtonsDND
+                macros={macros}
+                toMacrosChange={toMacrosChange}
+                macrosIndex={macrosIndex}
+                addKeyToMacros={addKeyToMacros}
+                isRecord={isRecord}
+                deleteKeyFromMacros={deleteKeyFromMacros}
+                openKeyConfig={openKeyConfig}
+                openDelayConfig={openDelayConfig}
+              />
+            </RootRef>
           </Grid>
         </Grid>
       </CardContent>

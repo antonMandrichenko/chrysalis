@@ -28,9 +28,9 @@ function AddKeyInMacros(props) {
   };
 
   const handleClose = e => {
-    if (e.currentTarget.value) {
+    if (e.currentTarget.value === 1) {
       openDelayConfig();
-    } else {
+    } else if (e.currentTarget.value === 0) {
       openKeyConfig();
     }
     setAnchorEl(null);

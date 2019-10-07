@@ -31,7 +31,11 @@ function ButtonDNDevents(props) {
     handlePopoverClose,
     item,
     keyIndex,
-    deleteKeyFromMacros
+    deleteKeyFromMacros,
+    isDelay, //bool
+    openKeyConfig, //func
+    openDelayConfig, //func,
+    keyNumber //number
   } = props;
   return (
     <div
@@ -46,6 +50,11 @@ function ButtonDNDevents(props) {
         aria-label="Edit letter"
         fontSize="small"
         className={classes.margin}
+        onClick={() => {
+          isDelay
+            ? openDelayConfig(keyIndex)
+            : openKeyConfig(keyIndex, keyNumber);
+        }}
       >
         <EditIcon />
       </IconButton>

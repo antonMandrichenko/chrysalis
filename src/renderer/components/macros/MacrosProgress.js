@@ -18,7 +18,8 @@ const styles = () => ({
     position: "relative"
   },
   progress: {
-    height: 20
+    height: 20,
+    borderRadius: 5
   },
   percentage: {
     position: "absolute",
@@ -41,7 +42,7 @@ function MacrosProgress(props) {
       <Typography gutterBottom>Used macros memory</Typography>
       <div className={classes.div}>
         <LinearProgress
-          color="secondary"
+          color={completed < 90 ? "primary" : "secondary"}
           variant="determinate"
           value={completed}
           className={classes.progress}

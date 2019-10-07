@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/lab/Slider";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 const styles = {
   slider: {
@@ -21,12 +22,11 @@ const styles = {
 
 function MacrosCardDelay(props) {
   const [value, setValue] = useState(10);
+  const { classes, isRecord, toAddDelayToMacros } = props;
 
   const handleChange = (e, value) => {
     setValue(value);
   };
-
-  const { classes, isRecord } = props;
 
   return (
     <Grid container>
@@ -53,6 +53,16 @@ function MacrosCardDelay(props) {
       >
         <Typography disabled={!isRecord}>{`${value}ms`}</Typography>
       </Grid>
+      <Button
+        size="small"
+        color={"secondary"}
+        onClick={() => {
+          toAddDelayToMacros(value);
+        }}
+        className={classes.button}
+      >
+        OK
+      </Button>
     </Grid>
   );
 }

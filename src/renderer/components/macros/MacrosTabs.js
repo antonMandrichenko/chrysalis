@@ -38,7 +38,7 @@ const styles = theme => ({
 class MacrosTabs extends React.Component {
   state = {
     value: 0,
-    isRecord: false
+    isRecord: this.props.startContext
   };
 
   handleChange = (event, value) => {
@@ -49,6 +49,15 @@ class MacrosTabs extends React.Component {
     this.setState({ isRecord: !this.state.isRecord });
   };
 
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.startContext !== prevProps.startContext &&
+      this.state.isRecord
+    ) {
+      this.setState({ isRecord: this.props.startContext });
+    }
+  }
+
   render() {
     const {
       classes,
@@ -58,9 +67,12 @@ class MacrosTabs extends React.Component {
       setActiveMacrosIndex,
       openKeyConfig,
       deleteKeyFromMacros,
-      openDelayConfig
+      openDelayConfig,
+      toChangeMacrosName,
+      toAddNewMacros
     } = this.props;
     const { value, isRecord } = this.state;
+    const isEmptyLastMacros = Boolean(macrosTab.slice(-1)[0].data.slice(-1)[0]);
     const renderTabContainer = value =>
       macrosTab.map((macros, i) => {
         if (value === i) {
@@ -78,6 +90,7 @@ class MacrosTabs extends React.Component {
                 openKeyConfig={openKeyConfig}
                 deleteKeyFromMacros={deleteKeyFromMacros}
                 openDelayConfig={openDelayConfig}
+                toChangeMacrosName={toChangeMacrosName}
               />
             </TabContainer>
           );
@@ -99,7 +112,8 @@ class MacrosTabs extends React.Component {
             <Tab
               icon={<AddIcon />}
               className={classes.tab}
-              disabled={isRecord}
+              disabled={isRecord || !isEmptyLastMacros}
+              onClick={toAddNewMacros}
             />
           </Tabs>
         </AppBar>
@@ -110,7 +124,8 @@ class MacrosTabs extends React.Component {
 }
 
 MacrosTabs.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  startContext: PropTypes.bool.isRequired
 };
 
 export default withStyles(styles)(MacrosTabs);

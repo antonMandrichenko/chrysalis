@@ -9,11 +9,12 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import RootRef from "@material-ui/core/RootRef";
 import MacrosCardInput from "./MacrosCardInput";
-import MacrosCardDelay from "../MacrosCardDelay";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
 import AddKeyInMacros from "./AddKeyInMacros";
+import PlayMacros from "./PlayMacros";
 import i18n from "../../../i18n";
 
 const styles = {
@@ -58,8 +59,17 @@ function MacrosCard(props) {
     isRecord,
     openKeyConfig,
     deleteKeyFromMacros,
-    openDelayConfig
+    openDelayConfig,
+    toChangeMacrosName
   } = props;
+
+  const domRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isRecord) {
+      domRef.current.focus();
+    }
+  }, [isRecord]);
 
   return (
     <Card
@@ -81,6 +91,7 @@ function MacrosCard(props) {
               toDeleteMacros={toDeleteMacros}
               macrosIndex={macrosIndex}
               isRecord={isRecord}
+              isMacrosInMemory={Boolean(macros.data.length)}
             >
               {i18n.editor.macros.deleteMacros}
             </DeleteMacrosButton>
@@ -89,8 +100,11 @@ function MacrosCard(props) {
         <Divider />
         <Grid container className={classes.container}>
           <Grid item xs={4}>
-            <MacrosCardInput isRecord={isRecord} />
-            <MacrosCardDelay isRecord={isRecord} />
+            <MacrosCardInput
+              isRecord={isRecord}
+              toChangeMacrosName={toChangeMacrosName}
+              macrosName={macros.macrosName}
+            />
             <AddKeyInMacros
               isRecord={isRecord}
               openKeyConfig={openKeyConfig}
@@ -98,16 +112,22 @@ function MacrosCard(props) {
             >
               {i18n.editor.macros.addKeyOrDelay}
             </AddKeyInMacros>
+            <Divider />
+            <PlayMacros />
           </Grid>
           <Grid item xs={8} className={classes.item}>
-            <MacrosButtonsDND
-              macros={macros}
-              toMacrosChange={toMacrosChange}
-              macrosIndex={macrosIndex}
-              addKeyToMacros={addKeyToMacros}
-              isRecord={isRecord}
-              deleteKeyFromMacros={deleteKeyFromMacros}
-            />
+            <RootRef rootRef={domRef}>
+              <MacrosButtonsDND
+                macros={macros}
+                toMacrosChange={toMacrosChange}
+                macrosIndex={macrosIndex}
+                addKeyToMacros={addKeyToMacros}
+                isRecord={isRecord}
+                deleteKeyFromMacros={deleteKeyFromMacros}
+                openKeyConfig={openKeyConfig}
+                openDelayConfig={openDelayConfig}
+              />
+            </RootRef>
           </Grid>
         </Grid>
       </CardContent>

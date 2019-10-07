@@ -14,7 +14,8 @@ const styles = {
     overflow: "auto",
     paddingBottom: 25,
     marginLeft: 15,
-    width: "100%"
+    width: "100%",
+    minHeight: 200
   },
   ul: {
     margin: 0,
@@ -50,7 +51,9 @@ const MacrosButtonsDND = props => {
     macrosIndex,
     addKeyToMacros,
     isRecord,
-    deleteKeyFromMacros
+    deleteKeyFromMacros,
+    openKeyConfig,
+    openDelayConfig
   } = props;
   const [state, setState] = useState(
     macros.data.map((item, i) => `${item} ${i}`)
@@ -103,23 +106,45 @@ const MacrosButtonsDND = props => {
     setAnchorEl(anchorEl ? null : item);
   };
 
+  const getKeyWithHeld = (keyCode, delta) => +keyCode + +delta;
+
   const getKey = (str, open, classes, idx) => {
     const macroConfig = str[0];
     const oneMacrosArr = str.split(" ");
     let item,
-      isSecondary = false;
+      isDelay = false,
+      keyNumber;
     switch (macroConfig) {
       case "1": {
         item = `delay ${oneMacrosArr[oneMacrosArr.length - 2]} ms`;
-        isSecondary = true;
+        isDelay = true;
         break;
       }
       case "5": {
-        item = oneMacrosArr[oneMacrosArr.length - 2];
+        const held = +oneMacrosArr[oneMacrosArr.length - 3];
+        const keyCode = oneMacrosArr[oneMacrosArr.length - 2];
+        const deltaMap = new Map([
+          [1, 256],
+          [2, 512],
+          [4, 1024],
+          [8, 2048],
+          [16, 4096]
+        ]);
+        let delta;
+        if (deltaMap.has(held)) {
+          delta = deltaMap.get(held);
+        }
+        keyNumber = getKeyWithHeld(keyCode, delta);
+        item = keymapDB.keymapCodeTable.filter((item, i) => i === keyNumber)[0];
+        if (item.labels.top) {
+          item = `${item.labels.top} ${item.labels.primary}`;
+        } else {
+          item = item.labels.primary.toUpperCase();
+        }
         break;
       }
       case "8": {
-        const keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
+        keyNumber = +oneMacrosArr[oneMacrosArr.length - 2];
         item = keymapDB.keymapCodeTable.filter((item, i) => i === keyNumber)[0];
         if (item.labels.top) {
           item = `${item.labels.top} ${item.labels.primary}`;
@@ -133,55 +158,75 @@ const MacrosButtonsDND = props => {
       }
     }
     return (
-      <Button
-        variant="contained"
-        color={isSecondary ? "secondary" : "primary"}
-        className={classes.button}
-        aria-owns={open ? "mouse-over-popover" : undefined}
-        aria-haspopup="true"
-        onMouseEnter={() => {
-          handlePopoverOpen(str);
-        }}
-        onMouseLeave={handlePopoverClose}
-        onClick={() => {
-          handlePopoverToggle(str);
-        }}
-        disabled={isOnDrag && draggedItem !== state[idx]}
-      >
-        {item}
-      </Button>
+      <React.Fragment>
+        <Button
+          variant="contained"
+          color={isDelay ? "secondary" : "primary"}
+          className={classes.button}
+          aria-owns={open ? "mouse-over-popover" : undefined}
+          aria-haspopup="true"
+          onMouseEnter={() => {
+            handlePopoverOpen(str);
+          }}
+          onMouseLeave={handlePopoverClose}
+          onClick={() => {
+            handlePopoverToggle(str);
+          }}
+          disabled={isOnDrag && draggedItem !== state[idx]}
+        >
+          {item}
+        </Button>
+        <ButtonDNDevents
+          isDisplay={isRecord && anchorEl === str}
+          handlePopoverOpen={handlePopoverOpen}
+          handlePopoverClose={handlePopoverClose}
+          item={str}
+          keyIndex={idx}
+          deleteKeyFromMacros={deleteKeyFromMacros}
+          isDelay={isDelay}
+          openKeyConfig={openKeyConfig}
+          openDelayConfig={openDelayConfig}
+          keyNumber={keyNumber}
+        />
+      </React.Fragment>
     );
+  };
+
+  const addKey = e => {
+    if (e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 18) {
+      return;
+    }
+    addKeyToMacros(e);
   };
 
   const open = Boolean(anchorEl);
 
   return (
-    <Paper className={classes.root}>
+    <Paper
+      className={classes.root}
+      onKeyUp={e => {
+        addKey(e);
+      }}
+      tabIndex="0"
+    >
       <ul className={classes.ul}>
-        {state.map((item, idx) => (
-          <li
-            key={item}
-            onDragOver={isRecord ? () => onDragOver(idx) : null}
-            className={classes.li}
-          >
-            <div
-              className={classes.drag}
-              draggable={isRecord}
-              onDragStart={isRecord ? e => onDragStart(e, idx) : null}
-              onDragEnd={isRecord ? onDragEnd : null}
+        {state.length > 0 &&
+          state.map((item, idx) => (
+            <li
+              key={item}
+              onDragOver={isRecord ? () => onDragOver(idx) : null}
+              className={classes.li}
             >
-              {getKey(item, open, classes, idx)}
-              <ButtonDNDevents
-                isDisplay={isRecord && anchorEl === item}
-                handlePopoverOpen={handlePopoverOpen}
-                handlePopoverClose={handlePopoverClose}
-                item={item}
-                keyIndex={idx}
-                deleteKeyFromMacros={deleteKeyFromMacros}
-              />
-            </div>
-          </li>
-        ))}
+              <div
+                className={classes.drag}
+                draggable={isRecord}
+                onDragStart={isRecord ? e => onDragStart(e, idx) : null}
+                onDragEnd={isRecord ? onDragEnd : null}
+              >
+                {getKey(item, open, classes, idx)}
+              </div>
+            </li>
+          ))}
       </ul>
     </Paper>
   );

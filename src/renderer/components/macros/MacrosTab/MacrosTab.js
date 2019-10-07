@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -21,7 +21,8 @@ function MacrosTab(props) {
     toRecordMacros,
     openKeyConfig,
     deleteKeyFromMacros,
-    openDelayConfig
+    openDelayConfig,
+    toChangeMacrosName
   } = props;
 
   return (
@@ -38,6 +39,7 @@ function MacrosTab(props) {
           openKeyConfig={openKeyConfig}
           deleteKeyFromMacros={deleteKeyFromMacros}
           openDelayConfig={openDelayConfig}
+          toChangeMacrosName={toChangeMacrosName}
         />
       </Grid>
     </Grid>

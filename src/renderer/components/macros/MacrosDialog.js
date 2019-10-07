@@ -19,6 +19,7 @@ import GroupItem from "../SearchKeyBox/GroupItem";
 import Grid from "@material-ui/core/Grid";
 import Modal from "@material-ui/core/Modal";
 import Focus from "@chrysalis-api/focus";
+import { getCurrentKeyCode } from "../../utils/transformKeyCodes";
 
 const styles = theme => ({
   appBar: {
@@ -122,46 +123,52 @@ function MacrosDialog(props) {
   };
 
   useEffect(() => {
+    let isMounted = true;
     let macrosMap;
     // const string =
     //   "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
     const getMacrosMap = async () => {
       // await focus.command("macros.map", string);
-      macrosMap = await focus.command("macros.map");
+      if (isMounted) {
+        macrosMap = await focus.command("macros.map");
 
-      console.log(macrosMap);
-      const macrosNames = settings.get("macrosNames")
-        ? settings.get("macrosNames").split("__")
-        : ["Macros 1"];
-      const macrosMapArray = macrosMap.match(/[\d\s]+?\s0\s/g);
-      const macroses = macrosMapArray
-        ? macrosMapArray.map(macros =>
-            macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
-          )
-        : [];
-
-      const macrosesWithNames = macroses.length
-        ? macroses.map((data, i) =>
-            macrosNames.reduce(
-              (newObj, macrosName, j) =>
-                i === j && data
-                  ? {
-                      ...newObj,
-                      macrosName: macrosName ? macrosName : `Macros ${i + 1}`,
-                      data
-                    }
-                  : data && Object.keys(newObj).length
-                  ? newObj
-                  : { data, macrosName: `Macros ${i + 1}` },
-              {}
+        console.log(macrosMap);
+        const macrosNames = settings.get("macrosNames")
+          ? settings.get("macrosNames").split("__")
+          : ["Macros 1"];
+        const macrosMapArray = macrosMap.match(/[\d\s]+?\s0\s/g);
+        const macroses = macrosMapArray
+          ? macrosMapArray.map(macros =>
+              macros.match(/[^5^0]{1}\s[0-9]+|5\s[0-9]\s[0-9]+/g)
             )
-          )
-        : initMacros;
-      setMacrosTab(macrosesWithNames);
-      getMacrosLength(macrosesWithNames);
-      console.log(macrosesWithNames);
+          : [];
+
+        const macrosesWithNames = macroses.length
+          ? macroses.map((data, i) =>
+              macrosNames.reduce(
+                (newObj, macrosName, j) =>
+                  i === j && data
+                    ? {
+                        ...newObj,
+                        macrosName: macrosName ? macrosName : `Macros ${i + 1}`,
+                        data
+                      }
+                    : data && Object.keys(newObj).length
+                    ? newObj
+                    : { data, macrosName: `Macros ${i + 1}` },
+                {}
+              )
+            )
+          : initMacros;
+        setMacrosTab(macrosesWithNames);
+        getMacrosLength(macrosesWithNames);
+        console.log(macrosesWithNames);
+      }
     };
     getMacrosMap();
+    return () => {
+      isMounted = false;
+    };
   }, [open]);
 
   useEffect(() => {
@@ -233,9 +240,35 @@ function MacrosDialog(props) {
   };
 
   const addKeyToMacros = e => {
+    let newState;
+    const key = getCurrentKeyCode(e);
+    if (e.shiftKey || e.ctrlKey || e.altKey) {
+      let heldNumber;
+      if (e.shiftKey) {
+        heldNumber = 8;
+      }
+      if (e.ctrlKey) {
+        heldNumber = 1;
+      }
+      if (e.altKey) {
+        heldNumber = 2;
+      }
+      const changeData = item => item.data.concat([`5 ${heldNumber} ${key}`]);
+      newState = changeMacrosTabState(null, changeData);
+      changeState(newState);
+      return;
+    }
+    const changeData = item => item.data.concat([`8 ${key}`]);
+    newState = changeMacrosTabState(null, changeData);
+    changeState(newState);
     console.log(
       "add",
+      "keyCode",
       e.keyCode,
+      "CharCode",
+      e.charCode,
+      "witch",
+      e.which,
       e.shiftKey,
       e.key,
       e.location,

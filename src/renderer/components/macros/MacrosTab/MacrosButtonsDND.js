@@ -106,6 +106,8 @@ const MacrosButtonsDND = props => {
     setAnchorEl(anchorEl ? null : item);
   };
 
+  const getKeyWithHeld = (keyCode, delta) => +keyCode + +delta;
+
   const getKey = (str, open, classes, idx) => {
     const macroConfig = str[0];
     const oneMacrosArr = str.split(" ");
@@ -119,7 +121,26 @@ const MacrosButtonsDND = props => {
         break;
       }
       case "5": {
-        item = oneMacrosArr[oneMacrosArr.length - 2];
+        const held = +oneMacrosArr[oneMacrosArr.length - 3];
+        const keyCode = oneMacrosArr[oneMacrosArr.length - 2];
+        const deltaMap = new Map([
+          [1, 256],
+          [2, 512],
+          [4, 1024],
+          [8, 2048],
+          [16, 4096]
+        ]);
+        let delta;
+        if (deltaMap.has(held)) {
+          delta = deltaMap.get(held);
+        }
+        keyNumber = getKeyWithHeld(keyCode, delta);
+        item = keymapDB.keymapCodeTable.filter((item, i) => i === keyNumber)[0];
+        if (item.labels.top) {
+          item = `${item.labels.top} ${item.labels.primary}`;
+        } else {
+          item = item.labels.primary.toUpperCase();
+        }
         break;
       }
       case "8": {
@@ -171,13 +192,20 @@ const MacrosButtonsDND = props => {
     );
   };
 
+  const addKey = e => {
+    if (e.keyCode === 16 || e.keyCode === 17 || e.keyCode === 18) {
+      return;
+    }
+    addKeyToMacros(e);
+  };
+
   const open = Boolean(anchorEl);
 
   return (
     <Paper
       className={classes.root}
       onKeyUp={e => {
-        addKeyToMacros(e);
+        addKey(e);
       }}
       tabIndex="0"
     >

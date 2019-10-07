@@ -14,6 +14,7 @@ import MacrosCardInput from "./MacrosCardInput";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
 import AddKeyInMacros from "./AddKeyInMacros";
+import PlayMacros from "./PlayMacros";
 import i18n from "../../../i18n";
 
 const styles = {
@@ -111,6 +112,8 @@ function MacrosCard(props) {
             >
               {i18n.editor.macros.addKeyOrDelay}
             </AddKeyInMacros>
+            <Divider />
+            <PlayMacros />
           </Grid>
           <Grid item xs={8} className={classes.item}>
             <RootRef rootRef={domRef}>

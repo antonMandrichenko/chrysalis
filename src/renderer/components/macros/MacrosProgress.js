@@ -29,12 +29,14 @@ const styles = () => ({
   }
 });
 
+const FULL_MACROS_LENGTH = 128;
+
 function MacrosProgress(props) {
   const { classes, macrosLength } = props;
   const [completed, setCompleted] = useState(0);
 
   useEffect(() => {
-    setCompleted((macrosLength / 255) * 100);
+    setCompleted((macrosLength / FULL_MACROS_LENGTH) * 100);
   }, [macrosLength]);
 
   return (

@@ -10,11 +10,12 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import RootRef from "@material-ui/core/RootRef";
+// import Focus from "@chrysalis-api/focus";
 import MacrosCardInput from "./MacrosCardInput";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
 import AddKeyInMacros from "./AddKeyInMacros";
-import PlayMacros from "./PlayMacros";
+// import PlayMacros from "./PlayMacros";
 import i18n from "../../../i18n";
 
 const styles = {
@@ -24,7 +25,7 @@ const styles = {
   item: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "flex-start"
   },
   container: {
     marginTop: 10
@@ -47,6 +48,8 @@ const styles = {
   }
 };
 
+// const focus = new Focus();
+
 function MacrosCard(props) {
   const {
     classes,
@@ -63,6 +66,8 @@ function MacrosCard(props) {
     toChangeMacrosName
   } = props;
 
+  // const [value, setValue] = useState("");
+
   const domRef = React.useRef();
 
   React.useEffect(() => {
@@ -70,6 +75,12 @@ function MacrosCard(props) {
       domRef.current.focus();
     }
   }, [isRecord]);
+
+  // const handlePlay = async () => {
+  //   await focus.request("macros.trigger", "0").then(() => {
+  //     return focus.request("0");
+  //   });
+  // };
 
   return (
     <Card
@@ -112,8 +123,8 @@ function MacrosCard(props) {
             >
               {i18n.editor.macros.addKeyOrDelay}
             </AddKeyInMacros>
-            <Divider />
-            <PlayMacros />
+            {/* <Divider />
+            <PlayMacros /> */}
           </Grid>
           <Grid item xs={8} className={classes.item}>
             <RootRef rootRef={domRef}>
@@ -140,6 +151,14 @@ function MacrosCard(props) {
         >
           Record macros
         </Button>
+        {/* <Button
+          size="small"
+          color={!isRecord ? "primary" : "inherit"}
+          onClick={handlePlay}
+          className={isRecord && classes.button}
+        >
+          Play macros
+        </Button> */}
       </CardActions>
     </Card>
   );

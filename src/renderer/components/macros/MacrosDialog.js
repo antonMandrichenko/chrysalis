@@ -100,7 +100,7 @@ const focus = new Focus();
 const initMacros = [{ macrosName: "New macros", data: [] }];
 
 function MacrosDialog(props) {
-  const { classes } = props;
+  const { classes, macrosNames, setMacrosNames } = props;
   const [open, setOpen] = useState(false);
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
@@ -126,16 +126,16 @@ function MacrosDialog(props) {
     let isMounted = true;
     let macrosMap;
     // const string =
-    //   "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
+    //   "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255";
     const getMacrosMap = async () => {
       // await focus.command("macros.map", string);
       if (isMounted) {
         macrosMap = await focus.command("macros.map");
 
         console.log(macrosMap);
-        const macrosNames = settings.get("macrosNames")
-          ? settings.get("macrosNames").split("__")
-          : ["Macros 1"];
+        // const macrosNames = settings.get("macrosNames")
+        //   ? settings.get("macrosNames").split("__")
+        //   : ["Macros 1"];
         const macrosMapArray = macrosMap.match(/[\d\s]+?\s0\s/g);
         const macroses = macrosMapArray
           ? macrosMapArray.map(macros =>
@@ -226,16 +226,18 @@ function MacrosDialog(props) {
           : "".concat("", item.data.join(" ")).concat(" ", 0),
         macrosNames: newMacros.macrosNames
           ? newMacros.macrosNames.concat("__", item.macrosName)
-          : "".concat("__", item.macrosName)
+          : "".concat("", item.macrosName)
       }),
       {}
     );
     newMacrosMap.macrosData = newMacrosMap.macrosData
       .concat(" ", addToAllLength)
-      .trim();
+      .trim()
+      .concat(" ", 0);
     console.log(newMacrosMap, typeof newMacrosMap);
 
     await focus.command("macros.map", newMacrosMap.macrosData);
+    setMacrosNames(newMacrosMap.macrosNames);
     settings.set("macrosNames", newMacrosMap.macrosNames);
   };
 

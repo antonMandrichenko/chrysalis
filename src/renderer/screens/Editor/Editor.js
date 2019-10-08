@@ -117,7 +117,8 @@ class Editor extends React.Component {
     importExportDialogOpen: false,
     isMultiSelected: false,
     isColorButtonSelected: false,
-    currentLanguageLayout: ""
+    currentLanguageLayout: "",
+    macrosNames: []
   };
   keymapDB = new KeymapDB();
   /**
@@ -177,12 +178,17 @@ class Editor extends React.Component {
 
       let colormap = await focus.command("colormap");
 
+      const macrosNames = settings.get("macrosNames")
+        ? settings.get("macrosNames").split("__")
+        : ["Macros 1"];
+
       this.setState({
         defaultLayer: defLayer,
         keymap: keymap,
         showDefaults: !keymap.onlyCustom,
         palette: colormap.palette,
-        colorMap: colormap.colorMap
+        colorMap: colormap.colorMap,
+        macrosNames
       });
       this.bottomMenuNeverHide();
     } catch (e) {
@@ -677,6 +683,10 @@ class Editor extends React.Component {
     this.props.startContext();
   };
 
+  setMacrosNames = names => {
+    console.log(names);
+  };
+
   render() {
     const { classes } = this.props;
     const { keymap, palette, isColorButtonSelected } = this.state;
@@ -814,7 +824,10 @@ class Editor extends React.Component {
                 </ToggleButton>
               )}
             </ToggleButtonGroup>
-            <MacrosDialog />
+            <MacrosDialog
+              macrosNames={this.state.macrosNames}
+              setMacrosNames={this.setMacrosNames}
+            />
             <div className={classes.grow} />
             <FormControl className={classes.layerSelect}>
               <Select

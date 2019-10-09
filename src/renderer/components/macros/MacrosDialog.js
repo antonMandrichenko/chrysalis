@@ -100,7 +100,12 @@ const focus = new Focus();
 const initMacros = [{ macrosName: "New macros", data: [] }];
 
 function MacrosDialog(props) {
-  const { classes, macrosNamesArr, setMacrosNames } = props;
+  const {
+    classes,
+    macrosNamesArr,
+    setMacrosNames,
+    currentLanguageLayout
+  } = props;
   const [open, setOpen] = useState(false);
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
@@ -170,11 +175,11 @@ function MacrosDialog(props) {
     return () => {
       isMounted = false;
     };
-  }, [open]);
+  }, [open, currentLanguageLayout]);
 
   useEffect(() => {
     setOrderArrayWithKeys(toOrderArrayWithKeys(baseKeyCodeTable));
-  }, []);
+  }, [currentLanguageLayout]);
 
   const getMacrosLength = data => {
     let length = 0;
@@ -224,7 +229,9 @@ function MacrosDialog(props) {
       (newMacros, item) => ({
         macrosData: newMacros.macrosData
           ? newMacros.macrosData.concat(" ", item.data.join(" ")).concat(" ", 0)
-          : "".concat("", item.data.join(" ")).concat(" ", 0),
+          : ""
+              .concat("", item.data.join(" "))
+              .concat(" ", item.data.length ? 0 : ""),
         macrosNames: newMacros.macrosNames
           ? newMacros.macrosNames.concat("__", item.macrosName)
           : "".concat("", item.macrosName)
@@ -234,7 +241,7 @@ function MacrosDialog(props) {
     newMacrosMap.macrosData =
       addToAllLength !== ""
         ? newMacrosMap.macrosData
-            .concat(" ", 0)
+            .concat(" ", newMacrosMap.macrosData.length > 1 ? 0 : "")
             .concat(" ", addToAllLength)
             .trim()
         : newMacrosMap.macrosData.trim().concat(" ", 0);
@@ -436,6 +443,7 @@ function MacrosDialog(props) {
           toChangeMacrosName={toChangeMacrosName}
           toAddNewMacros={toAddNewMacros}
           startContext={startContext}
+          currentLanguageLayout={currentLanguageLayout}
         />
         <MacrosProgress macrosLength={macrosLength} />
       </Dialog>

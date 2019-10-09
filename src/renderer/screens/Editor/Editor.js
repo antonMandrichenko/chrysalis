@@ -823,6 +823,7 @@ class Editor extends React.Component {
             <MacrosDialog
               macrosNamesArr={this.state.macrosNames}
               setMacrosNames={this.setMacrosNames}
+              currentLanguageLayout={this.state.currentLanguageLayout}
             />
             <div className={classes.grow} />
             <FormControl className={classes.layerSelect}>
@@ -868,6 +869,7 @@ class Editor extends React.Component {
               scanKeyboard={this.scanKeyboard}
               currentLanguageLayout={this.state.currentLanguageLayout}
               onChangeLanguageLayout={this.onChangeLanguageLayout}
+              macrosNames={this.state.macrosNames}
             />
           )) ||
             (mode == "colormap" && (

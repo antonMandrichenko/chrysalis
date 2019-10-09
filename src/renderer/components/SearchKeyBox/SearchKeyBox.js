@@ -34,7 +34,7 @@ const styles = theme => ({
     justifyContent: "center"
   },
   wrapper: {
-    height: "90vh",
+    height: "97vh",
     width: "90vw",
     position: "relative"
   },
@@ -145,9 +145,24 @@ class SearchKeyBox extends Component {
       !item.isUnite
         ? {
             // Change baseKeyCodeTable from props to local variable
-            ...this.baseKeyCodeTable.filter(
+            groupName: this.baseKeyCodeTable.filter(
               group => item.group === group.groupName
-            )[0],
+            )[0].groupName,
+            keys: this.baseKeyCodeTable
+              .filter(group => item.group === group.groupName)[0]
+              .keys.map((key, i) =>
+                key.code >= 53596 && key.code <= 53627
+                  ? {
+                      ...key,
+                      labels: {
+                        ...key.labels,
+                        primary: this.props.macrosNames
+                          ? this.props.macrosNames[i]
+                          : key.labels.primary
+                      }
+                    }
+                  : key
+              ),
             displayName: item.displayName
           }
         : {

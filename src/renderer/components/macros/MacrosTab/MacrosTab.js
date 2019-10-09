@@ -22,7 +22,8 @@ function MacrosTab(props) {
     openKeyConfig,
     deleteKeyFromMacros,
     openDelayConfig,
-    toChangeMacrosName
+    toChangeMacrosName,
+    currentLanguageLayout
   } = props;
 
   return (
@@ -40,6 +41,7 @@ function MacrosTab(props) {
           deleteKeyFromMacros={deleteKeyFromMacros}
           openDelayConfig={openDelayConfig}
           toChangeMacrosName={toChangeMacrosName}
+          currentLanguageLayout={currentLanguageLayout}
         />
       </Grid>
     </Grid>

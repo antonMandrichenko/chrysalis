@@ -63,7 +63,8 @@ function MacrosCard(props) {
     openKeyConfig,
     deleteKeyFromMacros,
     openDelayConfig,
-    toChangeMacrosName
+    toChangeMacrosName,
+    currentLanguageLayout
   } = props;
 
   // const [value, setValue] = useState("");
@@ -137,6 +138,7 @@ function MacrosCard(props) {
                 deleteKeyFromMacros={deleteKeyFromMacros}
                 openKeyConfig={openKeyConfig}
                 openDelayConfig={openDelayConfig}
+                currentLanguageLayout={currentLanguageLayout}
               />
             </RootRef>
           </Grid>

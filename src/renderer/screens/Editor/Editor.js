@@ -178,17 +178,12 @@ class Editor extends React.Component {
 
       let colormap = await focus.command("colormap");
 
-      const macrosNames = settings.get("macrosNames")
-        ? settings.get("macrosNames").split("__")
-        : ["Macros 1"];
-
       this.setState({
         defaultLayer: defLayer,
         keymap: keymap,
         showDefaults: !keymap.onlyCustom,
         palette: colormap.palette,
-        colorMap: colormap.colorMap,
-        macrosNames
+        colorMap: colormap.colorMap
       });
       this.bottomMenuNeverHide();
     } catch (e) {
@@ -684,6 +679,7 @@ class Editor extends React.Component {
   };
 
   setMacrosNames = names => {
+    this.setState({ macrosNames: names });
     console.log(names);
   };
 
@@ -825,7 +821,7 @@ class Editor extends React.Component {
               )}
             </ToggleButtonGroup>
             <MacrosDialog
-              macrosNames={this.state.macrosNames}
+              macrosNamesArr={this.state.macrosNames}
               setMacrosNames={this.setMacrosNames}
             />
             <div className={classes.grow} />

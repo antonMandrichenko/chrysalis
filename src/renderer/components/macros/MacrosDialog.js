@@ -100,7 +100,7 @@ const focus = new Focus();
 const initMacros = [{ macrosName: "New macros", data: [] }];
 
 function MacrosDialog(props) {
-  const { classes, macrosNames, setMacrosNames } = props;
+  const { classes, macrosNamesArr, setMacrosNames } = props;
   const [open, setOpen] = useState(false);
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
@@ -133,9 +133,10 @@ function MacrosDialog(props) {
         macrosMap = await focus.command("macros.map");
 
         console.log(macrosMap);
-        // const macrosNames = settings.get("macrosNames")
-        //   ? settings.get("macrosNames").split("__")
-        //   : ["Macros 1"];
+        const macrosNames = settings.get("macrosNames")
+          ? settings.get("macrosNames").split("__")
+          : ["Macros 1"];
+        setMacrosNames(macrosNames);
         const macrosMapArray = macrosMap.match(/[\d\s]+?\s0\s/g);
         const macroses = macrosMapArray
           ? macrosMapArray.map(macros =>
@@ -187,7 +188,7 @@ function MacrosDialog(props) {
       length += 1;
     }
     setMacrosLength(length);
-    if (!oldMacrosLength) {
+    if (!oldMacrosLength || oldMacrosLength < length) {
       setOldMacrosLength(length);
     }
   };
@@ -230,14 +231,16 @@ function MacrosDialog(props) {
       }),
       {}
     );
-    newMacrosMap.macrosData = newMacrosMap.macrosData
-      .concat(" ", addToAllLength)
-      .trim()
-      .concat(" ", 0);
+    newMacrosMap.macrosData =
+      addToAllLength !== ""
+        ? newMacrosMap.macrosData
+            .concat(" ", 0)
+            .concat(" ", addToAllLength)
+            .trim()
+        : newMacrosMap.macrosData.trim().concat(" ", 0);
     console.log(newMacrosMap, typeof newMacrosMap);
 
     await focus.command("macros.map", newMacrosMap.macrosData);
-    setMacrosNames(newMacrosMap.macrosNames);
     settings.set("macrosNames", newMacrosMap.macrosNames);
   };
 
@@ -344,6 +347,8 @@ function MacrosDialog(props) {
 
   const toChangeMacrosName = newName => {
     const newArr = changeMacrosTabState(newName, null);
+    let macrosNamesEditor = [...macrosNamesArr, newName];
+    setMacrosNames(macrosNamesEditor);
     setMacrosTab(newArr);
     setStartContext(true);
   };

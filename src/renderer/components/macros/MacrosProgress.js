@@ -45,14 +45,17 @@ const styles = () => ({
   }
 });
 
-const FULL_MACROS_LENGTH = 128;
+const FULL_MACROS_LENGTH = 126;
 
 function MacrosProgress(props) {
-  const { classes, macrosLength } = props;
+  const { classes, macrosLength, toChangeProgressMemory } = props;
   const [completed, setCompleted] = useState(0);
 
   useEffect(() => {
-    setCompleted((macrosLength / FULL_MACROS_LENGTH) * 100);
+    let newProgress = Math.ceil((macrosLength / FULL_MACROS_LENGTH) * 100);
+    newProgress = newProgress > 100 ? 100 : newProgress;
+    setCompleted(newProgress);
+    toChangeProgressMemory(newProgress);
   }, [macrosLength]);
 
   return (
@@ -60,7 +63,7 @@ function MacrosProgress(props) {
       <Typography gutterBottom>Used macros memory</Typography>
       <div className={classes.div}>
         <LinearProgress
-          color={completed < 90 ? "primary" : "secondary"}
+          color={completed < 95 ? "primary" : "secondary"}
           variant="determinate"
           value={completed}
           className={classes.progress}

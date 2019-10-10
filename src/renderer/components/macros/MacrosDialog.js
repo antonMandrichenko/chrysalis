@@ -133,6 +133,7 @@ function MacrosDialog(props) {
   const [isOpenDelayConfig, setIsOpenDelayConfig] = useState(false);
   const [delayKeyEdit, setDelayKeyEdit] = useState(null);
   const [keyEdit, setKeyEdit] = useState(null);
+  const [macrosProgress, setMacrosProgress] = useState(0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -241,30 +242,35 @@ function MacrosDialog(props) {
             .fill("255")
             .join(" ")
         : "";
-    const newMacrosMap = macrosTab.reduce(
-      (newMacros, item) => ({
-        macrosData: newMacros.macrosData
-          ? newMacros.macrosData.concat(" ", item.data.join(" ")).concat(" ", 0)
-          : ""
-              .concat("", item.data.join(" "))
-              .concat(" ", item.data.length ? 0 : ""),
-        macrosNames: newMacros.macrosNames
-          ? newMacros.macrosNames.concat("__", item.macrosName)
-          : "".concat("", item.macrosName)
-      }),
-      {}
-    );
+    const newMacrosMap = macrosTab.reduce((newMacros, item) => {
+      if (item.data.length) {
+        return {
+          macrosData: newMacros.macrosData
+            ? newMacros.macrosData
+                .concat(" ", item.data.join(" "))
+                .concat(" ", 0)
+            : ""
+                .concat("", item.data.join(" "))
+                .concat(" ", item.data.length ? 0 : ""),
+          macrosNames: newMacros.macrosNames
+            ? newMacros.macrosNames.concat("__", item.macrosName)
+            : "".concat("", item.macrosName)
+        };
+      }
+      return { ...newMacros };
+    }, {});
     newMacrosMap.macrosData =
       addToAllLength !== ""
         ? newMacrosMap.macrosData
-            .concat(" ", newMacrosMap.macrosData.length > 1 ? 0 : "")
-            .concat(" ", addToAllLength)
-            .trim()
+          ? newMacrosMap.macrosData
+              .concat(" ", newMacrosMap.macrosData.length > 1 ? 0 : "")
+              .concat(" ", addToAllLength)
+              .trim()
+          : addToAllLength
         : newMacrosMap.macrosData.trim().concat(" ", 0);
     console.log(newMacrosMap, typeof newMacrosMap);
-
-    await focus.command("macros.map", newMacrosMap.macrosData);
     settings.set("macrosNames", newMacrosMap.macrosNames);
+    await focus.command("macros.map", newMacrosMap.macrosData);
   };
 
   const addKeyToMacros = e => {
@@ -396,6 +402,10 @@ function MacrosDialog(props) {
     setMacrosTab(macrosTab.concat(initMacros));
   };
 
+  const toChangeProgressMemory = newProgress => {
+    setMacrosProgress(newProgress);
+  };
+
   const groupeList =
     orderArrayWithKeys &&
     orderArrayWithKeys.map((group, index) => (
@@ -460,8 +470,12 @@ function MacrosDialog(props) {
           toAddNewMacros={toAddNewMacros}
           startContext={startContext}
           currentLanguageLayout={currentLanguageLayout}
+          macrosProgress={macrosProgress}
         />
-        <MacrosProgress macrosLength={macrosLength} />
+        <MacrosProgress
+          macrosLength={macrosLength}
+          toChangeProgressMemory={toChangeProgressMemory}
+        />
       </Dialog>
       <Modal
         aria-labelledby="modal-title"

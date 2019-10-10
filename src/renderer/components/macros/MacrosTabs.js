@@ -86,7 +86,8 @@ class MacrosTabs extends React.Component {
       openDelayConfig,
       toChangeMacrosName,
       toAddNewMacros,
-      currentLanguageLayout
+      currentLanguageLayout,
+      macrosProgress
     } = this.props;
     const { value, isRecord } = this.state;
     const isEmptyLastMacros = Boolean(macrosTab.slice(-1)[0].data.slice(-1)[0]);
@@ -109,6 +110,7 @@ class MacrosTabs extends React.Component {
                 openDelayConfig={openDelayConfig}
                 toChangeMacrosName={toChangeMacrosName}
                 currentLanguageLayout={currentLanguageLayout}
+                macrosProgress={macrosProgress}
               />
             </TabContainer>
           );

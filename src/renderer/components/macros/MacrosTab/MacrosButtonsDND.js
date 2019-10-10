@@ -69,7 +69,8 @@ const MacrosButtonsDND = props => {
     isRecord,
     deleteKeyFromMacros,
     openKeyConfig,
-    openDelayConfig
+    openDelayConfig,
+    macrosProgress
     // currentLanguageLayout
   } = props;
   const [state, setState] = useState(
@@ -222,7 +223,7 @@ const MacrosButtonsDND = props => {
     <Paper
       className={classes.root}
       onKeyUp={e => {
-        addKey(e);
+        macrosProgress < 100 && addKey(e);
       }}
       tabIndex="0"
     >

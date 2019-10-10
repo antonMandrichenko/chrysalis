@@ -23,6 +23,13 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 
+AddKeyInMacros.propTypes = {
+  classes: PropTypes.object.isRequired,
+  isRecord: PropTypes.bool.isRequired,
+  openKeyConfig: PropTypes.func.isRequired,
+  openDelayConfig: PropTypes.func.isRequired
+};
+
 const styles = theme => ({
   root: {
     width: "100%",
@@ -35,7 +42,13 @@ const styles = theme => ({
 });
 
 function AddKeyInMacros(props) {
-  const { classes, isRecord, openKeyConfig, openDelayConfig } = props;
+  const {
+    classes,
+    isRecord,
+    openKeyConfig,
+    openDelayConfig,
+    macrosProgress
+  } = props;
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -60,7 +73,7 @@ function AddKeyInMacros(props) {
             color="primary"
             aria-label="Add"
             className={classes.margin}
-            disabled={!isRecord}
+            disabled={!isRecord || macrosProgress >= 100}
             aria-owns={anchorEl ? "simple-menu" : undefined}
             aria-haspopup="true"
             onClick={handleClick}
@@ -85,9 +98,5 @@ function AddKeyInMacros(props) {
     </div>
   );
 }
-
-AddKeyInMacros.propTypes = {
-  classes: PropTypes.object.isRequired
-};
 
 export default withStyles(styles)(AddKeyInMacros);

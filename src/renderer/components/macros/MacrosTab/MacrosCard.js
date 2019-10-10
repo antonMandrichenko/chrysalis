@@ -80,7 +80,8 @@ function MacrosCard(props) {
     deleteKeyFromMacros,
     openDelayConfig,
     toChangeMacrosName,
-    currentLanguageLayout
+    currentLanguageLayout,
+    macrosProgress
   } = props;
 
   // const [value, setValue] = useState("");
@@ -137,6 +138,7 @@ function MacrosCard(props) {
               isRecord={isRecord}
               openKeyConfig={openKeyConfig}
               openDelayConfig={openDelayConfig}
+              macrosProgress={macrosProgress}
             >
               {i18n.editor.macros.addKeyOrDelay}
             </AddKeyInMacros>
@@ -155,6 +157,7 @@ function MacrosCard(props) {
                 openKeyConfig={openKeyConfig}
                 openDelayConfig={openDelayConfig}
                 currentLanguageLayout={currentLanguageLayout}
+                macrosProgress={macrosProgress}
               />
             </RootRef>
           </Grid>

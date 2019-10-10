@@ -39,7 +39,8 @@ function MacrosTab(props) {
     deleteKeyFromMacros,
     openDelayConfig,
     toChangeMacrosName,
-    currentLanguageLayout
+    currentLanguageLayout,
+    macrosProgress
   } = props;
 
   return (
@@ -58,6 +59,7 @@ function MacrosTab(props) {
           openDelayConfig={openDelayConfig}
           toChangeMacrosName={toChangeMacrosName}
           currentLanguageLayout={currentLanguageLayout}
+          macrosProgress={macrosProgress}
         />
       </Grid>
     </Grid>

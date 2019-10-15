@@ -1,3 +1,19 @@
+// -*- mode: js-jsx -*-
+/* Chrysalis -- Dygma Raise macros
+ * Copyright (C) 2019  DygmaLab SE
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
@@ -10,11 +26,12 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import RootRef from "@material-ui/core/RootRef";
+// import Focus from "@chrysalis-api/focus";
 import MacrosCardInput from "./MacrosCardInput";
 import DeleteMacrosButton from "./DeleteMacrosButton";
 import MacrosButtonsDND from "./MacrosButtonsDND";
 import AddKeyInMacros from "./AddKeyInMacros";
-import PlayMacros from "./PlayMacros";
+// import PlayMacros from "./PlayMacros";
 import i18n from "../../../i18n";
 
 const styles = {
@@ -24,7 +41,7 @@ const styles = {
   item: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "flex-start"
   },
   container: {
     marginTop: 10
@@ -47,6 +64,8 @@ const styles = {
   }
 };
 
+// const focus = new Focus();
+
 function MacrosCard(props) {
   const {
     classes,
@@ -60,8 +79,12 @@ function MacrosCard(props) {
     openKeyConfig,
     deleteKeyFromMacros,
     openDelayConfig,
-    toChangeMacrosName
+    toChangeMacrosName,
+    currentLanguageLayout,
+    macrosProgress
   } = props;
+
+  // const [value, setValue] = useState("");
 
   const domRef = React.useRef();
 
@@ -70,6 +93,12 @@ function MacrosCard(props) {
       domRef.current.focus();
     }
   }, [isRecord]);
+
+  // const handlePlay = async () => {
+  //   await focus.request("macros.trigger", "0").then(() => {
+  //     return focus.request("0");
+  //   });
+  // };
 
   return (
     <Card
@@ -109,11 +138,12 @@ function MacrosCard(props) {
               isRecord={isRecord}
               openKeyConfig={openKeyConfig}
               openDelayConfig={openDelayConfig}
+              macrosProgress={macrosProgress}
             >
               {i18n.editor.macros.addKeyOrDelay}
             </AddKeyInMacros>
-            <Divider />
-            <PlayMacros />
+            {/* <Divider />
+            <PlayMacros /> */}
           </Grid>
           <Grid item xs={8} className={classes.item}>
             <RootRef rootRef={domRef}>
@@ -126,6 +156,8 @@ function MacrosCard(props) {
                 deleteKeyFromMacros={deleteKeyFromMacros}
                 openKeyConfig={openKeyConfig}
                 openDelayConfig={openDelayConfig}
+                currentLanguageLayout={currentLanguageLayout}
+                macrosProgress={macrosProgress}
               />
             </RootRef>
           </Grid>
@@ -140,6 +172,14 @@ function MacrosCard(props) {
         >
           Record macros
         </Button>
+        {/* <Button
+          size="small"
+          color={!isRecord ? "primary" : "inherit"}
+          onClick={handlePlay}
+          className={isRecord && classes.button}
+        >
+          Play macros
+        </Button> */}
       </CardActions>
     </Card>
   );

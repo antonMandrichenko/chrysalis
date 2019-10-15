@@ -1,3 +1,19 @@
+// -*- mode: js-jsx -*-
+/* Chrysalis -- Dygma Raise macros
+ * Copyright (C) 2019  DygmaLab SE
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
@@ -100,7 +116,12 @@ const focus = new Focus();
 const initMacros = [{ macrosName: "New macros", data: [] }];
 
 function MacrosDialog(props) {
-  const { classes } = props;
+  const {
+    classes,
+    macrosNamesArr,
+    setMacrosNames,
+    currentLanguageLayout
+  } = props;
   const [open, setOpen] = useState(false);
   const [startContext, setStartContext] = useState(false);
   const [macrosTab, setMacrosTab] = useState(null);
@@ -112,6 +133,7 @@ function MacrosDialog(props) {
   const [isOpenDelayConfig, setIsOpenDelayConfig] = useState(false);
   const [delayKeyEdit, setDelayKeyEdit] = useState(null);
   const [keyEdit, setKeyEdit] = useState(null);
+  const [macrosProgress, setMacrosProgress] = useState(0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -126,7 +148,7 @@ function MacrosDialog(props) {
     let isMounted = true;
     let macrosMap;
     // const string =
-    //   "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255";
+    //   "1 20 8 11 5 8 12 8 8 8 15 8 15 8 18 8 11 5 8 12 8 8 8 15 8 15 8 18 0 8 12 8 9 8 15 8 15 8 18 0 0 255 255 255 255 255 255 255 255 255 255 255 255 255 255";
     const getMacrosMap = async () => {
       // await focus.command("macros.map", string);
       if (isMounted) {
@@ -136,6 +158,7 @@ function MacrosDialog(props) {
         const macrosNames = settings.get("macrosNames")
           ? settings.get("macrosNames").split("__")
           : ["Macros 1"];
+        setMacrosNames(macrosNames);
         const macrosMapArray = macrosMap.match(/[\d\s]+?\s0\s/g);
         const macroses = macrosMapArray
           ? macrosMapArray.map(macros =>
@@ -169,11 +192,11 @@ function MacrosDialog(props) {
     return () => {
       isMounted = false;
     };
-  }, [open]);
+  }, [open, currentLanguageLayout]);
 
   useEffect(() => {
     setOrderArrayWithKeys(toOrderArrayWithKeys(baseKeyCodeTable));
-  }, []);
+  }, [currentLanguageLayout]);
 
   const getMacrosLength = data => {
     let length = 0;
@@ -187,7 +210,7 @@ function MacrosDialog(props) {
       length += 1;
     }
     setMacrosLength(length);
-    if (!oldMacrosLength) {
+    if (!oldMacrosLength || oldMacrosLength < length) {
       setOldMacrosLength(length);
     }
   };
@@ -219,24 +242,35 @@ function MacrosDialog(props) {
             .fill("255")
             .join(" ")
         : "";
-    const newMacrosMap = macrosTab.reduce(
-      (newMacros, item) => ({
-        macrosData: newMacros.macrosData
-          ? newMacros.macrosData.concat(" ", item.data.join(" ")).concat(" ", 0)
-          : "".concat("", item.data.join(" ")).concat(" ", 0),
-        macrosNames: newMacros.macrosNames
-          ? newMacros.macrosNames.concat("__", item.macrosName)
-          : "".concat("__", item.macrosName)
-      }),
-      {}
-    );
-    newMacrosMap.macrosData = newMacrosMap.macrosData
-      .concat(" ", addToAllLength)
-      .trim();
+    const newMacrosMap = macrosTab.reduce((newMacros, item) => {
+      if (item.data.length) {
+        return {
+          macrosData: newMacros.macrosData
+            ? newMacros.macrosData
+                .concat(" ", item.data.join(" "))
+                .concat(" ", 0)
+            : ""
+                .concat("", item.data.join(" "))
+                .concat(" ", item.data.length ? 0 : ""),
+          macrosNames: newMacros.macrosNames
+            ? newMacros.macrosNames.concat("__", item.macrosName)
+            : "".concat("", item.macrosName)
+        };
+      }
+      return { ...newMacros };
+    }, {});
+    newMacrosMap.macrosData =
+      addToAllLength !== ""
+        ? newMacrosMap.macrosData
+          ? newMacrosMap.macrosData
+              .concat(" ", newMacrosMap.macrosData.length > 1 ? 0 : "")
+              .concat(" ", addToAllLength)
+              .trim()
+          : addToAllLength
+        : newMacrosMap.macrosData.trim().concat(" ", 0);
     console.log(newMacrosMap, typeof newMacrosMap);
-
-    await focus.command("macros.map", newMacrosMap.macrosData);
     settings.set("macrosNames", newMacrosMap.macrosNames);
+    await focus.command("macros.map", newMacrosMap.macrosData);
   };
 
   const addKeyToMacros = e => {
@@ -342,6 +376,8 @@ function MacrosDialog(props) {
 
   const toChangeMacrosName = newName => {
     const newArr = changeMacrosTabState(newName, null);
+    let macrosNamesEditor = [...macrosNamesArr, newName];
+    setMacrosNames(macrosNamesEditor);
     setMacrosTab(newArr);
     setStartContext(true);
   };
@@ -364,6 +400,10 @@ function MacrosDialog(props) {
 
   const toAddNewMacros = () => {
     setMacrosTab(macrosTab.concat(initMacros));
+  };
+
+  const toChangeProgressMemory = newProgress => {
+    setMacrosProgress(newProgress);
   };
 
   const groupeList =
@@ -429,8 +469,13 @@ function MacrosDialog(props) {
           toChangeMacrosName={toChangeMacrosName}
           toAddNewMacros={toAddNewMacros}
           startContext={startContext}
+          currentLanguageLayout={currentLanguageLayout}
+          macrosProgress={macrosProgress}
         />
-        <MacrosProgress macrosLength={macrosLength} />
+        <MacrosProgress
+          macrosLength={macrosLength}
+          toChangeProgressMemory={toChangeProgressMemory}
+        />
       </Dialog>
       <Modal
         aria-labelledby="modal-title"

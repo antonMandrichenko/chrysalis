@@ -370,7 +370,21 @@ class KeyGroupListUnwrapped extends React.Component {
       );
     }
 
-    const itemList = items || baseKeyCodeTable[group].keys;
+    const macroseGroup =
+      baseKeyCodeTable[group].groupName === "Macros" &&
+      baseKeyCodeTable[group].keys
+        .filter((item, i) => i < this.props.macrosNames.length)
+        .map((key, i) => ({
+          ...key,
+          labels: {
+            ...key.labels,
+            primary: this.props.macrosNames
+              ? this.props.macrosNames[i]
+              : key.labels.primary
+          }
+        }));
+
+    const itemList = macroseGroup || items || baseKeyCodeTable[group].keys;
 
     const keyList = itemList.map(key => {
       let selected = false;
@@ -499,6 +513,7 @@ class KeyGroup extends React.Component {
         group={group}
         selectedKey={keyCode}
         onKeySelect={onKeySelect}
+        macrosNames={this.props.macrosNames}
         {...props}
       />
     );
@@ -575,6 +590,7 @@ class KeySelector extends React.Component {
             onKeySelect={this.onKeySelect}
             currentKeyCode={actualKeycode}
             baseKeyCodeTable={baseKeyCodeTable}
+            macrosNames={this.props.macrosNames}
           />
           <SelectLanguage
             scanKeyboard={this.props.scanKeyboard}
@@ -589,6 +605,7 @@ class KeySelector extends React.Component {
             group={groupIndex}
             keyCode={actualKeycode}
             onKeySelect={this.onKeySelect}
+            macrosNames={this.props.macrosNames}
           />
         </div>
       </Paper>

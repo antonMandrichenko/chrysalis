@@ -118,7 +118,8 @@ class Editor extends React.Component {
     importExportDialogOpen: false,
     isMultiSelected: false,
     isColorButtonSelected: false,
-    currentLanguageLayout: ""
+    currentLanguageLayout: "",
+    macrosNames: []
   };
   keymapDB = new KeymapDB();
   /**
@@ -701,6 +702,11 @@ class Editor extends React.Component {
     this.setState({ importExportDialogOpen: false });
   };
 
+  setMacrosNames = names => {
+    this.setState({ macrosNames: names });
+    console.log(names);
+  };
+
   render() {
     const { classes } = this.props;
     const { keymap, palette, isColorButtonSelected } = this.state;
@@ -842,7 +848,11 @@ class Editor extends React.Component {
                 </ToggleButton>
               )}
             </ToggleButtonGroup>
-            <MacrosDialog />
+            <MacrosDialog
+              macrosNamesArr={this.state.macrosNames}
+              setMacrosNames={this.setMacrosNames}
+              currentLanguageLayout={this.state.currentLanguageLayout}
+            />
             <div className={classes.grow} />
             <FormControl className={classes.layerSelect}>
               <Select
@@ -887,6 +897,7 @@ class Editor extends React.Component {
               scanKeyboard={this.scanKeyboard}
               currentLanguageLayout={this.state.currentLanguageLayout}
               onChangeLanguageLayout={this.onChangeLanguageLayout}
+              macrosNames={this.state.macrosNames}
             />
           )) ||
             (mode == "colormap" && (

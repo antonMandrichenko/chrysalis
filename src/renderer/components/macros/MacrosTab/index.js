@@ -1,6 +1,6 @@
 // -*- mode: js-jsx -*-
-/* Chrysalis -- Kaleidoscope Command Center
- * Copyright (C) 2019  Keyboardio, Inc.
+/* Chrysalis -- Dygma Raise macros
+ * Copyright (C) 2019  DygmaLab SE
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software

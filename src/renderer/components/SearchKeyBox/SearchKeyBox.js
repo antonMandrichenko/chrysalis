@@ -34,7 +34,7 @@ const styles = theme => ({
     justifyContent: "center"
   },
   wrapper: {
-    height: "90vh",
+    height: "97vh",
     width: "90vw",
     position: "relative"
   },
@@ -99,6 +99,16 @@ export const orderArray = [
   { group: "Steno", isUnite: false, displayName: "Steno" }
 ];
 
+const forOrderArray = [
+  {
+    group: "Macros",
+    isUnite: false,
+    displayName: "Macros"
+  }
+];
+
+const newOrderArray = orderArray.concat(forOrderArray);
+
 /**
  * Reactjs component that creates menu for choise key from all keys list
  * @param {object} classes Property that sets up CSS classes that adding to HTML elements
@@ -131,13 +141,28 @@ class SearchKeyBox extends Component {
    * The first argument is valid state of baseKeyCodeTable
    */
   toOrderArrayWithKeys = baseKeyCodeTable =>
-    orderArray.map(item =>
+    newOrderArray.map(item =>
       !item.isUnite
         ? {
             // Change baseKeyCodeTable from props to local variable
-            ...this.baseKeyCodeTable.filter(
+            groupName: this.baseKeyCodeTable.filter(
               group => item.group === group.groupName
-            )[0],
+            )[0].groupName,
+            keys: this.baseKeyCodeTable
+              .filter(group => item.group === group.groupName)[0]
+              .keys.map((key, i) =>
+                key.code >= 53596 && key.code <= 53627
+                  ? {
+                      ...key,
+                      labels: {
+                        ...key.labels,
+                        primary: this.props.macrosNames
+                          ? this.props.macrosNames[i]
+                          : key.labels.primary
+                      }
+                    }
+                  : key
+              ),
             displayName: item.displayName
           }
         : {
@@ -188,18 +213,22 @@ class SearchKeyBox extends Component {
   render() {
     const { classes, currentKeyCode } = this.props;
     const { open, orderArrayWithKeys } = this.state;
-    const groupeList = orderArrayWithKeys.map((group, index) => (
-      <GroupItem
-        key={group.groupName}
-        group={group}
-        keySelect={this.keySelect}
-        isUnited={Boolean(group.innerGroup)}
-        selectedKeyCode={currentKeyCode}
-        numderContGrids={orderArrayWithKeys.length === index + 1 ? 8 : 4}
-        numderLgItemsGrids={orderArrayWithKeys.length === index + 1 ? 1 : 2}
-        numderMdItemsGrids={orderArrayWithKeys.length === index + 1 ? 2 : 3}
-      />
-    ));
+    const groupeList = orderArrayWithKeys.map((group, index) => {
+      const lastEl = orderArrayWithKeys.length === index + 1;
+      const beforeLastEl = orderArrayWithKeys.length - 1 === index + 1;
+      return (
+        <GroupItem
+          key={group.groupName}
+          group={group}
+          keySelect={this.keySelect}
+          isUnited={Boolean(group.innerGroup)}
+          selectedKeyCode={currentKeyCode}
+          numderContGrids={beforeLastEl ? 8 : lastEl ? 12 : 4}
+          numderLgItemsGrids={beforeLastEl ? 1 : lastEl ? 1 : 2}
+          numderMdItemsGrids={beforeLastEl ? 2 : lastEl ? 1 : 3}
+        />
+      );
+    });
 
     return (
       <React.Fragment>

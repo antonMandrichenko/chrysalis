@@ -1,5 +1,5 @@
 // -*- mode: js-jsx -*-
-/* Chrysalis -- Kaleidoscope Command Center
+/* Bazecor -- Kaleidoscope Command Center
  * Copyright (C) 2018, 2019  Keyboardio, Inc.
  *
  * This program is free software: you can redistribute it and/or modify it under
@@ -24,23 +24,18 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import FormControl from "@material-ui/core/FormControl";
 import IconButton from "@material-ui/core/IconButton";
 import ImportExportIcon from "@material-ui/icons/ImportExport";
-import KeyboardIcon from "@material-ui/icons/Keyboard";
 import LayersClearIcon from "@material-ui/icons/LayersClear";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import LockIcon from "@material-ui/icons/Lock";
 import MenuItem from "@material-ui/core/MenuItem";
-import PaletteIcon from "@material-ui/icons/Palette";
 import Portal from "@material-ui/core/Portal";
 import Select from "@material-ui/core/Select";
 import Slide from "@material-ui/core/Slide";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import { withStyles } from "@material-ui/core/styles";
-
 import { withSnackbar } from "notistack";
 
 import Focus from "@chrysalis-api/focus";
@@ -55,6 +50,7 @@ import settings from "electron-settings";
 import ImportExportDialog from "./ImportExportDialog";
 import { CopyFromDialog } from "./CopyFromDialog";
 import MacrosDialog from "../../components/macros";
+import { undeglowDefaultColors } from "./initialUndaglowColors";
 
 const styles = theme => ({
   tbg: {
@@ -67,9 +63,8 @@ const styles = theme => ({
     flexGrow: 1
   },
   editor: {
-    margin: theme.spacing.unit * 3,
-    marginBottom: 150,
-    textAlign: "center"
+    display: "block",
+    margin: "2px auto"
   },
   moreMenu: {
     marginTop: theme.spacing.unit * 4
@@ -94,6 +89,11 @@ const styles = theme => ({
   disabledLayer: {
     opacity: 0.5,
     filter: "saturate(25%)"
+  },
+  toolbar: {
+    position: "absolute",
+    right: 0,
+    top: 21
   }
 });
 
@@ -112,16 +112,17 @@ class Editor extends React.Component {
     },
     palette: [],
     colorMap: [],
-    mode: "layout",
     clearConfirmationOpen: false,
     copyFromOpen: false,
     importExportDialogOpen: false,
     isMultiSelected: false,
     isColorButtonSelected: false,
     currentLanguageLayout: "",
-    macrosNames: []
+    macrosNames: [],
+    undeglowColors: null
   };
   keymapDB = new KeymapDB();
+  undeglowCount = 14;
   /**
    * Bottom menu never hide and automatically select a key at launch and have this shown in the bottom menu
    */
@@ -201,16 +202,32 @@ class Editor extends React.Component {
           await focus.command("keymap", keymap);
         }
 
-        let colormap = await focus.command("colormap");
-
-        this.setState({
-          defaultLayer: defLayer,
-          keymap: keymap,
-          showDefaults: !keymap.onlyCustom,
-          palette: colormap.palette,
-          colorMap: colormap.colorMap
-        });
-      }
+      let colormap = await focus.command("colormap");
+      let palette = colormap.palette.slice();
+      const undeglowColors = settings.get("undeglowColors");
+      this.setState(
+        () => {
+          if (!undeglowColors) {
+            settings.set("undeglowColors", undeglowDefaultColors);
+            return { undeglowColors: undeglowDefaultColors };
+          } else {
+            return { undeglowColors };
+          }
+        },
+        () => {
+          palette[this.undeglowCount] = this.state.undeglowColors[
+            this.state.currentLayer
+          ];
+          this.setState({
+            defaultLayer: defLayer,
+            keymap: keymap,
+            showDefaults: !keymap.onlyCustom,
+            palette,
+            colorMap: colormap.colorMap
+          });
+        }
+      );
+    }
       this.bottomMenuNeverHide();
     } catch (e) {
       this.props.enqueueSnackbar(e, { variant: "error" });
@@ -401,8 +418,12 @@ class Editor extends React.Component {
 
   selectLayer = event => {
     if (event.target.value === undefined) return;
+    const { palette, undeglowColors } = this.state;
+    let newPalette = palette.slice();
+    newPalette[this.undeglowCount] = undeglowColors[event.target.value];
     this.setState({
-      currentLayer: event.target.value
+      currentLayer: event.target.value,
+      palette: newPalette
     });
     this.bottomMenuNeverHide();
   };
@@ -410,6 +431,7 @@ class Editor extends React.Component {
   onApply = async () => {
     const { isDemo } = this.props;
     this.setState({ saving: true });
+    settings.set("undeglowColors", this.state.undeglowColors);
     let focus = new Focus();
     if (isDemo) {
       this.saveDataInLS();
@@ -551,30 +573,32 @@ class Editor extends React.Component {
     this.setState({ clearConfirmationOpen: false });
   };
 
-  setMode = (mode, isUnderglow) => {
-    this.setState({ mode: mode });
-    this.bottomMenuNeverHide();
+  onColorButtonSelect = (action, colorIndex) => {
+    const { isColorButtonSelected } = this.state;
+    if (action === "one_button_click") {
+      this.setState({
+        isMultiSelected: false,
+        isColorButtonSelected: !isColorButtonSelected
+      });
+      return;
+    }
+    if (action === "another_button_click") {
+      this.setState({
+        selectedPaletteColor: colorIndex,
+        isColorButtonSelected: true
+      });
+      return;
+    }
   };
 
   onColorSelect = colorIndex => {
-    const {
-      currentLayer,
-      currentLedIndex,
-      colorMap,
-      selectedPaletteColor
-    } = this.state;
+    const { currentLayer, currentLedIndex, colorMap } = this.state;
 
     const isEqualColor = this.onVerificationColor(
       colorIndex,
       currentLayer,
       currentLedIndex
     );
-
-    if (colorIndex == this.state.selectedPaletteColor) colorIndex = -1;
-    if (colorIndex == -1) {
-      this.setState({ selectedPaletteColor: selectedPaletteColor });
-      return;
-    }
 
     if (currentLayer < 0 || currentLayer >= colorMap.length) return;
 
@@ -597,18 +621,34 @@ class Editor extends React.Component {
     }
   };
 
+  onBacklightColorSelect = colorIndex => {
+    this.setState({
+      selectedPaletteColor: colorIndex,
+      isColorButtonSelected: true
+    });
+  };
+
   onColorPick = (colorIndex, r, g, b) => {
     let newPalette = this.state.palette.slice();
-    newPalette[colorIndex] = {
-      r: r,
-      g: g,
-      b: b,
+    const setColors = (r, g, b) => ({
+      r,
+      g,
+      b,
       rgb: `rgb(${r}, ${g}, ${b})`
-    };
+    });
+    newPalette[colorIndex] = setColors(r, g, b);
     this.setState({
       palette: newPalette,
       modified: true
     });
+    if (colorIndex === this.undeglowCount) {
+      const { currentLayer } = this.state;
+      let newUndeglowColors = { ...this.state.undeglowColors };
+      newUndeglowColors[currentLayer] = setColors(r, g, b);
+      this.setState({
+        undeglowColors: newUndeglowColors
+      });
+    }
     this.props.startContext();
   };
 
@@ -629,7 +669,6 @@ class Editor extends React.Component {
             newKeymap[currentLayer] = data.keymap.slice();
             let newColormap = this.state.colorMap.slice();
             newColormap[currentLayer] = data.colormap.slice();
-            console.log(currentLayer, newKeymap);
             return {
               keymap: {
                 default: state.keymap.default,
@@ -672,19 +711,14 @@ class Editor extends React.Component {
     this.setState({ importExportDialogOpen: false });
   };
 
-  /**
-   * Changes color of all keyboard underglows
-   */
-  toChangeAllUnderglowsColor = colorIndex => {
+  toChangeAllKeysColor = (colorIndex, start, end) => {
     const { currentLayer } = this.state;
-    const beginForChange = 69;
-    const endForChange = 131;
     this.setState(state => {
       let colormap = state.colorMap.slice();
       colormap[currentLayer] = colormap[currentLayer].fill(
         colorIndex,
-        beginForChange,
-        endForChange
+        start,
+        end
       );
       return {
         colorMap: colormap,
@@ -753,7 +787,6 @@ class Editor extends React.Component {
                 : this.state.colorMap[currentLayer - keymap.default.length]
             }
             theme={this.props.theme}
-            setMode={this.setMode}
           />
         </div>
       </Fade>
@@ -815,7 +848,6 @@ class Editor extends React.Component {
     });
 
     const layerMenu = (defaultLayerMenu || []).concat(customLayerMenu);
-    const { mode } = this.state;
 
     return (
       <React.Fragment>
@@ -853,6 +885,7 @@ class Editor extends React.Component {
               setMacrosNames={this.setMacrosNames}
               currentLanguageLayout={this.state.currentLanguageLayout}
             />
+          <Toolbar className={classes.toolbar}>
             <div className={classes.grow} />
             <FormControl className={classes.layerSelect}>
               <Select
@@ -882,12 +915,28 @@ class Editor extends React.Component {
               </Tooltip>
             </div>
           </Toolbar>
-        </Portal>
+        {/* </Portal> */}
         {this.state.keymap.custom.length == 0 &&
           this.state.keymap.default.length == 0 && (
             <LinearProgress variant="query" />
           )}
-        {layer}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {layer}
+          <ColorPalette
+            disabled={isReadOnly || currentLayer > this.state.colorMap.length}
+            onColorSelect={this.onColorSelect}
+            colorButtonIsSelected={this.state.colorButtonIsSelected}
+            palette={palette}
+            onColorPick={this.onColorPick}
+            selected={this.state.selectedPaletteColor}
+            isColorButtonSelected={isColorButtonSelected}
+            onColorButtonSelect={this.onColorButtonSelect}
+            theme={this.props.theme}
+            toChangeAllKeysColor={this.toChangeAllKeysColor}
+            onBacklightColorSelect={this.onBacklightColorSelect}
+            className="palette"
+          />
+        </div>
         <Slide in={this.getCurrentKey() != -1} direction="up" unmountOnExit>
           {(mode == "layout" && (
             <KeySelector
@@ -916,6 +965,14 @@ class Editor extends React.Component {
                 toChangeAllUnderglowsColor={this.toChangeAllUnderglowsColor}
               />
             ))}
+          <KeySelector
+            disabled={isReadOnly}
+            onKeySelect={this.onKeyChange}
+            currentKeyCode={this.getCurrentKey()}
+            scanKeyboard={this.scanKeyboard}
+            currentLanguageLayout={this.state.currentLanguageLayout}
+            onChangeLanguageLayout={this.onChangeLanguageLayout}
+          />
         </Slide>
         <SaveChangesButton
           floating
